@@ -1,0 +1,22 @@
+{
+  "api": {
+    "evalio": {
+      "dependsOn": [],
+      "output": {
+        "authConfig": {
+          "additionalAuthenticationProviders": [],
+          "defaultAuthentication": {
+            "apiKeyConfig": {
+              "apiKeyExpirationDate": "2024-04-11T09:38:41.253Z",
+              "apiKeyExpirationDays": 365,
+              "description": "argusref"
+            },
+            "authenticationType": "API_KEY"
+          }
+        }
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "AppSync"
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-evalio-dev-113510-authRole",
+      "UnauthRoleArn": "arn:aws:iam::867796623642:role/amplify-evalio-dev-113510-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::867796623642:role/amplify-evalio-dev-113510-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-evalio-dev-113510-deployment",
+      "UnauthRoleName": "amplify-evalio-dev-113510-unauthRole",
+      "StackName": "amplify-evalio-dev-113510",
+      "StackId": "arn:aws:cloudformation:us-east-1:867796623642:stack/amplify-evalio-dev-113510/4f6eb770-d915-11ed-955f-0e89cb2d4977",
+      "AmplifyAppId": "d3314j1sp22rmi"
+    }
+  }
+}
