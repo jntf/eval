@@ -4,39 +4,35 @@ import HelloWorld from './components/HelloWorld.vue'
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
+  <form @submit.prevent="submitForm">
+    <div>
+      <select v-model="selectedMake" @change="fetchModels">
+        <option disabled value="">Sélectionnez une marque</option>
+        <option v-for="make in makes" :key="make" :value="make">{{ make }}</option>
+      </select>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+      <select v-model="selectedModel" :disabled="!selectedMake" @change="fetchDetails">
+        <option disabled value="">Sélectionnez un modèle</option>
+        <option v-for="model in models" :key="model" :value="model">{{ model }}</option>
+      </select>
+
+      <select v-model="selectedKeywords" :disabled="!selectedModel" multiple>
+        <option disabled value="">Sélectionnez des mots-clés</option>
+        <option v-for="keyword in keywords" :key="keyword" :value="keyword">{{ keyword }}</option>
+      </select>
+
+      <select v-model="selectedEnergies" :disabled="!selectedModel">
+        <option disabled value="">Sélectionnez des énergies</option>
+        <option v-for="energy in energies" :key="energy" :value="energy">{{ energy }}</option>
+      </select>
+
+      <select v-model="selectedTransmissions"  :disabled="!selectedModel">
+        <option disabled value="">Sélectionnez des transmissions</option>
+        <option v-for="transmission in transmissions" :key="transmission" :value="transmission">{{ transmission }}</option>
+      </select>
     </div>
-  </header>
-  <div>
-    <select v-model="selectedMake" @change="fetchModels">
-      <option disabled value="">Sélectionnez une marque</option>
-      <option v-for="make in makes" :key="make" :value="make">{{ make }}</option>
-    </select>
-
-    <select v-model="selectedModel" :disabled="!selectedMake" @change="fetchDetails">
-      <option disabled value="">Sélectionnez un modèle</option>
-      <option v-for="model in models" :key="model" :value="model">{{ model }}</option>
-    </select>
-
-    <select v-model="selectedKeywords" :disabled="!selectedModel">
-      <option disabled value="">Sélectionnez des mots-clés</option>
-      <option v-for="keyword in keywords" :key="keyword" :value="keyword">{{ keyword }}</option>
-    </select>
-
-    <select v-model="selectedEnergies" :disabled="!selectedModel">
-      <option disabled value="">Sélectionnez des énergies</option>
-      <option v-for="energy in energies" :key="energy" :value="energy">{{ energy }}</option>
-    </select>
-
-    <select v-model="selectedTransmissions"  :disabled="!selectedModel">
-      <option disabled value="">Sélectionnez des transmissions</option>
-      <option v-for="transmission in transmissions" :key="transmission" :value="transmission">{{ transmission }}</option>
-    </select>
-  </div>
+    <button type="submit">Submit</button>
+  </form>
 </template>
 
 <script>
@@ -58,7 +54,15 @@ export default {
       selectedModel: null,
       selectedKeywords: [],
       selectedEnergies: [],
-      selectedTransmissions: []
+      selectedTransmissions: [],
+      // Form
+      form: {
+        make: null,
+        model: null,
+        keywords: [],
+        energies: [],
+        transmissions: []
+      }
     }
   },
   methods: {
@@ -67,7 +71,7 @@ export default {
         const response = await API.graphql({
           query: listVehicles,
           variables: {
-            limit: 1000,
+            limit: 10000,
             nextToken: null,
             sortDirection: "ASC",
             filter: {
@@ -90,7 +94,7 @@ export default {
         const response = await API.graphql({
           query: listVehicles,
           variables: {
-            limit: 1000,
+            limit: 10000,
             nextToken: null,
             sortDirection: "ASC",
             filter: {
@@ -123,23 +127,31 @@ export default {
         const response = await API.graphql({
           query: listVehicles,
           variables: {
-            limit: 1,
+            limit: 10000,
             nextToken: null,
             sortDirection: "ASC",
             filter: {
               make: {
-                eq: this.selectedMake
+                eq: this.selectedMake,
               },
               model: {
-                eq: this.selectedModel
+                eq: this.selectedModel,
               }
             }
           }
         });
-        const vehicle = response.data.listVehicles.items[0];
-        this.keywords = vehicle.keywords;
-        this.energies = vehicle.energies;
-        this.transmissions = vehicle.transmissions;
+        this.keywords = response.data.listVehicles.items.map(item => item.keywords)[0];
+        this.keywords = [...new Set(this.keywords)];
+        this.keywords = this.keywords.sort();
+        console.log(this.keywords)
+        this.energies = response.data.listVehicles.items.map(item => item.energies)[0];
+        this.energies = [...new Set(this.energies)];
+        this.energies = this.energies.sort();
+        console.log(this.energies)
+        this.transmissions = response.data.listVehicles.items.map(item => item.transmissions)[0];
+        this.transmissions = [...new Set(this.transmissions)];
+        this.transmissions = this.transmissions.sort();
+        console.log(this.transmissions)
         this.selectedKeywords = [];
         this.selectedEnergies = [];
         this.selectedTransmissions = [];
