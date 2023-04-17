@@ -35,9 +35,12 @@
             <div class="grid grid-cols-3 gap-3">
                 <div>
                     <label for="year" class="text-gray-800 ml-5">Année</label>
-                    <Slider v-model="kms" :min="1990" :max="2030" class="" />
+                    <Slider v-model="year" :min="1990" :max="2030" class="" />
                 </div>
-                <div></div>
+                <div>
+                    <label for="kms" class="text-gray-800 ml-5">Kilométrage</label>
+                    <Slider v-model="kms" :min="0" :max="500000" class="" />
+                </div>
                 <!-- Multiselect with the keywords and Multiselect composent -->
                 <div>
                     <label for="keywords" class="text-gray-800 pt-5 pb-3 ml-5">Mots-clés</label>
@@ -60,7 +63,6 @@
 
 <script>
 import { defineComponent } from 'vue';
-import { mapActions } from 'vuex';
 import { API } from 'aws-amplify';
 import { listVehicles } from '../graphql/queries'
 
@@ -85,7 +87,8 @@ export default defineComponent({
     },
     data() {
         return {
-            kms: year,
+            year: year,
+            kms: '',
             makes: [],
             models: [],
             keywords: [],
@@ -143,7 +146,6 @@ export default defineComponent({
                 this.models = response.data.listVehicles.items.map(item => item.model);
                 this.models = [...new Set(this.models)];
                 this.models = this.models.sort();
-                console.log(this.models)
                 this.selectedModel = null;
                 this.keywords = [];
                 this.energies = [];
@@ -176,15 +178,12 @@ export default defineComponent({
                 this.keywords = response.data.listVehicles.items.map(item => item.keywords)[0];
                 this.keywords = [...new Set(this.keywords)];
                 this.keywords = this.keywords.sort();
-                console.log(this.keywords)
                 this.energies = response.data.listVehicles.items.map(item => item.energies)[0];
                 this.energies = [...new Set(this.energies)];
                 this.energies = this.energies.sort();
-                console.log(this.energies)
                 this.transmissions = response.data.listVehicles.items.map(item => item.transmissions)[0];
                 this.transmissions = [...new Set(this.transmissions)];
                 this.transmissions = this.transmissions.sort();
-                console.log(this.transmissions)
                 this.selectedKeywords = [];
                 this.selectedEnergies = [];
                 this.selectedTransmissions = [];
@@ -192,19 +191,27 @@ export default defineComponent({
                 console.log(error);
             }
         },
-        // Vuex action
-        ...mapActions(['search']),
-        // Search function
-        search () {
-            this.search({
-                make: this.selectedMake,
-                model: this.selectedModel,
-                keywords: this.selectedKeywords,
-                energies: this.selectedEnergies,
-                transmissions: this.selectedTransmissions,
-                year: this.kms,
-            });
-        },
+        async submitForm() {
+            const data = {
+                "make": this.selectedMake,
+                "model": this.selectedModel,
+                "kms": this.kms,
+                "year": this.year,
+                "keywords": this.selectedKeywords,
+                "energies": this.selectedEnergies,
+                "transmissions": this.selectedTransmissions
+            }
+            console.log(data)
+            const path = 'https://7vlwbc2slg.execute-api.us-east-1.amazonaws.com/dev';
+            try {
+                const response = await API.post('evalPredApi','/evaluations', {
+                    body: data
+                })
+                console.log(response);
+            } catch (error) {
+                console.log(error);
+            }
+        }
     },
 });
 </script>

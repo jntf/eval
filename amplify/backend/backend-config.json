@@ -1,5 +1,19 @@
 {
   "api": {
+    "evalPredApi": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "evalPred"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "API Gateway"
+    },
     "evalio": {
       "dependsOn": [],
       "output": {
@@ -20,26 +34,26 @@
     }
   },
   "function": {
-    "evalPredict": {
+    "evalPred": {
       "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     }
   },
   "parameters": {
-    "AMPLIFY_function_evalPredict_deploymentBucketName": {
+    "AMPLIFY_function_evalPred_deploymentBucketName": {
       "usedBy": [
         {
           "category": "function",
-          "resourceName": "evalPredict"
+          "resourceName": "evalPred"
         }
       ]
     },
-    "AMPLIFY_function_evalPredict_s3Key": {
+    "AMPLIFY_function_evalPred_s3Key": {
       "usedBy": [
         {
           "category": "function",
-          "resourceName": "evalPredict"
+          "resourceName": "evalPred"
         }
       ]
     }

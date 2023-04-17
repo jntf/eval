@@ -12,14 +12,15 @@
       "AmplifyAppId": "d31tkryrfnsl3w"
     },
     "categories": {
-      "function": {
-        "evalPredict": {
-          "deploymentBucketName": "amplify-evalio-dev-81726-deployment",
-          "s3Key": "amplify-builds/evalPredict-474e6c63346d524b6d79-build.zip"
-        }
-      },
       "api": {
-        "evalio": {}
+        "evalio": {},
+        "evalPredApi": {}
+      },
+      "function": {
+        "evalPred": {
+          "deploymentBucketName": "amplify-evalio-dev-81726-deployment",
+          "s3Key": "amplify-builds/evalPred-57754530554a72303762-build.zip"
+        }
       }
     }
   }

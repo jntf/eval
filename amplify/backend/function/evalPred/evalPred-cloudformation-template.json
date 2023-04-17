@@ -47,12 +47,12 @@
         "FunctionName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "evalPredict",
+            "evalPred",
             {
               "Fn::Join": [
                 "",
                 [
-                  "evalPredict",
+                  "evalPred",
                   "-",
                   {
                     "Ref": "env"
@@ -89,12 +89,12 @@
         "RoleName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "evalioLambdaRoleebf32fb0",
+            "evalioLambdaRole282dee4f",
             {
               "Fn::Join": [
                 "",
                 [
-                  "evalioLambdaRoleebf32fb0",
+                  "evalioLambdaRole282dee4f",
                   "-",
                   {
                     "Ref": "env"
