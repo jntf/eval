@@ -19,7 +19,7 @@
       "function": {
         "evalPred": {
           "deploymentBucketName": "amplify-evalio-dev-81726-deployment",
-          "s3Key": "amplify-builds/evalPred-57754530554a72303762-build.zip"
+          "s3Key": "amplify-builds/evalPred-2b44685a4f55526b3636-build.zip"
         }
       }
     }

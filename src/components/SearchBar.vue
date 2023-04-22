@@ -1,55 +1,61 @@
 <template>
-    <div class="sm:w-5/6 lg:w-2/3  p-3 relative mx-auto my-auto rounded-xl shadow-lg bg-white">
+    <div class="p-3 relative mx-auto my-auto rounded-xl shadow-lg border-gray-100 z-100">
         <form id="form" class="mx-auto pt-5" @submit.prevent="submitForm">
-            <div class="grid grid-cols-4 gap-3">
+            <div class="grid lg:grid-cols-2 sm:grid-clos-1 gap-24">
                 <div class="">
                     <select v-model="selectedMake" @change="fetchModels"
-                        class="bg-gray-800 text-white hover:bg-gray-600 hover:text-red-50 shadow-lg rounded-lg py-2 px-1">
+                        class="w-full bg-gray-700 text-white hover:bg-gray-600 hover:text-red-50 shadow-lg rounded-lg py-2 px-1">
                         <option disabled value="" class="text-white">Sélectionnez une marque</option>
-                        <option v-for="make in makes" :key="make" :value="make">{{ make }}</option>
+                        <option v-for="make in makes" :key="make" :value="make">{{ make.toUpperCase() }}</option>
                     </select>
                 </div>
                 <div>
                     <select v-model="selectedModel" :disabled="!selectedMake" @change="fetchDetails"
-                        class="bg-gray-800 text-white hover:bg-gray-500 hover:text-red-50 shadow-lg rounded-lg py-2 px-1">
+                        class="w-full bg-gray-700 text-white hover:bg-gray-500 hover:text-red-50 shadow-lg rounded-lg py-2 px-1">
                         <option disabled value="">Sélectionnez un modèle</option>
-                        <option v-for="model in models" :key="model" :value="model">{{ model }}</option>
+                        <option v-for="model in models" :key="model" :value="model">{{ model.toUpperCase() }}</option>
                     </select>
                 </div>
                 <div>
                     <select v-model="selectedEnergies" :disabled="!selectedModel"
-                        class="bg-gray-800 text-white hover:bg-gray-500 hover:text-red-50 shadow-lg rounded-lg py-2 px-1">
+                        class="w-full bg-gray-700 text-white hover:bg-gray-500 hover:text-red-50 shadow-lg rounded-lg py-2 px-1">
                         <option disabled value="">Sélectionnez des énergies</option>
-                        <option v-for="energy in energies" :key="energy" :value="energy">{{ energy }}</option>
+                        <option v-for="energy in energies" :key="energy" :value="energy">{{ energy.toUpperCase() }}</option>
                     </select>
                 </div>
                 <div>
                     <select v-model="selectedTransmissions" :disabled="!selectedModel"
-                        class="bg-gray-800 text-white hover:bg-gray-500 hover:text-red-50 shadow-lg rounded-lg py-2 px-1">
+                        class="w-full bg-gray-700 text-white hover:bg-gray-500 hover:text-red-50 shadow-lg rounded-lg py-2 px-1">
                         <option disabled value="">Sélectionnez des énergies</option>
                         <option v-for="transmission in transmissions" :key="transmission" :value="transmission">{{
-                            transmission }}</option>
+                            transmission.toUpperCase() }}</option>
                     </select>
                 </div>
-            </div>
-            <div class="grid grid-cols-3 gap-3">
                 <div>
-                    <label for="year" class="text-gray-800 ml-5">Année</label>
+                    <label for="year" class="text-gray-800 ml-5 mb-5">Année</label>
                     <Slider v-model="year" :min="1990" :max="2030" class="" />
                 </div>
                 <div>
                     <label for="kms" class="text-gray-800 ml-5">Kilométrage</label>
-                    <Slider v-model="kms" :min="0" :max="500000" class="" />
-                </div>
-                <!-- Multiselect with the keywords and Multiselect composent -->
-                <div>
-                    <label for="keywords" class="text-gray-800 pt-5 pb-3 ml-5">Mots-clés</label>
-                    <Multiselect v-model="selectedKeywords" :options="keywords" mode="tags" placeholder="Select options"
-                        :close-on-select="false" :searchable="true" :object="true" :resolve-on-load="false" :delay="0"
-                        :min-chars="1" :style="{ color: 'black', backgroundColor: 'gray', zIndex: '50' }" />
+                    <input type="text" v-model="kms"
+                        class="w-full bg-gray-700 text-white hover:bg-gray-500 hover:text-red-50 shadow-lg rounded-lg py-2 px-1" />
                 </div>
             </div>
-            <div>
+            <div class="pt-5">
+                <div class="selected-tags">
+                    <span v-for="tag in selectedKeywords" :key="tag"
+                        class="p-1 mx-3 bg-green-400 rounded-lg shadow-lg">{{ tag }}</span>
+                </div>
+                <div class="w-full">
+                    <label>Sélectionnez les mots clés:</label>
+                    <div class="all-tags">
+                        <span v-for="option in sortedKeywords" :key="selectedKeywords" @click="toggleTag(option)">
+                            {{ option.label.toUpperCase() }} <span v-if="option.selected" class="text-green-500">✓ </span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-center">
                 <button type="submit"
                     class="w-full px-4 py-2 mt-2 text-white bg-blue-500 rounded-md focus:bg-blue-600 focus:outline-none">Rechercher</button>
             </div>
@@ -101,7 +107,23 @@ export default defineComponent({
             selectedTransmissions: [],
         }
     },
+    computed: {
+        sortedKeywords() {
+            return this.keywords.sort((a, b) => a.label.localeCompare(b.label))
+        }
+    },
     methods: {
+        toggleTag(tag) {
+            tag.selected = !tag.selected;
+            if (tag.selected) {
+                this.selectedKeywords.push(tag.label);
+            } else {
+                const index = this.selectedKeywords.indexOf(tag.label);
+                if (index > -1) {
+                this.selectedKeywords.splice(index, 1);
+                }
+            }
+        },
         async fetchMakes() {
             try {
                 const response = await API.graphql({
@@ -177,7 +199,12 @@ export default defineComponent({
                 });
                 this.keywords = response.data.listVehicles.items.map(item => item.keywords)[0];
                 this.keywords = [...new Set(this.keywords)];
-                this.keywords = this.keywords.sort();
+                this.keywords = this.keywords.map(keyword => {
+                    return {
+                        label: keyword,
+                        selected: false
+                    };
+                });
                 this.energies = response.data.listVehicles.items.map(item => item.energies)[0];
                 this.energies = [...new Set(this.energies)];
                 this.energies = this.energies.sort();
@@ -202,12 +229,12 @@ export default defineComponent({
                 "transmissions": this.selectedTransmissions
             }
             console.log(data)
-            const path = 'https://7vlwbc2slg.execute-api.us-east-1.amazonaws.com/dev';
             try {
-                const response = await API.post('evalPredApi','/evaluations', {
+                const result = await API.post('evalPredApi','/evaluations', {
                     body: data
                 })
-                console.log(response);
+                console.log(result);
+                this.$router.push({ path: '/eval', query: { response: result }})
             } catch (error) {
                 console.log(error);
             }

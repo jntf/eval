@@ -1,19 +1,20 @@
 <template>
   <div>
-    <h1>Evaluation</h1>
-    <p>Make: {{ formData.make }}</p>
-    <p>Model: {{ formData.model }}</p>
-    <p>kms: {{ formData.kms }}</p>
-    <!-- Display other form fields here -->
+    <h1>Résultat de l'évaluation:</h1>
+    <p>{{ evaluationResult }}</p>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
-
 export default {
-  computed: {
-    ...mapState(['formData'])
+  name: 'Eval',
+  data() {
+    return {
+      evaluationResult: null,
+    }
+  },
+  mounted() {
+    this.evaluationResult = this.$route.query.response
   }
 }
 </script>

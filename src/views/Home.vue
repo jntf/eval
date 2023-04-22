@@ -8,24 +8,46 @@ const auth = useAuthenticator();
 <template>
     <div class="font-sans">
         <!-- Header -->
-        <header class="py-10 bg-red-900">
-            <div class="container mx-auto">
-                <h1 class="text-2xl font-bold mb-5">Eval.ai</h1>
-                <nav>
-                    <ul class="flex justify-between">
-                        <li><a class="text-red-200 hover:text-red-400" href="#accueil">Accueil</a></li>
-                        <li><a class="text-red-200 hover:text-red-400" href="#presentation">Présentation</a></li>
-                        <li><a class="text-red-200 hover:text-red-400" href="#comment-ca-marche">Comment ça marche</a>
-                        </li>
-                        <li><a class="text-red-200 hover:text-red-400" href="#tarifs">Tarifs</a></li>
-                        <li><a class="text-red-200 hover:text-red-400" href="#nous-contacter">Nous contacter</a></li>
-                    </ul>
-                </nav>
-                <div class="text-right">
-                    <!-- Use <authenticator variation="modal"></authenticator> with a <a> button -->
-                    <a class="text-red-200 hover:text-red-400" href="#inscription">Inscription</a>
-                    <a class="text-red-200 hover:text-red-400" href="#connexion">Connexion</a>
+        <header class="bg-red-800 shadow rounded-lg">
+            <div class="container mx-auto px-6 py-3">
+            <nav class="flex items-center justify-between flex-wrap">
+                <div class="flex items-center flex-shrink-0 text-gray-800">
+                <img src="logo.png" alt="EVALIO" class="h-12">
+                <span class="font-semibold text-xl tracking-tight ml-2">EVALIO</span>
                 </div>
+                <div class="block lg:hidden">
+                <button @click="isActive = !isActive" class="navbar-burger flex items-center py-2 px-3 text-gray-500 rounded border border-gray-500">
+                    <svg class="fill-current h-3 w-3" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><title>Menu</title><path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"/></svg>
+                </button>
+                </div>
+                <div :class="{'navbar-menu': true, 'block': isActive, 'hidden': !isActive}" class="w-full lg:flex lg:items-center lg:w-auto">
+                <div class="text-md lg:flex-grow">
+                    <a href="#accueil" class="block mt-4 lg:inline-block lg:mt-0 hover:text-red-500 mr-4">
+                    Accueil
+                    </a>
+                    <a href="#presentation" class="block mt-4 lg:inline-block lg:mt-0 hover:text-red-500 mr-4">
+                    Présentation
+                    </a>
+                    <a href="#comment-ca-marche" class="block mt-4 lg:inline-block lg:mt-0 hover:text-red-500 mr-4">
+                    Comment ça marche
+                    </a>
+                    <a href="#tarifs" class="block mt-4 lg:inline-block lg:mt-0 hover:text-red-500 mr-4">
+                    Tarifs
+                    </a>
+                    <a href="#nous-contacter" class="block mt-4 lg:inline-block lg:mt-0 hover:text-red-500 mr-4">
+                    Nous contacter
+                    </a>
+                </div>
+                <div class="text-right">
+                    <a href="#inscription" class="inline-block text-sm px-4 py-2 leading-none border rounded border-gray-800 hover:text-white hover:bg-red-500 mt-4 lg:mt-0 mr-4">
+                    Inscription
+                    </a>
+                    <a href="#connexion" class="inline-block text-sm px-4 py-2 leading-none border rounded border-gray-800 hover:text-white hover:bg-red-500 mt-4 lg:mt-0">
+                    Connexion
+                    </a>
+                </div>
+                </div>
+            </nav>
             </div>
         </header>
 
@@ -81,3 +103,17 @@ const auth = useAuthenticator();
         </section>
     </div>
 </template>
+
+<script>
+export default {
+    name: 'App',
+    components: {
+        Authenticator
+    },
+    data() {
+        return {
+            isActive: false
+        }
+    }
+}
+</script>
