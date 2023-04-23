@@ -227,7 +227,7 @@ export default defineComponent({
             try {
                 const result = await API.post('demo', '/evalia', {
                     headers: {
-                        "x-api-key": process.env.VUE_APP_API_KEY_EVAL,
+                        "x-api-key": "nzrUMQjcLua1JP6upoFRB3N4RhehR0J23eN1RL3O",
                     },
                     body: data,
                 })
