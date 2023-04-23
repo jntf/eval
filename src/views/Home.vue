@@ -12,8 +12,8 @@ const auth = useAuthenticator();
             <div class="container mx-auto px-6 py-3">
             <nav class="flex items-center justify-between flex-wrap">
                 <div class="flex items-center flex-shrink-0 text-gray-800">
-                <img src="logo.png" alt="EVALIO" class="h-12">
-                <span class="font-semibold text-xl tracking-tight ml-2">EVALIO</span>
+                <img src="../assets/logo.svg" alt="EVALIO" class="h-12">
+                <span class="font-semibold text-xl text-white tracking-tight ml-2">EVALIO</span>
                 </div>
                 <div class="block lg:hidden">
                 <button @click="isActive = !isActive" class="navbar-burger flex items-center py-2 px-3 text-gray-500 rounded border border-gray-500">
@@ -22,19 +22,19 @@ const auth = useAuthenticator();
                 </div>
                 <div :class="{'navbar-menu': true, 'block': isActive, 'hidden': !isActive}" class="w-full lg:flex lg:items-center lg:w-auto">
                 <div class="text-md lg:flex-grow">
-                    <a href="#accueil" class="block mt-4 lg:inline-block lg:mt-0 hover:text-red-500 mr-4">
+                    <a href="#accueil" class="text-white block mt-4 lg:inline-block lg:mt-0 hover:text-red-500 mr-4">
                     Accueil
                     </a>
-                    <a href="#presentation" class="block mt-4 lg:inline-block lg:mt-0 hover:text-red-500 mr-4">
+                    <a href="#presentation" class="text-white block mt-4 lg:inline-block lg:mt-0 hover:text-red-500 mr-4">
                     Présentation
                     </a>
-                    <a href="#comment-ca-marche" class="block mt-4 lg:inline-block lg:mt-0 hover:text-red-500 mr-4">
+                    <a href="#comment-ca-marche" class="text-white block mt-4 lg:inline-block lg:mt-0 hover:text-red-500 mr-4">
                     Comment ça marche
                     </a>
-                    <a href="#tarifs" class="block mt-4 lg:inline-block lg:mt-0 hover:text-red-500 mr-4">
+                    <a href="#tarifs" class="text-white block mt-4 lg:inline-block lg:mt-0 hover:text-red-500 mr-4">
                     Tarifs
                     </a>
-                    <a href="#nous-contacter" class="block mt-4 lg:inline-block lg:mt-0 hover:text-red-500 mr-4">
+                    <a href="#nous-contacter" class="text-white block mt-4 lg:inline-block lg:mt-0 hover:text-red-500 mr-4">
                     Nous contacter
                     </a>
                 </div>

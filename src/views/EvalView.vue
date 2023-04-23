@@ -71,44 +71,81 @@ export default {
       ],
     };
   },
+  // The `created()` method is a lifecycle hook in Vue.js that is called when the component is created.
+  // In this code, it calls the `updateData()` method to update the component's data properties with the
+  // values from the current route's query parameters. This ensures that the component's data is
+  // initialized with the correct values when the component is created.
   created() {
-    this.make = this.$route.query.make;
-    this.model = this.$route.query.model;
-    this.year = this.$route.query.year;
-    this.kms = this.$route.query.kms;
-    this.transmission = this.$route.query.transmission;
-    this.energy = this.$route.query.energy;
-    this.keywords = this.$route.query.keywords;
-    this.price = this.$route.query.price;
+    this.updateData();
   }, 
+  // The `mounted()` lifecycle hook is called after the Vue instance has been mounted to the DOM. In this
+  // code, it initializes an ECharts chart by selecting the DOM element with the ID "chart" and passing
+  // it to the `echarts.init()` method. It then calls the `renderChart()` method, passing in the
+  // initialized chart instance as an argument. This renders the bar chart using the data in the
+  // `chartData` property of the component.
   mounted() {
     const chart = echarts.init(document.getElementById('chart'));
-
-    const option = {
-      tooltip: {
-        trigger: 'axis',
-        axisPointer: {
-          type: 'shadow',
-        },
-      },
-      xAxis: {
-        type: 'value',
-        boundaryGap: [0, 0.01],
-      },
-      yAxis: {
-        type: 'category',
-        data: this.chartData.map((item) => item.model),
-      },
-      series: [
-        {
-          name: 'Ventes',
-          type: 'bar',
-          data: this.chartData.map((item) => item.sales),
-        },
-      ],
-    };
-
-    chart.setOption(option);
+    this.renderChart(chart);
   },
+  // `watch: {()}` is a Vue.js watcher that listens for changes to the `` object, which
+  // represents the current route of the application. Whenever the route changes, the `updateData()`
+  // method is called to update the component's data properties with the new values from the route's
+  // query parameters. Then, the `renderChart(chart)` method is called to re-render the bar chart using
+  // the updated data. This ensures that the chart always reflects the current state of the
+  // application.
+  watch: {
+    $route() {
+      this.updateData();
+      const chart = echarts.init(document.getElementById('chart'));
+      this.renderChart(chart);
+    }
+  },
+  methods: {
+    // `updateData()` is a method that updates the component's data properties with the values from the
+    // current route's query parameters. It sets the values of `make`, `model`, `year`, `kms`,
+    // `transmission`, `energy`, `keywords`, and `price` to the corresponding values in the route's
+    // query parameters. This method is called in the `created()` hook and in the `watch` object to
+    // update the data whenever the route changes.
+    updateData() {
+      this.make = this.$route.query.make;
+      this.model = this.$route.query.model;
+      this.year = this.$route.query.year;
+      this.kms = this.$route.query.kms;
+      this.transmission = this.$route.query.transmission;
+      this.energy = this.$route.query.energy;
+      this.keywords = this.$route.query.keywords;
+      this.price = this.$route.query.price;
+    },
+
+    // The `renderChart(chart)` method is responsible for rendering a bar chart using the ECharts
+    // library. It takes in a `chart` parameter, which is the instance of the ECharts chart that is
+    // being rendered.
+    renderChart(chart) {
+      const option = {
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow',
+          },
+        },
+        xAxis: {
+          type: 'value',
+          boundaryGap: [0, 0.01],
+        },
+        yAxis: {
+          type: 'category',
+          data: this.chartData.map((item) => item.model),
+        },
+        series: [
+          {
+            name: 'Ventes',
+            type: 'bar',
+            data: this.chartData.map((item) => item.sales),
+          },
+        ],
+      };
+      chart.setOption(option);
+    }
+  }
 };
 </script>
