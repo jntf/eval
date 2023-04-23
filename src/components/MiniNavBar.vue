@@ -37,40 +37,37 @@
         </div>
     </div>
     <transition name="fade">
-        <div v-if="isModalVisible"
-            class="fixed inset-0 flex items-center justify-center z-50">
+        <div v-if="isModalVisible" class="fixed inset-0 flex items-center justify-center z-50">
             <div @click="onToggle" class="absolute bg-black opacity-50 inset-0 pointer-events-none"></div>
             <div class="bg-white rounded-lg p-6 z-100 w-full sm:w-1/2 max-w-2xl mx-auto">
                 <button @click="onToggle" class="absolute top-0 right-0 m-4">
-                    <div class="-mt-3 px-2 py-1 rounded-lg shadow-lg text-blue-500 hover:text-gray-700 bg-indigo-200 hover:bg-indigo-400">
+                    <div
+                        class="-mt-3 px-2 py-1 rounded-lg shadow-lg text-blue-500 hover:text-gray-700 bg-indigo-200 hover:bg-indigo-400">
                         Fermer
                     </div>
-                </button>                
-                <SearchBar />
+                </button>
+                <SearchBar @close-modal="onToggle" />
             </div>
         </div>
     </transition>
 </template>
 
 <script>
-import SidebarCar from './SidebarCar.vue';
 import SearchBar from './SearchBar.vue';
 
 export default {
     components: {
-        SidebarCar, 
-        SearchBar
-    }, 
+        SearchBar,
+    },
     data() {
         return {
-            sidebarIsOpen: false,
-            isModalVisible: false
-        }
+            isModalVisible: false,
+        };
     },
     methods: {
         onToggle() {
-            this.isModalVisible = !this.isModalVisible
-        }
+            this.isModalVisible = !this.isModalVisible;
+        },
     },
-}
+};
 </script>

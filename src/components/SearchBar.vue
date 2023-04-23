@@ -43,8 +43,8 @@
             </div>
             <div class="pt-5">
                 <div class="selected-tags">
-                    <span v-for="tag in selectedKeywords" :key="tag"
-                        class="p-1 mx-3 bg-green-400 rounded-lg shadow-lg">{{ tag }}</span>
+                    <span v-for="tag in selectedKeywords" :key="tag" class="p-1 mx-3 bg-green-400 rounded-lg shadow-lg">{{
+                        tag }}</span>
                 </div>
                 <div class="w-full">
                     <label>Sélectionnez les mots clés:</label>
@@ -79,11 +79,6 @@ const year = new Date().getFullYear();
 
 export default defineComponent({
     name: 'car',
-    props: {
-        sidebarIsOpen: {
-            type: Boolean,
-        },
-    },
     async created() {
         this.fetchMakes();
     },
@@ -120,7 +115,7 @@ export default defineComponent({
             } else {
                 const index = this.selectedKeywords.indexOf(tag.label);
                 if (index > -1) {
-                this.selectedKeywords.splice(index, 1);
+                    this.selectedKeywords.splice(index, 1);
                 }
             }
         },
@@ -230,11 +225,26 @@ export default defineComponent({
             }
             console.log(data)
             try {
-                const result = await API.post('evalPredApi','/evaluations', {
-                    body: data
+                const result = await API.post('demo', '/evalia', {
+                    headers: {
+                        "x-api-key": "nzrUMQjcLua1JP6upoFRB3N4RhehR0J23eN1RL3O",
+                    },
+                    body: data,
                 })
-                console.log(result);
-                this.$router.push({ path: '/eval', query: { response: result }})
+                this.$emit('close-modal');
+                this.$router.push({
+                    path: '/eval',
+                    query: {
+                        make: result.make,
+                        model: result.model,
+                        year: result.year,
+                        kms: result.mileage,
+                        transmission: result.transmission,
+                        energy: result.energies,
+                        keywords: result.keywords,
+                        price: result.price
+                    } 
+                })
             } catch (error) {
                 console.log(error);
             }

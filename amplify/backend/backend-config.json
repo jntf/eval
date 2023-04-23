@@ -1,19 +1,5 @@
 {
   "api": {
-    "evalPredApi": {
-      "dependsOn": [
-        {
-          "attributes": [
-            "Name",
-            "Arn"
-          ],
-          "category": "function",
-          "resourceName": "evalPred"
-        }
-      ],
-      "providerPlugin": "awscloudformation",
-      "service": "API Gateway"
-    },
     "evalio": {
       "dependsOn": [],
       "output": {
@@ -33,29 +19,5 @@
       "service": "AppSync"
     }
   },
-  "function": {
-    "evalPred": {
-      "build": true,
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda"
-    }
-  },
-  "parameters": {
-    "AMPLIFY_function_evalPred_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "evalPred"
-        }
-      ]
-    },
-    "AMPLIFY_function_evalPred_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "evalPred"
-        }
-      ]
-    }
-  }
+  "function": {}
 }

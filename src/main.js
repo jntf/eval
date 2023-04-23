@@ -6,6 +6,17 @@ import store from './stores/index'
 import { Amplify } from 'aws-amplify';
 import awsExports from './aws-exports';
 Amplify.configure(awsExports);
+Amplify.configure({
+    API: {
+        endpoints: [
+            {
+              name: "demo",
+              endpoint:
+                "https://a97s6j7cue.execute-api.us-east-1.amazonaws.com/default",
+            },
+        ],
+    },
+});
 
 import './assets/main.css'
 

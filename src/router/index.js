@@ -23,7 +23,8 @@ const router = createRouter({
     {
         path: '/eval',
         name: 'eval',
-        component: Eval
+        component: Eval,
+        props: true
     },
     // Fallback
     { 
