@@ -41,6 +41,9 @@
               </div>
             </div>
           </div>
+          <h1>r2 = {{ Math.round(r2 * 100) }} % fiable</h1>
+          <h1>mae = {{ Math.round(mae) }}</h1>
+          <h1>rmse = {{ Math.round(rmse) }}</h1>
         </div>
       </div>
     </div>
@@ -62,6 +65,9 @@ export default {
       energy: '',
       keywords: '',
       price: '', 
+      r2: '',
+      mae: '',
+      rmse: '',
       chartData: [
         { model: 'Modèle A', sales: 450 },
         { model: 'Modèle B', sales: 340 },
@@ -115,6 +121,9 @@ export default {
       this.energy = this.$route.query.energy;
       this.keywords = this.$route.query.keywords;
       this.price = this.$route.query.price;
+      this.r2 = this.$route.query.r2;
+      this.mae = this.$route.query.mae;
+      this.rmse = this.$route.query.rmse;
     },
 
     // The `renderChart(chart)` method is responsible for rendering a bar chart using the ECharts

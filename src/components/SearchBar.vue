@@ -242,7 +242,10 @@ export default defineComponent({
                         transmission: result.transmission,
                         energy: result.energies,
                         keywords: result.keywords,
-                        price: result.price
+                        price: result.price,
+                        r2: result.metrics.r2,
+                        mae: result.metrics.mae,
+                        rmse: result.metrics.rmse
                     } 
                 })
             } catch (error) {
