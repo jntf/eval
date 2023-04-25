@@ -14,6 +14,9 @@
     "categories": {
       "api": {
         "evalio": {}
+      },
+      "auth": {
+        "evalio7dfc5467": {}
       }
     }
   }

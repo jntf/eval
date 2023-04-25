@@ -4,22 +4,29 @@ import { RouterLink, RouterView } from "vue-router";
 import MiniNavBar from './components/MiniNavBar.vue'
 import TopRight from './components/TopRight.vue'
 import Home from './views/Home.vue';
-
 import { Authenticator, useAuthenticator } from '@aws-amplify/ui-vue';
+
 const auth = useAuthenticator();
 </script>
 
 <template>
-  <nav>
-      <TopRight :auth="auth"/>
-      <MiniNavBar />
-  </nav>
-  <!-- Container -->
-  <div class="container mx-auto">
-      <div class="flex flex-col flex-grow">
-          <RouterView />
-      </div>
-  </div>
+    <authenticator>
+        <template v-if="auth.route === 'authenticated'">
+            <nav>
+                <TopRight :auth="auth"/>
+                <MiniNavBar :auth="auth"/>
+            </nav>
+            <!-- Container -->
+            <div class="container mx-auto">
+                <div class="flex flex-col flex-grow">
+                    <RouterView />
+                </div>
+            </div>
+        </template>
+        <template v-else>
+            <Home />
+        </template>
+    </authenticator>
 </template>
 
 <style scoped>
