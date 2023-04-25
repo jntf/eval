@@ -19,11 +19,11 @@
                         <span
                             class="block px-1 py-1 border border-transparent group-hover:border-red-50 rounded-full group-hover:flex-grow">
                             <i class="far fa-search text-2xl pt-1"></i><span
-                                class="hidden group-hover:inline-block ml-3 align-bottom pb-1">Search</span>
+                                class="hidden group-hover:inline-block ml-3 align-bottom pb-1">Search {{ role }}</span>
                         </span>
                     </a>
                 </div>
-                <div class="flex-auto hover:w-full group" v-if="isModalVisible == false">
+                <div class="flex-auto hover:w-full group" v-if="isModalVisible == false && role === 'Admin'">
                     <a href="#"
                         class="flex items-center justify-center text-center mx-auto px-4 py-2 group-hover:w-full text-red-50">
                         <span
@@ -59,9 +59,15 @@ export default {
     components: {
         SearchBar,
     },
+    props: {
+        auth: {
+            type: Function
+        }
+    },
     data() {
         return {
             isModalVisible: false,
+            role: this.auth?.user?.signInUserSession?.accessToken?.payload?.["cognito:groups"][0]
         };
     },
     methods: {
