@@ -3,7 +3,7 @@
         <div class="container mx-auto px-6 py-3">
             <nav class="flex items-center justify-between flex-wrap">
                 <div class="flex items-center flex-shrink-0 text-gray-800">
-                    <img src="../assets/logo.svg" alt="EVALIO" class="h-12">
+                    <img src="../../assets/logo.svg" alt="EVALIO" class="h-12">
                     <span class="font-semibold text-xl text-white tracking-tight ml-2">EVALIO</span>
                 </div>
                 <div class="block lg:hidden">
