@@ -70,7 +70,7 @@
 <script>
 import { defineComponent } from 'vue';
 import { API } from 'aws-amplify';
-import { listVehicles } from '../graphql/queries'
+import { listVehicles } from '../../graphql/queries'
 
 import Slider from '@vueform/slider'
 import Multiselect from '@vueform/multiselect'
@@ -233,7 +233,7 @@ export default defineComponent({
                 })
                 this.$emit('close-modal');
                 this.$router.push({
-                    path: '/eval',
+                    path: '/user/eval',
                     query: {
                         make: result.make,
                         model: result.model,
