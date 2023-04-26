@@ -1,10 +1,10 @@
 <template>
-    <header class="bg-red-800 shadow-xl rounded-b-lg">
+    <header class="bg-red-800 shadow-xl rounded-b-lg fixed top-0 left-0 w-full z-50">
         <div class="container mx-auto px-6 py-3">
             <nav class="flex items-center justify-between flex-wrap">
                 <div class="flex items-center flex-shrink-0 text-gray-800">
                     <img src="../../assets/logo.svg" alt="EVALIO" class="h-12">
-                    <span class="font-semibold text-xl text-white tracking-tight ml-2">EVALIO</span>
+                    <span class="font-semibold text-xl text-white tracking-tight ml-2">EVALIA</span>
                 </div>
                 <div class="block lg:hidden">
                     <button @click="isActive = !isActive"
@@ -38,13 +38,9 @@
                         </a>
                     </div>
                     <div class="text-right">
-                        <a href="#inscription"
-                            class="inline-block text-sm px-4 py-2 leading-none border rounded border-gray-800 hover:text-white hover:bg-red-500 mt-4 lg:mt-0 mr-4">
-                            Inscription
-                        </a>
                         <router-link to="login">
                             <div href="#connexion"
-                                class="inline-block text-sm px-4 py-2 leading-none border rounded border-gray-800 hover:text-white hover:bg-red-500 mt-4 lg:mt-0">
+                                class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-gray-200 hover:text-white hover:bg-red-500 mt-4 lg:mt-0">
                                 Connexion
                             </div>
                         </router-link>

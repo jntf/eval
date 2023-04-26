@@ -12,22 +12,36 @@ import Header from '../components/home/Header.vue';
         <Header />
 
         <!-- Accueil -->
-        <section id="accueil" class="py-20">
-            <div class="container mx-auto">
-                <h2 class="text-3xl font-bold mb-10">Bienvenue sur notre site</h2>
-                <p class="mb-10">Nous sommes là pour vous aider à déterminer le prix de vente de votre voiture grâce à
-                    l'IA.</p>
-                <a class="bg-red-600 px-10 py-3 rounded-lg text-white hover:bg-red-700" href="#presentation">En savoir
-                    plus</a>
+        <section id="accueil" class="h-screen flex flex-col justify-center text-center py-2">
+            <div class="container mx-auto flex items-center">
+                <div class="w-1/2 flex justify-end">
+                    <img src="../assets/grapcar.jpeg" alt="GraphicalCar"
+                        class="w-2/3 transform scale-x-[-1] rounded-xl shadow-lg">
+                </div>
+                <div class="w-1/2 ml-10">
+                    <h2 class="text-3xl font-bold mb-10">Découvrez la puissance de l'IA pour déterminer le prix de votre
+                        voiture</h2>
+                    <p class="text-lg leading-8 mb-10">Vous êtes fatigué de passer des heures à calculer le prix de vente de
+                        votre voiture ?
+                        Laissez notre IA le faire pour vous ! Avec notre outil de calcul de prix basé sur l'IA, vous pouvez
+                        facilement déterminer la valeur de votre voiture en quelques clics.</p>
+                </div>
             </div>
         </section>
 
+
         <!-- Présentation -->
-        <section id="presentation" class="py-20">
+        <section id="presentation" class="h-screen flex flex-col justify-center text-center bg-gray-100">
             <div class="container mx-auto">
-                <h2 class="text-3xl font-bold mb-10">Présentation</h2>
-                <p class="mb-10">Notre site utilise les dernières technologies en matière d'IA pour déterminer le prix
-                    de vente de votre voiture en quelques secondes.</p>
+                <h2 class="text-4xl font-bold mb-10">Optimisez la vente de vos voitures avec notre outil de prédiction de
+                    prix</h2>
+                <p class="text-lg leading-8 mb-10">Notre application utilise les dernières avancées de l'IA pour prédire les
+                    fluctuations des prix des véhicules en fonction de divers facteurs tels que le marché, les réseaux
+                    sociaux, le lieu de vente et la conjoncture. Grâce à cette prédiction, vous pouvez coter en rafale un
+                    grand nombre de véhicules et connaître la valeur de votre stock tous les jours. Vous pouvez également
+                    anticiper les variations des prix pour mieux adapter vos prix de vente. De plus, notre outil permet
+                    d'avoir une prévision à plusieurs années des prix des véhicules, ce qui est idéal pour les ventes avec
+                    engagement de reprise.</p>
                 <a class="bg-red-600 px-10 py-3 rounded-lg text-white hover:bg-red-700" href="#comment-ca-marche">Comment ça
                     marche</a>
             </div>

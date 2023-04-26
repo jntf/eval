@@ -5,7 +5,7 @@ import { RouterView } from "vue-router";
 
 <template>
     <router-view />
-  </template>
+</template>
 
 <style scoped>
 @import url(https://pro.fontawesome.com/releases/v5.10.0/css/all.css);
