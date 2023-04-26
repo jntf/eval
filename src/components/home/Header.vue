@@ -3,7 +3,7 @@
         <div class="container mx-auto px-6 py-3">
             <nav class="flex items-center justify-between flex-wrap">
                 <div class="flex items-center flex-shrink-0 text-gray-800">
-                    <img src="../../assets/logo.svg" alt="EVALIO" class="h-12">
+                    <img src="../../assets/logo.svg" alt="EVALIO" class="h-12" />
                     <span class="font-semibold text-xl text-white tracking-tight ml-2">EVALIA</span>
                 </div>
                 <div class="block lg:hidden">
@@ -15,8 +15,12 @@
                         </svg>
                     </button>
                 </div>
-                <div :class="{ 'navbar-menu': true, 'block': isActive, 'hidden': !isActive }"
-                    class="w-full lg:flex lg:items-center lg:w-auto">
+                <div :class="{
+                        'navbar-menu': true,
+                        'block': isActive,
+                        'hidden': !isActive,
+                        'lg:flex': true
+                    }" class="w-full lg:flex lg:items-center lg:w-auto">
                     <div class="text-md lg:flex-grow">
                         <a href="#accueil" class="text-white block mt-4 lg:inline-block lg:mt-0 hover:text-red-500 mr-4">
                             Accueil
@@ -50,10 +54,10 @@
         </div>
     </header>
 </template>
-
+  
 <script>
 export default {
-    name: 'App',
+    name: "App",
     data() {
         return {
             isActive: false
