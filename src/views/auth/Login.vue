@@ -1,53 +1,41 @@
-<script setup>
-import { Authenticator } from "@aws-amplify/ui-vue";
-import "@aws-amplify/ui-vue/styles.css";
-
-import { Amplify } from 'aws-amplify';
-import awsconfig from '../../aws-exports';
-
-import Header from '../../components/home/Header.vue';
-
-Amplify.configure(awsconfig);
-</script>
-
 <template>
-    <Header />
-    <div class="fixed inset-0 flex items-center justify-center z-50">
-        <authenticator>
-            <template v-slot="{ user, signOut }">
-                <h1>Hello {{ user.username }}!</h1>
-                <button @click="signOut">Sign Out</button>
-            </template>
-        </authenticator>
+  <div>
+    <div class="bg-red-900 text-white py-4">
+      <Header />
     </div>
+    <div class="fixed inset-0 flex items-center justify-center z-50">
+      <div class="w-full max-w-md px-4">
+        <component :is="currentStep" :email="email" @nextStep="nextStep" />
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-import { Auth } from 'aws-amplify';
+import Header from '../../components/home/Header.vue';
+import Login from '../../components/auth/Login.vue';
+import ForgotPassword from '../../components/auth/ForgotPassword.vue';
+import VerifyCode from '../../components/auth/VerifyCode.vue';
 
 export default {
-  name: 'Login',
-  methods: {
-    login() {
-      Auth.signIn(this.email, this.password)
-        .then(() => {
-          // Redirect to analysis page if user is authenticated
-          if (Auth.user) {
-            console.log('User is authenticated')
-            console.log(Auth)
-            this.$router.push({ name: 'analyse' });
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
+  components: {
+    Header,
+    Login,
+    ForgotPassword,
+    VerifyCode
   },
   data() {
     return {
-      email: '',
-      password: '',
-    };
+      currentStep: 'Login',
+      email: ''
+    }
   },
-};
+  methods: {
+    nextStep(step, email) {
+      this.currentStep = step;
+      this.email = email;
+    }
+  }
+}
 </script>
+  

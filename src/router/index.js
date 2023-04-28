@@ -6,41 +6,22 @@ import Analyse from "../views/user/Analyse.vue";
 import Eval from "../views/user/EvalView.vue";
 import { Auth } from 'aws-amplify';
 
-const requireAuth = (to, from, next) => {
-  Auth.currentAuthenticatedUser()
-    .then(() => {
-      // User is authenticated, allow access to route
-      next();
-    })
-    .catch(() => {
-      // User is not authenticated, redirect to home page
-      next({ name: "home" });
-    });
+const requireAuth = async (to, from, next) => {
+  try {
+    await Auth.currentAuthenticatedUser();
+    next();
+  } catch (error) {
+    next({ name: "login" });
+  }
 };
 
-// Ajouter la redirection vers /user/analyse
-const requireAuthWithRedirection = (to, from, next) => {
-  Auth.currentAuthenticatedUser()
-    .then(() => {
-      // User is authenticated, redirect to analysis page
-      next({ name: "analyse" });
-    })
-    .catch(() => {
-      // User is not authenticated, allow access to route
-      next({ name: "home" });
-    });
-};
-
-const requireNoAuth = (to, from, next) => {
-  Auth.currentAuthenticatedUser()
-    .then(() => {
-      // User is authenticated, redirect to analysis page
-      next({ name: "analyse" });
-    })
-    .catch(() => {
-      // User is not authenticated, allow access to route
-      next();
-    });
+const requireNoAuth = async (to, from, next) => {
+  try {
+    await Auth.currentAuthenticatedUser();
+    next({ name: "home" });
+  } catch (error) {
+    next();
+  }
 };
 
 const router = createRouter({
@@ -54,32 +35,30 @@ const router = createRouter({
       path: "/home",
       name: "home",
       component: Home,
-      beforeEnter: requireNoAuth,
+      meta: { guestOnly: true },
     },
     {
       path: "/login",
       name: "login",
       component: Login,
-      beforeEnter: requireNoAuth,
+      meta: { guestOnly: true },
     },
     {
       path: "/user",
       name: "user",
       component: User,
-      beforeEnter: requireAuth,
+      meta: { requiresAuth: true },
       children: [
         {
           path: "analyse",
           name: "analyse",
           component: Analyse,
-          beforeEnter: requireAuth,
         },
         {
           path: "eval",
           name: "eval",
           component: Eval,
           props: true,
-          beforeEnter: requireAuth,
         },
       ],
     },
@@ -89,6 +68,23 @@ const router = createRouter({
       redirect: { name: "home" },
     },
   ],
+});
+
+router.beforeEach(async (to, from, next) => {
+  try {
+    await Auth.currentAuthenticatedUser();
+    if (to.matched.some((record) => record.meta.guestOnly)) {
+      next({ name: 'analyse' });
+    } else {
+      next();
+    }
+  } catch (error) {
+    if (to.matched.some((record) => record.meta.requiresAuth)) {
+      next({ name: 'home' });
+    } else {
+      next();
+    }
+  }
 });
 
 export default router;

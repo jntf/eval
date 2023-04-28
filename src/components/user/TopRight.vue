@@ -36,12 +36,13 @@ export default {
             show: false,
             name: this.auth?.user?.attributes?.name,
             familyName: this.auth?.user?.attributes?.family_name,
-            role: this.auth?.user?.signInUserSession?.accessToken?.payload?.["cognito:groups"][0]
+            role: this.auth?.user?.signInUserSession?.accessToken?.payload?.["cognito:groups"]?.[0]
         }
     },
     methods: {
         signOut() {
             this.auth.signOut();
+            this.$router.push('/home');
         }, 
     }
 }
