@@ -36,7 +36,7 @@
             </div>
         </div>
     </div>
-    <transition name="fade">
+    <!-- <transition name="fade">
         <div v-if="isModalVisible" class="fixed inset-0 flex items-center justify-center z-50">
             <div @click="onToggle" class="absolute bg-black opacity-50 inset-0 pointer-events-none"></div>
             <div class="bg-white rounded-lg p-6 z-100 w-full sm:w-1/2 max-w-2xl mx-auto">
@@ -49,24 +49,30 @@
                 <SearchBar @close-modal="onToggle" />
             </div>
         </div>
-    </transition>
+    </transition> -->
+    <CustomModal :role="role" :is-modal-visible="isModalVisible" :modal-content="customModal" @toggle-modal="isModalVisible = !isModalVisible" />
 </template>
 
 <script>
+import { markRaw } from 'vue';
 import SearchBar from './SearchBar.vue';
+import CustomModal from '../reuse/CustomModal.vue';
 
 export default {
     components: {
-        SearchBar,
-    },
+    SearchBar,
+    CustomModal
+},
     props: {
         auth: {
-            type: Function
+            type: Object,
+            required: true,
         }
     },
     data() {
         return {
             isModalVisible: false,
+            customModal: markRaw(SearchBar),
             role: this.auth?.user?.signInUserSession?.accessToken?.payload?.["cognito:groups"][0]
         };
     },
