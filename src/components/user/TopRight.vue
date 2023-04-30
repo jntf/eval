@@ -49,3 +49,8 @@ export default {
 }
 </script>
 
+<style>
+/* .object {
+    position: relative;
+} */
+</style>
