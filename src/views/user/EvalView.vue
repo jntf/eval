@@ -64,6 +64,7 @@ import ReliabilityIndicator from '../../components/eval/ReliabilityIndicator.vue
 import * as echarts from 'echarts';
 
 export default {
+  components: { ReliabilityIndicator },
   data() {
     return {
       make: "",
@@ -190,7 +191,6 @@ export default {
         this.$route.query.keywords
       );
     },
-  },
-  components: { ReliabilityIndicator }
+  }
 };
 </script>

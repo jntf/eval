@@ -4,6 +4,7 @@ import Login from "../views/auth/Login.vue";
 import User from "../views/user/IndexUser.vue";
 import Analyse from "../views/user/Analyse.vue";
 import Eval from "../views/user/EvalView.vue";
+import UserSettings from "../views/user/Settings.vue";
 import { Auth } from 'aws-amplify';
 
 const requireAuth = async (to, from, next) => {
@@ -50,14 +51,20 @@ const router = createRouter({
       meta: { requiresAuth: true },
       children: [
         {
-          path: "analyse",
+          path: "/analyse",
           name: "analyse",
           component: Analyse,
         },
         {
-          path: "eval",
+          path: "/eval",
           name: "eval",
           component: Eval,
+          props: true,
+        },
+        {
+          path: "/settings",
+          name: "settings",
+          component: UserSettings,
           props: true,
         },
       ],
