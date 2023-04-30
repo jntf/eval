@@ -2,7 +2,7 @@
   <div class="bg-white">
     <div class="container mx-auto px-4 py-8">
       <div class="w-full flex flex-wrap items-stretch">
-        <div class="w-full lg:w-1/2 px-2 mb-4">
+        <div class="w-full lg:w-1/2 px-2 mb-1">
           <div class="bg-white rounded-lg shadow-red-900 shadow-lg p-8 h-full border-2 border-gray-100">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
               <div class="font-semibold text-blue-800 col-span-1">Marque :</div>
@@ -20,13 +20,10 @@
               <div class="text-gray-700 border-b border-gray-300 col-span-2 text-right">{{ energy.toUpperCase() }}</div>
               <div class="font-semibold text-blue-800 col-span-1">Mot-clé :</div>
               <div class="text-gray-700 border-b border-gray-300 col-span-2 text-right">{{ keywords.toUpperCase() }}</div>
-              <div class="font-semibold text-red-600 col-span-1">Prix :</div>
-              <div class="text-red-600 font-bold text-lg border-b border-gray-300 col-span-2 text-right">{{ price }} €
-              </div>
             </div>
           </div>
         </div>
-        <div class="w-full lg:w-1/2 px-2 mb-4">
+        <div class="w-full lg:w-1/2 px-2 mb-1">
           <div class="bg-white rounded-lg shadow-red-900 shadow-lg p-8 h-full border-2 border-gray-100">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
               <div class="font-semibold text-blue-800 col-span-1">Fiabilité de l'IA :</div>
@@ -39,119 +36,145 @@
                   Math.round(mae) }} €</h1>
               </div>
               <div class="font-semibold text-blue-800 col-span-1">Marge :</div>
-              <div class="text-gray-700 border-b border-gray-300 col-span-2 text-right">1200 €.HT</div>
+              <div class="text-gray-700 border-b border-gray-300 col-span-2 text-right">
+                {{ marginValue }} €.HT
+              </div>
               <div class="font-semibold text-blue-800 col-span-1">FreVO :</div>
-              <div class="text-gray-700 border-b border-gray-300 col-span-2 text-right">{{ Math.round(price) * 2 / 100 }}
-                €
+              <div class="text-gray-700 border-b border-gray-300 col-span-2 text-right">
+                {{ frevoValue }} €
               </div>
               <div class="font-semibold text-blue-800 col-span-1">Frais fixe :</div>
-              <div class="text-gray-700 border-b border-gray-300 col-span-2 text-right">400 €</div>
+              <div class="text-gray-700 border-b border-gray-300 col-span-2 text-right">
+                {{ fixedFeesValue }} €
+              </div>
               <div class="font-semibold text-blue-800 col-span-1">Prix de reprise :</div>
-              <div class="text-gray-700 border-b border-gray-300 col-span-2 text-right">{{ Math.round(Math.round(price) -
-                1200 * 1.2 - Math.round(price) * 2 / 100 - 400) }} €</div>
+              <div class="text-gray-700 border-b border-gray-300 col-span-2 text-right">
+                {{ totalPrice }} €
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="w-full flex flex-wrap items-stretch">
+        <div class="w-full lg:w-1/2 px-2 mb-4">
+          <div class="bg-white rounded-lg shadow-red-900 shadow-lg p-8 h-full border-2 border-gray-100">
+            <div class="text-center">
+              <div class="text-xl font-semibold text-gray-800 ">Valeur Marché</div>
+              <div class="text-3xl font-bold text-red-800 ">{{ price }} €</div>
+            </div>
+          </div>
+        </div>
+        <div class="w-full lg:w-1/2 px-2 mb-4">
+          <div class="bg-white rounded-lg shadow-red-900 shadow-lg p-8 h-full border-2 border-gray-100">
+            <div class="text-center">
+              <div class="text-xl font-semibold text-gray-800 ">Valeur Reprise</div>
+              <div class="text-3xl font-bold text-red-800 ">{{ totalPrice }} €</div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <a :href="laCentraleUrl" target="_blank" rel="noopener noreferrer">Voir les annonces sur La Centrale</a>
     <div id="chart" class="bg-red-800 p-5" style="width: 1000px; height: 400px;"></div>
   </div>
 </template>
 
 <script>
+import { computed, ref, onMounted, watch } from "vue";
+import { useRoute } from "vue-router";
+import { Auth } from "aws-amplify";
 import ReliabilityIndicator from '../../components/eval/ReliabilityIndicator.vue';
 import * as echarts from 'echarts';
 
 export default {
-  data() {
-    return {
-      make: "",
-      model: "",
-      year: "",
-      kms: "",
-      transmission: "",
-      energy: "",
-      keywords: "",
-      price: "",
-      r2: "",
-      mae: "",
-      rmse: "",
-      chartData: [
-        { model: "Modèle A", sales: 450 },
-        { model: "Modèle B", sales: 340 },
-        { model: "Modèle C", sales: 280 },
-        { model: "Modèle D", sales: 200 },
-        { model: "Modèle E", sales: 180 },
-      ],
-    };
-  },
-  created() {
-    this.updateData();
-  },
-  mounted() {
-    const chart = echarts.init(document.getElementById("chart"));
-    this.renderChart(chart);
-  },
-  watch: {
-    $route() {
-      this.updateData();
-      const chart = echarts.init(document.getElementById("chart"));
-      this.renderChart(chart);
-      const laCentraleUrl = this.buildLaCentraleUrl(
-        this.$route.query.make,
-        this.$route.query.model,
-        this.$route.query.year,
-        this.$route.query.kms,
-        this.$route.query.transmission,
-        this.$route.query.energy,
-        this.$route.query.keywords
-      );
+  components: { ReliabilityIndicator },
+  setup() {
+    const route = useRoute();
+
+    const make = ref("");
+    const model = ref("");
+    const year = ref("");
+    const kms = ref("");
+    const transmission = ref("");
+    const energy = ref("");
+    const keywords = ref("");
+    const price = ref("");
+    const r2 = ref("");
+    const mae = ref("");
+    const rmse = ref("");
+    const chartData = ref([
+      { model: "Modèle A", sales: 450 },
+      { model: "Modèle B", sales: 340 },
+      { model: "Modèle C", sales: 280 },
+      { model: "Modèle D", sales: 200 },
+      { model: "Modèle E", sales: 180 },
+    ]);
+
+    const userAttributes = ref({
+      margin: 1200,
+      marginType: "euro",
+      frevo: 2,
+      fixedFees: 400,
+    });
+
+    async function loadUserAttributes() {
+      try {
+        const user = await Auth.currentAuthenticatedUser();
+        const attributes = user.attributes;
+        userAttributes.value.margin = attributes["custom:margin"] || 1200;
+        userAttributes.value.marginType = attributes["custom:marginType"] || "euro";
+        userAttributes.value.frevo = attributes["custom:frevo"] || 2;
+        userAttributes.value.fixedFees = attributes["custom:fixedFees"] || 400;
+      } catch (error) {
+        console.error("Erreur lors du chargement des attributs utilisateur", error);
+      }
     }
-  },
-  methods: {
-    parseFloat(value) {
+
+    onMounted(async () => {
+      await loadUserAttributes();
+      updateData();
+      const chart = echarts.init(document.getElementById("chart"));
+      renderChart(chart);
+    });
+
+    const marginValue = computed(() => {
+      if (userAttributes.value.marginType === "euro") {
+        return userAttributes.value.margin;
+      } else {
+        return (price.value * userAttributes.value.margin) / 100;
+      }
+    });
+
+    const frevoValue = computed(() => userAttributes.value.frevo);
+    const fixedFeesValue = computed(() => userAttributes.value.fixedFees);
+
+    const totalPrice = computed(() =>
+      Math.round(price.value - marginValue.value - frevoValue.value - fixedFeesValue.value)
+    );
+
+    watch(() => price.value, () => {
+      const chart = echarts.init(document.getElementById("chart"));
+      renderChart(chart);
+    });
+
+    function updateData() {
+      make.value = route.query.make;
+      model.value = route.query.model;
+      year.value = route.query.year;
+      kms.value = route.query.kms;
+      transmission.value = route.query.transmission;
+      energy.value = route.query.energy;
+      keywords.value = route.query.keywords;
+      price.value = route.query.price;
+      r2.value = route.query.r2;
+      mae.value = route.query.mae;
+      rmse.value = route.query.rmse;
+    }
+
+    function parseFloat(value) {
       return parseFloat(value);
-    },
-    openCarSearchModal() {
-      const searchUrl = this.buildSearchUrl();
-      window.open(searchUrl, 'CarSearchModal', 'width=800, height=600, menubar=no, toolbar=no, location=no, status=no, resizable=yes, scrollbars=yes');
-    },
-    updateData() {
-      this.make = this.$route.query.make;
-      this.model = this.$route.query.model;
-      this.year = this.$route.query.year;
-      this.kms = this.$route.query.kms;
-      this.transmission = this.$route.query.transmission;
-      this.energy = this.$route.query.energy;
-      this.keywords = this.$route.query.keywords;
-      this.price = this.$route.query.price;
-      this.r2 = this.$route.query.r2;
-      this.mae = this.$route.query.mae;
-      this.rmse = this.$route.query.rmse;
-    },
-    buildLaCentraleUrl(make, model, year, kms, keywords) {
-      const baseUrl = "https://www.lacentrale.fr/listing";
-      const makesModelsCommercialNames = `${make.toUpperCase()}%3A${model.toUpperCase().replace(" ", "%20")}`;
-      const mileageMin = Math.max(0, kms - 10000);
-      const mileageMax = Math.max(0, kms + 10000);
-      const yearMin = year;
-      const yearMax = year;
-      const versions = keywords.replace(" ", "%2C");
+    }
 
-      const queryParams = [
-        `makesModelsCommercialNames=${makesModelsCommercialNames}`,
-        `mileageMax=${mileageMax}`,
-        `mileageMin=${mileageMin}`,
-        `sortBy=priceAsc`,
-        `versions=${versions}`,
-        `yearMax=${yearMax}`,
-        `yearMin=${yearMin}`,
-      ];
-
-      return `${baseUrl}?${queryParams.join("&")}`;
-    },
-    renderChart(chart) {
+    function renderChart(chart) {
       const option = {
         tooltip: {
           trigger: "axis",
@@ -165,32 +188,38 @@ export default {
         },
         yAxis: {
           type: "category",
-          data: this.chartData.map((item) => item.model),
+          data: chartData.value.map((item) => item.model),
         },
         series: [
           {
             name: "Ventes",
             type: "bar",
-            data: this.chartData.map((item) => item.sales),
+            data: chartData.value.map((item) => item.sales),
           },
         ],
       };
       chart.setOption(option);
     }
+
+    return {
+      make,
+      model,
+      year,
+      kms,
+      transmission,
+      energy,
+      keywords,
+      price,
+      r2,
+      mae,
+      rmse,
+      chartData,
+      marginValue,
+      frevoValue,
+      fixedFeesValue,
+      totalPrice,
+      parseFloat,
+    };
   },
-  computed: {
-    laCentraleUrl() {
-      return this.buildLaCentraleUrl(
-        this.$route.query.make,
-        this.$route.query.model,
-        this.$route.query.year,
-        this.$route.query.kms,
-        this.$route.query.transmission,
-        this.$route.query.energy,
-        this.$route.query.keywords
-      );
-    },
-  },
-  components: { ReliabilityIndicator }
 };
 </script>
