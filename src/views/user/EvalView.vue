@@ -14,13 +14,15 @@
               <div class="font-semibold text-blue-800 col-span-1">Kilométrage :</div>
               <div class="text-gray-700 border-b border-gray-300 col-span-2 text-right">{{ kms }}</div>
               <div class="font-semibold text-blue-800 col-span-1">Transmission :</div>
-              <div class="text-gray-700 border-b border-gray-300 col-span-2 text-right">{{ transmission.toUpperCase() }}</div>
+              <div class="text-gray-700 border-b border-gray-300 col-span-2 text-right">{{ transmission.toUpperCase() }}
+              </div>
               <div class="font-semibold text-blue-800 col-span-1">Énergie :</div>
               <div class="text-gray-700 border-b border-gray-300 col-span-2 text-right">{{ energy.toUpperCase() }}</div>
               <div class="font-semibold text-blue-800 col-span-1">Mot-clé :</div>
               <div class="text-gray-700 border-b border-gray-300 col-span-2 text-right">{{ keywords.toUpperCase() }}</div>
               <div class="font-semibold text-red-600 col-span-1">Prix :</div>
-              <div class="text-red-600 font-bold text-lg border-b border-gray-300 col-span-2 text-right">{{ price }} €</div>
+              <div class="text-red-600 font-bold text-lg border-b border-gray-300 col-span-2 text-right">{{ price }} €
+              </div>
             </div>
           </div>
         </div>
@@ -39,20 +41,20 @@
               <div class="font-semibold text-blue-800 col-span-1">Marge :</div>
               <div class="text-gray-700 border-b border-gray-300 col-span-2 text-right">1200 €.HT</div>
               <div class="font-semibold text-blue-800 col-span-1">FreVO :</div>
-              <div class="text-gray-700 border-b border-gray-300 col-span-2 text-right">{{ Math.round(price) * 2/100 }} €</div>
+              <div class="text-gray-700 border-b border-gray-300 col-span-2 text-right">{{ Math.round(price) * 2 / 100 }}
+                €
+              </div>
               <div class="font-semibold text-blue-800 col-span-1">Frais fixe :</div>
               <div class="text-gray-700 border-b border-gray-300 col-span-2 text-right">400 €</div>
               <div class="font-semibold text-blue-800 col-span-1">Prix de reprise :</div>
-              <div class="text-gray-700 border-b border-gray-300 col-span-2 text-right">{{ Math.round(Math.round(price) - 1200*1.2 - Math.round(price) * 2/100 - 400) }} €</div>
+              <div class="text-gray-700 border-b border-gray-300 col-span-2 text-right">{{ Math.round(Math.round(price) -
+                1200 * 1.2 - Math.round(price) * 2 / 100 - 400) }} €</div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <h1>Évaluation de voiture</h1>
-    <iframe
-      src="https://www.lacentrale.fr/listing?energies=hyb&makesModelsCommercialNames=RENAULT%3AAUSTRAL&mileageMax=5000&sortBy=priceAsc&versions=200%2Calpine&yearMax=2023&yearMin=2023"
-      width="100%" height="600" frameborder="0"></iframe>
+    <a :href="laCentraleUrl" target="_blank" rel="noopener noreferrer">Voir les annonces sur La Centrale</a>
     <div id="chart" class="bg-red-800 p-5" style="width: 1000px; height: 400px;"></div>
   </div>
 </template>
@@ -96,24 +98,20 @@ export default {
       this.updateData();
       const chart = echarts.init(document.getElementById("chart"));
       this.renderChart(chart);
+      const laCentraleUrl = this.buildLaCentraleUrl(
+        this.$route.query.make,
+        this.$route.query.model,
+        this.$route.query.year,
+        this.$route.query.kms,
+        this.$route.query.transmission,
+        this.$route.query.energy,
+        this.$route.query.keywords
+      );
     }
   },
   methods: {
     parseFloat(value) {
       return parseFloat(value);
-    },
-    buildSearchUrl() {
-      const baseUrl = 'https://www.lacentrale.fr/your-search-url';
-      const queryParams = [
-        `make=${this.make}`,
-        `model=${this.model}`,
-        `year=${this.year}`,
-        `kms=${this.kms}`,
-        `transmission=${this.transmission}`,
-        `energy=${this.energy}`,
-        `keywords=${this.keywords}`,
-      ];
-      return `${baseUrl}?${queryParams.join('&')}`;
     },
     openCarSearchModal() {
       const searchUrl = this.buildSearchUrl();
@@ -131,6 +129,27 @@ export default {
       this.r2 = this.$route.query.r2;
       this.mae = this.$route.query.mae;
       this.rmse = this.$route.query.rmse;
+    },
+    buildLaCentraleUrl(make, model, year, kms, keywords) {
+      const baseUrl = "https://www.lacentrale.fr/listing";
+      const makesModelsCommercialNames = `${make.toUpperCase()}%3A${model.toUpperCase().replace(" ", "%20")}`;
+      const mileageMin = Math.max(0, kms - 10000);
+      const mileageMax = Math.max(0, kms + 10000);
+      const yearMin = year;
+      const yearMax = year;
+      const versions = keywords.replace(" ", "%2C");
+
+      const queryParams = [
+        `makesModelsCommercialNames=${makesModelsCommercialNames}`,
+        `mileageMax=${mileageMax}`,
+        `mileageMin=${mileageMin}`,
+        `sortBy=priceAsc`,
+        `versions=${versions}`,
+        `yearMax=${yearMax}`,
+        `yearMin=${yearMin}`,
+      ];
+
+      return `${baseUrl}?${queryParams.join("&")}`;
     },
     renderChart(chart) {
       const option = {
@@ -158,6 +177,19 @@ export default {
       };
       chart.setOption(option);
     }
+  },
+  computed: {
+    laCentraleUrl() {
+      return this.buildLaCentraleUrl(
+        this.$route.query.make,
+        this.$route.query.model,
+        this.$route.query.year,
+        this.$route.query.kms,
+        this.$route.query.transmission,
+        this.$route.query.energy,
+        this.$route.query.keywords
+      );
+    },
   },
   components: { ReliabilityIndicator }
 };
