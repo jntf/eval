@@ -28,7 +28,8 @@
 export default {
     props: {
         auth: {
-            type: Function
+            type: Object, // or Function, depending on the expected type
+            required: true
         }
     },
     data() {
@@ -43,13 +44,8 @@ export default {
         signOut() {
             this.auth.signOut();
             this.$router.push('/home');
-        }, 
+        },
     }
 }
 </script>
 
-<style>
-/* .object {
-    position: relative;
-} */
-</style>
