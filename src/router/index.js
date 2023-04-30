@@ -4,25 +4,8 @@ import Login from "../views/auth/Login.vue";
 import User from "../views/user/IndexUser.vue";
 import Analyse from "../views/user/Analyse.vue";
 import Eval from "../views/user/EvalView.vue";
+import Settings from "../views/user/Settings.vue";
 import { Auth } from 'aws-amplify';
-
-const requireAuth = async (to, from, next) => {
-  try {
-    await Auth.currentAuthenticatedUser();
-    next();
-  } catch (error) {
-    next({ name: "login" });
-  }
-};
-
-const requireNoAuth = async (to, from, next) => {
-  try {
-    await Auth.currentAuthenticatedUser();
-    next({ name: "home" });
-  } catch (error) {
-    next();
-  }
-};
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -59,6 +42,11 @@ const router = createRouter({
           name: "eval",
           component: Eval,
           props: true,
+        },
+        {
+          path: 'settings',
+          name: 'settings',
+          component: Settings,
         },
       ],
     },
