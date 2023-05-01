@@ -97,7 +97,7 @@ import Footer from '../components/home/Footer.vue';
         </section>
 
         <!-- Tarifs -->
-        <section id="tarifs" class="h-screen flex justify-center items-center">
+        <section id="tarifs" class="h-screen flex justify-center items-center bg-emerald-50">
             <div class="container mx-auto">
                 <h2 class="text-3xl md:text-4xl font-bold mb-10">Tarifs</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
