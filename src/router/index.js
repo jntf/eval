@@ -37,6 +37,7 @@ const router = createRouter({
           path: "analyse",
           name: "analyse",
           component: Analyse,
+          props: true,
         },
         {
           path: "eval",
@@ -48,6 +49,7 @@ const router = createRouter({
           path: 'settings',
           name: 'settings',
           component: Settings,
+          props: true,
         },
       ],
     },

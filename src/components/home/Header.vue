@@ -1,10 +1,23 @@
 <template>
-    <header class="bg-red-800 shadow-xl rounded-b-lg fixed top-0 left-0 w-full z-50">
+    <header class="bg-red-900 shadow-xl rounded-b-lg fixed top-0 left-0 w-full z-50">
         <div class="container mx-auto px-6 py-3">
             <nav class="flex items-center justify-between flex-wrap">
                 <div class="flex items-center flex-shrink-0 text-gray-800">
-                    <img src="../../assets/logo.svg" alt="EVALIO" class="h-12" />
-                    <span class="font-semibold text-xl text-white tracking-tight ml-2">EVALIA</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" class="h-16">
+                        <circle cx="60" cy="60" r="28" stroke="url(#grad)" stroke-width="8" fill="none" />
+                        <path d="M70 44L47 60l23 17" stroke="url(#grad)" stroke-width="12" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <path d="M50 76l23-16-23-16" stroke="url(#grad)" stroke-width="12" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <defs>
+                            <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#222;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#444;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#666;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <span class="font-semibold text-xl text-white tracking-tight ml-2">Evalia</span>
                 </div>
                 <div class="block lg:hidden">
                     <button @click="isActive = !isActive"
