@@ -8,7 +8,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@aws-amplify/ui-components": "^1.9.40",
     "@aws-amplify/ui-vue": "^3.1.14",
     "@aws-sdk/client-cognito-identity-provider": "^3.321.1",
     "@vueform/multiselect": "^2.6.1",
