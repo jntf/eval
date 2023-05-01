@@ -2,6 +2,7 @@
 import '@aws-amplify/ui-vue/styles.css';
 
 import Header from '../components/home/Header.vue';
+import Footer from '../components/home/Footer.vue';
 
 </script>
 
@@ -49,8 +50,49 @@ import Header from '../components/home/Header.vue';
         <section id="comment-ca-marche" class="h-screen flex justify-center items-center">
             <div class="container mx-auto">
                 <h2 class="text-3xl md:text-4xl font-bold mb-10">Comment ça marche ?</h2>
-                <p class="text-lg md:text-xl leading-8 mb-10">Nous avons développé un algorithme d'apprentissage automatique
-                    qui permet de déterminer le prix de vente de votre voiture en fonction de plusieurs critères.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="flex flex-col items-center">
+                        <div
+                            class="h-20 w-20 rounded-full bg-red-500 flex items-center justify-center text-white font-bold mb-4">
+                            1
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Collecte des données</h3>
+                        <p class="text-lg leading-7 text-center">Nous collectons des données historiques et en temps réel de
+                            différentes sources, telles que des sites de vente de voitures, des données du marché
+                            automobile, des réseaux sociaux, des sites d'enchères, et bien plus encore.</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div
+                            class="h-20 w-20 rounded-full bg-red-500 flex items-center justify-center text-white font-bold mb-4">
+                            2
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Nettoyage des données</h3>
+                        <p class="text-lg leading-7 text-center">Nous nettoyons et préparons les données pour l'analyse en
+                            éliminant les doublons, les erreurs et les données manquantes. Nous normalisons également les
+                            données pour les rendre comparables et cohérentes.</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div
+                            class="h-20 w-20 rounded-full bg-red-500 flex items-center justify-center text-white font-bold mb-4">
+                            3
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4">Analyse des données</h3>
+                        <p class="text-lg leading-7 text-center">Nous utilisons des algorithmes d'apprentissage automatique
+                            pour analyser les données nettoyées et normalisées. Nous identifions les tendances, les modèles
+                            et les corrélations pour prédire les fluctuations de prix.</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div
+                            class="h-20 w-20 rounded-full bg-red-500 flex items-center justify-center text-white font-bold mb-4">
+                            4
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4">Prédiction des prix</h3>
+                        <p class="text-lg leading-7 text-center">En utilisant les résultats de l'analyse des données, nous
+                            prédisons les fluctuations de prix pour une période donnée. Beaucoup de nos prévisions sont
+                            précises à plus
+                            de 90%, ce qui vous permet d'ajuster vos prix de vente en conséquence.</p>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -58,45 +100,39 @@ import Header from '../components/home/Header.vue';
         <section id="tarifs" class="h-screen flex justify-center items-center">
             <div class="container mx-auto">
                 <h2 class="text-3xl md:text-4xl font-bold mb-10">Tarifs</h2>
-                <table>
-                    <tr>
-                        <th></th>
-                        <th class="text-purple-600 text-lg font-black">1 à 4 utilisateurs</th>
-                        <th class="text-purple-600 text-lg font-black">5 à 9 utilisateurs</th>
-                        <th class="text-purple-600 text-lg font-black">10 à 19 utilisateurs</th>
-                        <th class="text-purple-600 text-lg font-black">20 utilisateurs ou plus</th>
-                    </tr>
-                    <tr>
-                        <td>Côtes illimités</td>
-                        <td class="text-green-500">✔️</td>
-                        <td class="text-green-500">✔️</td>
-                        <td class="text-green-500">✔️</td>
-                        <td class="text-green-500">✔️</td>
-                    </tr>
-                    <tr>
-                        <td>Analyse de marché illimités</td>
-                        <td class="text-green-500">✔️</td>
-                        <td class="text-green-500">✔️</td>
-                        <td class="text-green-500">✔️</td>
-                        <td class="text-green-500">✔️</td>
-                    </tr>
-                    <tr>
-                        <td>Coûts en rafales par API ou Excel</td>
-                        <td class="font-black">0,50€ par rafale</td>
-                        <td class="font-black">0,50€ par rafale</td>
-                        <td class="font-black">Illimité</td>
-                        <td class="font-black">Illimité</td>
-                    </tr>
-                    <tr>
-                        <td>Prix par utilisateur</td>
-                        <td class="text-4xl text-purple-600">19,90€</td>
-                        <td class="text-4xl text-purple-600">16,90€</td>
-                        <td class="text-4xl text-purple-600">14,90€</td>
-                        <td class="text-4xl text-purple-600">Nous contacter</td>
-                    </tr>
-                </table>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="border rounded-lg shadow-sm p-6 text-center">
+                        <h3 class="text-lg font-bold mb-4">1 à 4 utilisateurs</h3>
+                        <p class="text-green-500 mb-4">Côtes illimitées</p>
+                        <p class="text-green-500 mb-4">Analyse de marché illimitée</p>
+                        <p class="font-black mb-4">0,50€ par rafale</p>
+                        <p class="text-4xl text-purple-600 font-bold">19,90€</p>
+                    </div>
+                    <div class="border rounded-lg shadow-sm p-6 text-center">
+                        <h3 class="text-lg font-bold mb-4">5 à 9 utilisateurs</h3>
+                        <p class="text-green-500 mb-4">Côtes illimitées</p>
+                        <p class="text-green-500 mb-4">Analyse de marché illimitée</p>
+                        <p class="font-black mb-4">0,50€ par rafale</p>
+                        <p class="text-4xl text-purple-600 font-bold">16,90€</p>
+                    </div>
+                    <div class="border rounded-lg shadow-sm p-6 text-center">
+                        <h3 class="text-lg font-bold mb-4">10 à 19 utilisateurs</h3>
+                        <p class="text-green-500 mb-4">Côtes illimitées</p>
+                        <p class="text-green-500 mb-4">Analyse de marché illimitée</p>
+                        <p class="font-black mb-4">Illimité</p>
+                        <p class="text-4xl text-purple-600 font-bold">14,90€</p>
+                    </div>
+                    <div class="border rounded-lg shadow-sm p-6 text-center">
+                        <h3 class="text-lg font-bold mb-4">20 utilisateurs ou plus</h3>
+                        <p class="text-green-500 mb-4">Côtes illimitées</p>
+                        <p class="text-green-500 mb-4">Analyse de marché illimitée</p>
+                        <p class="font-black mb-4">Illimité</p>
+                        <p class="text-4xl text-purple-600 font-bold">Nous contacter</p>
+                    </div>
+                </div>
             </div>
         </section>
+
 
         <!-- Nous contacter -->
         <section id="nous-contacter" class="h-screen flex justify-center items-center bg-red-800">
@@ -138,6 +174,7 @@ import Header from '../components/home/Header.vue';
             </div>
         </section>
     </div>
+    <Footer />
 </template>
 
 <style>
@@ -181,5 +218,4 @@ tr:nth-child(even) {
 /* leopard skin */
 th {
     color: white;
-}
-</style>
+}</style>
