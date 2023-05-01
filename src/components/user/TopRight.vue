@@ -15,9 +15,9 @@
         <!-- Dropdown -->
         <div class="object bg-gray-50 border border-t-0 shadow-xl text-gray-700 rounded-3xl w-48 -mb-36 right-0 mr-6 text-center mt-2 z-50"
             :class="show ? '' : 'hidden'">
-            <div class="my-5"><span class="text-white bg-green-600 rounded-lg px-2 py-1">{{ role }}</span></div>
+            <div v-for="r in roles" class="my-5"><span class="text-white bg-green-600 rounded-lg px-2 py-1">{{ r }}</span></div>
             <div><span class="font-black">{{ name }} {{ familyName }}</span></div>
-            <a href="#" class="block px-4 py-2 hover:bg-gray-200" @click="auth.signOut">Logout</a>
+            <a href="#" class="block px-4 py-2 hover:bg-gray-200" @click="signOut()">Logout</a>
         </div>
     </div>
 </template>
@@ -27,30 +27,17 @@
 <script>
 export default {
     props: {
-        auth: {
-            type: Object, // or Function, depending on the expected type
-            required: true
-        }
-    },
-    data() {
-        return {
-            show: false,
-            name: this.auth?.user?.attributes?.name,
-            familyName: this.auth?.user?.attributes?.family_name,
-            role: this.auth?.user?.signInUserSession?.accessToken?.payload?.["cognito:groups"]?.[0]
-        }
-    },
-    methods: {
-        signOut() {
-            this.auth.signOut();
-            this.$router.push('/home');
-        },
+    name: String,
+    familyName: String,
+    roles: Array,
+    signOut: Function,
+  },
+  data() {
+    return {
+      show: false,
     }
+  },
 }
+
 </script>
 
-<style>
-/* .object {
-    position: relative;
-} */
-</style>

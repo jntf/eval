@@ -1,35 +1,47 @@
 <template>
-    <div class="container mx-auto px-4">
-        <h1 class="text-2xl font-bold mb-6">Paramètres</h1>
-        <form @submit.prevent="isEditing ? saveSettings() : null">
-            <div v-for="(field, key) in settings" :key="key" class="mb-4">
-                <label class="block text-gray-700 mb-2" :for="key">{{ field.label }}</label>
-                <input v-if="field.type !== 'select'" :readonly="!isEditing" v-model="field.value" :type="field.type"
-                    :step="field.step" :id="key" class="w-full p-2 border-2 border-gray-300 rounded"
-                    :required="isEditing" />
-                <select v-if="field.type === 'select'" :readonly="!isEditing" v-model="field.value" :id="key"
-                    class="w-full p-2 border-2 border-gray-300 rounded" :required="isEditing">
-                    <option v-for="(option, index) in field.options" :key="index" :value="option.value">
-                        {{ option.text }}
-                    </option>
-                </select>
-            </div>
+    <div class="container mx-auto px-4 py-10">
+        <div class="bg-white shadow-md shadow-red-900 border-gray-700 rounded px-8 pt-6 pb-8 mb-4 w-full max-w-3xl mx-auto">
+            <h1 class="text-2xl font-bold mb-6 text-center">
+                Paramètres d'estimation de reprise
+            </h1>
             <button @click="isEditing = !isEditing" type="button"
-                class="bg-yellow-500 text-white font-bold py-2 px-4 rounded mr-4">
-                {{ isEditing ? 'Annuler' : 'Modifier' }}
+                class="text-cyan-500 font-bold py-2 px-4 rounded absolute top-4 right-4">
+                <i class="fas" :class="isEditing ? 'fa-times' : 'fa-edit'"></i>
             </button>
-            <button v-if="isEditing" type="submit" class="bg-blue-500 text-white font-bold py-2 px-4 rounded">
-                Sauvegarder
-            </button>
-        </form>
+            <form @submit.prevent="isEditing ? saveSettings() : null">
+                <div v-for="(field, key) in settings" :key="key" class="mb-4 flex justify-end">
+                    <label class="block text-gray-700 mb-2 mr-4" :for="key">{{ field.label }}</label>
+                    <input v-if="field.type !== 'select'" :readonly="!isEditing" v-model="field.value" :type="field.type"
+                        :step="field.step" :id="key" class="w-full p-2 border-2 border-gray-300 rounded"
+                        :required="isEditing" />
+                    <select v-if="field.type === 'select'" :readonly="!isEditing" v-model="field.value" :id="key"
+                        class="w-full p-2 border-2 border-gray-300 rounded" :required="isEditing">
+                        <option v-for="(option, index) in field.options" :key="index" :value="option.value">
+                            {{ option.text }}
+                        </option>
+                    </select>
+                </div>
+                <div class="text-right">
+                    <button v-if="isEditing" type="submit" class="bg-emerald-500 text-white font-bold py-2 px-4 rounded">
+                        Modifier
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </template>
+  
   
 <script>
 import { ref, onMounted } from "vue";
 import { Auth } from "aws-amplify";
+import { useUserStore } from "../../stores/userStore";
+
 export default {
     setup() {
+        const userStore = useUserStore();
+        const name = ref(userStore.name);
+        const familyName = ref(userStore.familyName);
         const isEditing = ref(false);
         const settings = ref({
             margin: { label: "Marge souhaitée", value: 0, type: "number", step: "0.01" },
@@ -74,7 +86,13 @@ export default {
             }
         }
         onMounted(loadSettings);
-        return { settings, isEditing, saveSettings };
+        return {
+            name,
+            familyName,
+            settings,
+            isEditing,
+            saveSettings
+        };
     },
 };
 </script>
