@@ -42,7 +42,7 @@ export const useUserStore = defineStore({
             margin: attributes["custom:margin"],
             marginType: attributes["custom:marginType"],
           });
-          this.router = this.$router;
+          this.router = router;
         }
       } catch (error) {
         console.error("Error fetching user data:", error);

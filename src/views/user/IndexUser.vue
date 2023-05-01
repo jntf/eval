@@ -4,6 +4,7 @@ import { RouterView, useRouter } from "vue-router";
 import { Authenticator } from "@aws-amplify/ui-vue";
 import MiniNavBar from "../../components/user/MiniNavBar.vue";
 import TopRight from "../../components/user/TopRight.vue";
+import Footer from "../../components/home/Footer.vue";
 import { useUserStore } from "../../stores/userStore";
 import { onMounted } from "vue";
 
@@ -17,7 +18,7 @@ console.log(userStore)
 </script>
 
 <template>
-  <authenticator v-if="userStore">
+  <authenticator>
     <nav>
       <TopRight
         :name="userStore.name"
@@ -29,8 +30,13 @@ console.log(userStore)
     </nav>
     <div class="container mx-auto">
       <div class="flex flex-col flex-grow">
-        <router-view />
+        <router-view 
+
+        />
       </div>
     </div>
   </authenticator>
+  <footer>
+    <Footer />
+  </footer>
 </template>
