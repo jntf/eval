@@ -1,44 +1,44 @@
 <template>
     <div class="p-3 relative mx-auto my-auto rounded-xl shadow-lg border-gray-100 z-100">
         <form id="form" class="mx-auto pt-5" @submit.prevent="submitForm">
-            <div class="grid lg:grid-cols-2 sm:grid-clos-1 gap-24">
-                <div class="">
+            <div class="grid lg:grid-cols-2 sm:grid-cols-1 gap-8">
+                <div>
                     <select v-model="selectedMake" @change="fetchModels"
-                        class="w-full bg-gray-700 text-white hover:bg-gray-600 hover:text-red-50 shadow-lg rounded-lg py-2 px-1">
+                        class="w-full bg-gray-700 text-white hover:bg-gray-600 hover:text-red-50 shadow-lg rounded-lg py-2 px-1 text-sm sm:text-base">
                         <option disabled value="" class="text-white">Sélectionnez une marque</option>
                         <option v-for="make in makes" :key="make" :value="make">{{ make.toUpperCase() }}</option>
                     </select>
                 </div>
                 <div>
                     <select v-model="selectedModel" :disabled="!selectedMake" @change="fetchDetails"
-                        class="w-full bg-gray-700 text-white hover:bg-gray-500 hover:text-red-50 shadow-lg rounded-lg py-2 px-1">
+                        class="w-full bg-gray-700 text-white hover:bg-gray-500 hover:text-red-50 shadow-lg rounded-lg py-2 px-1 text-sm sm:text-base">
                         <option disabled value="">Sélectionnez un modèle</option>
                         <option v-for="model in models" :key="model" :value="model">{{ model.toUpperCase() }}</option>
                     </select>
                 </div>
                 <div>
                     <select v-model="selectedEnergies" :disabled="!selectedModel"
-                        class="w-full bg-gray-700 text-white hover:bg-gray-500 hover:text-red-50 shadow-lg rounded-lg py-2 px-1">
+                        class="w-full bg-gray-700 text-white hover:bg-gray-500 hover:text-red-50 shadow-lg rounded-lg py-2 px-1 text-sm sm:text-base">
                         <option disabled value="">Sélectionnez des énergies</option>
                         <option v-for="energy in energies" :key="energy" :value="energy">{{ energy.toUpperCase() }}</option>
                     </select>
                 </div>
                 <div>
                     <select v-model="selectedTransmissions" :disabled="!selectedModel"
-                        class="w-full bg-gray-700 text-white hover:bg-gray-500 hover:text-red-50 shadow-lg rounded-lg py-2 px-1">
+                        class="w-full bg-gray-700 text-white hover:bg-gray-500 hover:text-red-50 shadow-lg rounded-lg py-2 px-1 text-sm sm:text-base">
                         <option disabled value="">Sélectionnez des énergies</option>
                         <option v-for="transmission in transmissions" :key="transmission" :value="transmission">{{
                             transmission.toUpperCase() }}</option>
                     </select>
                 </div>
                 <div>
-                    <label for="year" class="text-gray-800 ml-5 mb-5">Année</label>
+                    <label for="year" class="text-gray-800 ml-5 mb-2 text-sm sm:text-base">Année</label>
                     <Slider v-model="year" :min="1990" :max="2030" class="" />
                 </div>
                 <div>
-                    <label for="kms" class="text-gray-800 ml-5">Kilométrage</label>
+                    <label for="kms" class="text-gray-800 ml-5 mb-2 text-sm sm:text-base">Kilométrage</label>
                     <input type="text" v-model="kms"
-                        class="w-full bg-gray-700 text-white hover:bg-gray-500 hover:text-red-50 shadow-lg rounded-lg py-2 px-1" />
+                        class="w-full bg-gray-700 text-white hover:bg-gray-500 hover:text-red-50 shadow-lg rounded -lg py-2 px-1 text-sm sm:text-base" />
                 </div>
             </div>
             <div class="pt-5">
@@ -47,21 +47,23 @@
                         tag }}</span>
                 </div>
                 <div class="w-full">
-                    <label>Sélectionnez les mots clés:</label>
+                    <label class="text-gray-800 mb-2 text-sm sm:text-base">Sélectionnez les mots clés:</label>
                     <div class="all-tags">
-                        <span v-for="option in sortedKeywords" :key="selectedKeywords" @click="toggleTag(option)">
+                        <span v-for="option in sortedKeywords" :key="option.label" @click="toggleTag(option)"
+                            class="text-sm sm:text-base">
                             {{ option.label.toUpperCase() }} <span v-if="option.selected" class="text-green-500">✓ </span>
                         </span>
                     </div>
                 </div>
             </div>
-            <div class="flex justify-center">
+            <div class="flex justify-center mt-4">
                 <button type="submit"
-                    class="w-full px-4 py-2 mt-2 text-white bg-blue-500 rounded-md focus:bg-blue-600 focus:outline-none">Rechercher</button>
+                    class="w-full px-4 py-2 text-white bg-blue-500 rounded-md focus:bg-blue-600 focus:outline-none text-sm sm:text-base">Rechercher</button>
             </div>
         </form>
     </div>
 </template>
+
 
 <style src="@vueform/slider/themes/default.css">
 @import '@vueform/multiselect/themes/tailwind.css';
@@ -226,7 +228,7 @@ export default defineComponent({
                     body: data,
                 })
                 // this.$emit('close-modal');
-                router.push({ 
+                router.push({
                     path: '/user/eval',
                     query: {
                         make: result.make,
