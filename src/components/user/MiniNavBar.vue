@@ -23,7 +23,7 @@
                         </span>
                     </a>
                 </div>
-                <div class="flex-auto hover:w-full group" v-if="isModalVisible == false && role === 'Admin'">
+                <div class="flex-auto hover:w-full group" v-if="isModalVisible == false && roles.includes('Admin')">
                     <router-link to="settings"
                         class="flex items-center justify-center text-center mx-auto px-4 py-2 group-hover:w-full text-red-50">
                         <span
@@ -33,7 +33,7 @@
                         </span>
                     </router-link>
                 </div>
-                <div class="flex-auto hover:w-full group" v-if="isModalVisible == false && role === 'SuperAdmin'">
+                <div class="flex-auto hover:w-full group" v-if="isModalVisible == false && roles.includes('SuperAdmin')">
                     <a href="#"
                         class="flex items-center justify-center text-center mx-auto px-4 py-2 group-hover:w-full text-red-50">
                         <span
@@ -46,7 +46,7 @@
             </div>
         </div>
     </div>
-    <CustomModal :role="role" :is-modal-visible="isModalVisible" :modal-content="customModal" @toggle-modal="isModalVisible = !isModalVisible" />
+    <CustomModal :roles="roles" :is-modal-visible="isModalVisible" :modal-content="customModal" @toggle-modal="isModalVisible = !isModalVisible" />
 </template>
 
 <script>
@@ -60,16 +60,12 @@ export default {
     CustomModal
 },
     props: {
-        auth: {
-            type: Object,
-            required: true,
-        }
+        roles: Array
     },
     data() {
         return {
             isModalVisible: false,
             customModal: markRaw(SearchBar),
-            role: this.auth?.user?.signInUserSession?.accessToken?.payload?.["cognito:groups"][0]
         };
     },
     methods: {

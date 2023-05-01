@@ -1,30 +1,36 @@
 <script setup>
-import '@aws-amplify/ui-vue/styles.css';
-import { RouterView } from "vue-router";
-import MiniNavBar from '../../components/user/MiniNavBar.vue'
-import TopRight from '../../components/user/TopRight.vue'
-import { useAuthenticator } from '@aws-amplify/ui-vue';
-import { Authenticator } from "@aws-amplify/ui-vue";
 import "@aws-amplify/ui-vue/styles.css";
+import { RouterView, useRouter } from "vue-router";
+import { Authenticator } from "@aws-amplify/ui-vue";
+import MiniNavBar from "../../components/user/MiniNavBar.vue";
+import TopRight from "../../components/user/TopRight.vue";
+import { useUserStore } from "../../stores/userStore";
+import { onMounted } from "vue";
 
-import { Amplify } from 'aws-amplify';
-import awsconfig from '../../aws-exports';
+const userStore = useUserStore();
+const router = useRouter();
+onMounted(() => {
+  userStore.fetchUserData(router);
+});
 
-Amplify.configure(awsconfig);
-const auth = useAuthenticator();
+console.log(userStore)
 </script>
 
 <template>
-    <authenticator>
-        <nav>
-
-            <TopRight :auth="auth" />
-            <MiniNavBar :auth="auth" />
-        </nav>
-        <div class="container mx-auto">
-            <div class="flex flex-col flex-grow">
-                <router-view />
-            </div>
-        </div>
-    </authenticator>
+  <authenticator v-if="userStore">
+    <nav>
+      <TopRight
+        :name="userStore.name"
+        :familyName="userStore.family_name"
+        :roles="userStore.roles"
+        :signOut="userStore.signOut"
+      />
+      <MiniNavBar :roles="userStore.roles"/>
+    </nav>
+    <div class="container mx-auto">
+      <div class="flex flex-col flex-grow">
+        <router-view />
+      </div>
+    </div>
+  </authenticator>
 </template>
