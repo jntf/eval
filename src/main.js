@@ -1,4 +1,5 @@
 import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 
@@ -19,11 +20,11 @@ Amplify.configure({
 
 import './assets/main.css'
 
+const pinia = createPinia()
+router.pinia = pinia;
+
 const app = createApp(App)
-
 app.config.debug = true;
-
 app.use(router)
-// app.use(store)
-
+app.use(pinia)
 app.mount('#app')
