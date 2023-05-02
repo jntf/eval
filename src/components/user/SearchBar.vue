@@ -80,7 +80,8 @@ export default defineComponent({
     components: {
         Slider,
     },
-    setup(ctx) {
+    emits: ['close-modal'], // declaration of events emitted by the component
+    setup(_, { emit }) { // declaration of setup methods with the { emit } object
         const router = useRouter();
 
         const makes = ref([]);
@@ -227,7 +228,7 @@ export default defineComponent({
                     },
                     body: data,
                 })
-                // this.$emit('close-modal');
+                emit('close-modal');
                 router.push({
                     path: '/user/eval',
                     query: {
