@@ -125,6 +125,9 @@ export default defineComponent({
                         filter: {
                             make: {
                                 ne: null
+                            },
+                            isActive: {
+                                eq: 1
                             }
                         }
                     }
@@ -132,6 +135,7 @@ export default defineComponent({
                 makes.value = response.data.listVehicles.items.map(item => item.make);
                 makes.value = [...new Set(makes.value)];
                 makes.value = makes.value.sort();
+                console.log(makes.value.length)
                 selectedMake.value = null;
             } catch (error) {
                 console.log(error);
@@ -151,6 +155,9 @@ export default defineComponent({
                             },
                             model: {
                                 ne: null
+                            }, 
+                            isActive: {
+                                eq: 1
                             }
                         }
                     }
@@ -158,6 +165,7 @@ export default defineComponent({
                 models.value = response.data.listVehicles.items.map(item => item.model);
                 models.value = [...new Set(models.value)];
                 models.value = models.value.sort();
+                console.log(models.value.length)
                 selectedModel.value = null;
                 keywords.value = [];
                 energies.value = [];
