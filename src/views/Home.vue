@@ -106,21 +106,21 @@ import Footer from '../components/home/Footer.vue';
                         <p class="text-green-500 mb-4">Côtes illimitées</p>
                         <p class="text-green-500 mb-4">Analyse de marché illimitée</p>
                         <p class="font-black mb-4">0,50€ par rafale</p>
-                        <p class="text-4xl text-purple-600 font-bold">19,90€</p>
+                        <p class="text-4xl text-purple-600 font-bold">19,90€<br><span class="text-sm font-light"> par utilisateur</span></p>
                     </div>
                     <div class="border rounded-lg shadow-sm p-6 text-center">
                         <h3 class="text-lg font-bold mb-4">5 à 9 utilisateurs</h3>
                         <p class="text-green-500 mb-4">Côtes illimitées</p>
                         <p class="text-green-500 mb-4">Analyse de marché illimitée</p>
                         <p class="font-black mb-4">0,50€ par rafale</p>
-                        <p class="text-4xl text-purple-600 font-bold">16,90€</p>
+                        <p class="text-4xl text-purple-600 font-bold">16,90€<br><span class="text-sm font-light"> par utilisateur</span></p>
                     </div>
                     <div class="border rounded-lg shadow-sm p-6 text-center">
                         <h3 class="text-lg font-bold mb-4">10 à 19 utilisateurs</h3>
                         <p class="text-green-500 mb-4">Côtes illimitées</p>
                         <p class="text-green-500 mb-4">Analyse de marché illimitée</p>
                         <p class="font-black mb-4">Illimité</p>
-                        <p class="text-4xl text-purple-600 font-bold">14,90€</p>
+                        <p class="text-4xl text-purple-600 font-bold">14,90€<br><span class="text-sm font-light"> par utilisateur</span></p>
                     </div>
                     <div class="border rounded-lg shadow-sm p-6 text-center">
                         <h3 class="text-lg font-bold mb-4">20 utilisateurs ou plus</h3>
