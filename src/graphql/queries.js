@@ -9,6 +9,7 @@ export const getVehicle = /* GraphQL */ `
       keywords
       energies
       transmissions
+      isActive
       id
       createdAt
       updatedAt
@@ -28,6 +29,7 @@ export const listVehicles = /* GraphQL */ `
         keywords
         energies
         transmissions
+        isActive
         id
         createdAt
         updatedAt
@@ -59,6 +61,7 @@ export const vehiclesByMakeAndModel = /* GraphQL */ `
         keywords
         energies
         transmissions
+        isActive
         id
         createdAt
         updatedAt

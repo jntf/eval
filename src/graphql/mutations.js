@@ -12,6 +12,7 @@ export const createVehicle = /* GraphQL */ `
       keywords
       energies
       transmissions
+      isActive
       id
       createdAt
       updatedAt
@@ -29,6 +30,7 @@ export const updateVehicle = /* GraphQL */ `
       keywords
       energies
       transmissions
+      isActive
       id
       createdAt
       updatedAt
@@ -46,6 +48,7 @@ export const deleteVehicle = /* GraphQL */ `
       keywords
       energies
       transmissions
+      isActive
       id
       createdAt
       updatedAt
