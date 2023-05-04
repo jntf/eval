@@ -11,9 +11,12 @@
           <div class="w-full md:w-1/2 lg:w-1/4 text-center md:text-left mb-8 md:mb-0">
             <h3 class="text-lg font-semibold mb-4">Liens utiles</h3>
             <ul>
-              <li><a href="#" class="text-white hover:text-emerald-400">Accueil</a></li>
-              <li><a href="#" class="text-white hover:text-emerald-400">Services</a></li>
-              <li><a href="#" class="text-white hover:text-emerald-400">Contact</a></li>
+              <li><a href="/home#acceuil" class="text-white hover:text-emerald-400">Accueil</a></li>
+              <li><a href="/home#presentation" class="text-white hover:text-emerald-400">Présentation</a></li>
+              <li><a href="/home#comment-ca-marche" class="text-white hover:text-emerald-400">Comment ça marche</a></li>
+              <li><a href="/home#nous-contacter" class="text-white hover:text-emerald-400">Nous contacter</a></li>
+              <li><a href="/home#tarifs" class="text-white hover:text-emerald-400">Tarifs</a></li>
+              <li><router-link to="login" class="text-white hover:text-emerald-400">Connexion</router-link></li>
             </ul>
           </div>
           <div class="w-full md:w-1/2 lg:w-1/4 text-center md:text-left mb-8 md:mb-0">
@@ -41,13 +44,24 @@
         </div>
         <hr class="my-8 border-gray-600" />
         <div class="text-center">
-          <p>&copy; 2023 Votre Entreprise. Tous droits réservés.</p>
+          <p>&copy; {{ year }} Evalia . Tous droits réservés.</p>
         </div>
       </div>
     </footer>
   </template>
   
-  <style scoped>
-    /* Ajoutez ici les styles spécifiques pour le footer si nécessaire */
-  </style>
+<script>
+// Import Router link
+import { RouterLink } from 'vue-router'
+
+export default {
+  setup () {
+    return {
+      year: new Date().getFullYear(),
+      router: RouterLink
+    }
+  }
+}
+</script>
+
   
