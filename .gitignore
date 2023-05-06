@@ -28,7 +28,7 @@ coverage
 *.sw?
 
 #amplify-do-not-edit-begin
-amplify/\#current-cloud-backend
+amplify/#current-cloud-backend
 amplify/.config/local-*
 amplify/logs
 amplify/mock-data
@@ -47,4 +47,6 @@ amplify-gradle-config.json
 amplifytools.xcconfig
 .secret-*
 **.sample
+.env
 #amplify-do-not-edit-end
+
