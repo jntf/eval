@@ -192,6 +192,9 @@ export default defineComponent({
                             },
                             model: {
                                 eq: selectedModel.value,
+                            },
+                            isActive: {
+                                eq: 1
                             }
                         }
                     }
@@ -218,6 +221,7 @@ export default defineComponent({
             }
         };
 
+        console.log()
         const submitForm = async () => {
             const data = {
                 "make": selectedMake.value,
@@ -230,9 +234,9 @@ export default defineComponent({
             }
             console.log(data)
             try {
-                const result = await API.post('demo', '/evalia', {
+                const result = await API.post('eval-lambda', import.meta.env.VITE_EVAL_RESOURCE, {
                     headers: {
-                        "x-api-key": "nzrUMQjcLua1JP6upoFRB3N4RhehR0J23eN1RL3O",
+                        "x-api-key": import.meta.env.VITE_EVAL_KEY,
                     },
                     body: data,
                 })

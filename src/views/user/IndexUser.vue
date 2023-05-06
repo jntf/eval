@@ -13,8 +13,6 @@ const router = useRouter();
 onMounted(() => {
   userStore.fetchUserData(router);
 });
-
-console.log(userStore)
 </script>
 
 <template>

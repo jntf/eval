@@ -10,9 +10,8 @@ Amplify.configure({
     API: {
         endpoints: [
             {
-              name: "demo",
-              endpoint:
-                "https://a97s6j7cue.execute-api.us-east-1.amazonaws.com/default",
+              name: "eval-lambda",
+              endpoint: import.meta.env.VITE_EVAL_ENDPOINT,
             },
         ],
     },
