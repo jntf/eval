@@ -2,23 +2,12 @@
     <header class="bg-red-900 shadow-xl rounded-b-lg fixed top-0 left-0 w-full z-50">
         <div class="container mx-auto px-6 py-3">
             <nav class="flex items-center justify-between flex-wrap">
-                <div class="flex items-center flex-shrink-0 text-gray-800">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" class="h-16">
-                        <circle cx="60" cy="60" r="28" stroke="url(#grad)" stroke-width="8" fill="none" />
-                        <path d="M70 44L47 60l23 17" stroke="url(#grad)" stroke-width="12" stroke-linecap="round"
-                            stroke-linejoin="round" />
-                        <path d="M50 76l23-16-23-16" stroke="url(#grad)" stroke-width="12" stroke-linecap="round"
-                            stroke-linejoin="round" />
-                        <defs>
-                            <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" style="stop-color:#222;stop-opacity:1" />
-                                <stop offset="50%" style="stop-color:#444;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#666;stop-opacity:1" />
-                            </linearGradient>
-                        </defs>
-                    </svg>
-                    <span class="font-semibold text-xl text-white tracking-tight ml-2">Evalia</span>
-                </div>
+                <a href="/">
+                    <div class="flex items-center flex-shrink-0 text-gray-800">
+                        <img class="h-16 w-16" src="../../assets/logo.svg" alt="evalia" />
+                        <span class="font-semibold text-xl text-white tracking-tight ml-2">Evaluia</span>
+                    </div>
+                </a>
                 <div class="block lg:hidden">
                     <button @click="isActive = !isActive"
                         class="navbar-burger flex items-center py-2 px-3 text-gray-500 rounded border border-gray-500">
@@ -29,11 +18,11 @@
                     </button>
                 </div>
                 <div :class="{
-                        'navbar-menu': true,
-                        'block': isActive,
-                        'hidden': !isActive,
-                        'lg:flex': true
-                    }" class="w-full lg:flex lg:items-center lg:w-auto">
+                    'navbar-menu': true,
+                    'block': isActive,
+                    'hidden': !isActive,
+                    'lg:flex': true
+                }" class="w-full lg:flex lg:items-center lg:w-auto">
                     <div class="text-md lg:flex-grow">
                         <a href="#accueil" class="text-white block mt-4 lg:inline-block lg:mt-0 hover:text-red-500 mr-4">
                             Accueil
