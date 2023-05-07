@@ -5,8 +5,8 @@ import User from "../views/user/IndexUser.vue";
 import Analyse from "../views/user/Analyse.vue";
 import Eval from "../views/user/EvalView.vue";
 import Settings from "../views/user/Settings.vue";
-import { Auth } from 'aws-amplify';
-import { useUserStore } from '../stores/userStore';
+import { Auth } from "aws-amplify";
+import { useUserStore } from "../stores/userStore";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -46,8 +46,8 @@ const router = createRouter({
           props: true,
         },
         {
-          path: 'settings',
-          name: 'settings',
+          path: "settings",
+          name: "settings",
           component: Settings,
           props: true,
         },
@@ -62,20 +62,19 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-
-  const pinia = router.pinia; // Récupérez l'instance Pinia à partir de l'instance du routeur
-  const userStore = useUserStore(pinia); // Utilisez le store avec l'instance Pinia
+  const pinia = router.pinia;
+  const userStore = useUserStore(pinia);
 
   try {
     await Auth.currentAuthenticatedUser();
     if (to.matched.some((record) => record.meta.guestOnly)) {
-      next({ name: 'analyse' });
+      next({ name: "analyse" });
     } else {
       next();
     }
   } catch (error) {
     if (to.matched.some((record) => record.meta.requiresAuth)) {
-      next({ name: 'home' });
+      next({ name: "login" }); // Redirection vers la page de connexion
     } else {
       next();
     }
