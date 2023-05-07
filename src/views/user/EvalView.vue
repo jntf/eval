@@ -151,10 +151,20 @@ export default {
       Math.round(price.value - marginValue.value - frevoValue.value - fixedFeesValue.value)
     );
 
-    watch(() => price.value, () => {
-      const chart = echarts.init(document.getElementById("chart"));
-      renderChart(chart);
-    });
+    watch(
+      [route, price],
+      () => {
+        updateData();
+      }
+    );
+
+    watch(
+      price,
+      () => {
+        const chart = echarts.init(document.getElementById("chart"));
+        renderChart(chart);
+      }
+    );
 
     function updateData() {
       make.value = route.query.make;
