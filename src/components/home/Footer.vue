@@ -44,7 +44,7 @@
         </div>
         <hr class="my-8 border-gray-600" />
         <div class="text-center">
-          <p>&copy; {{ year }} Evalia . Tous droits réservés.</p>
+          <p>&copy; {{ year }} EvaluIA . Tous droits réservés.</p>
         </div>
       </div>
     </footer>
