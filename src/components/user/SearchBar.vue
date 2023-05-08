@@ -53,6 +53,7 @@ import { useRouter } from 'vue-router';
 import SelectComponent from './SelectComponent.vue';
 import KeywordToggle from './KeywordToggle.vue';
 import { fetchMakes, fetchModels, fetchDetails } from '../../stores/vehicles.js';
+import { createSearchHistory as createSearchHistoryMutation } from '../../graphql/mutations.js';
 import { submitEvalForm } from '../../stores/evalForm.js';
 import Slider from '@vueform/slider';
 
@@ -83,6 +84,13 @@ export default defineComponent({
         const sortedKeywords = computed(() =>
             keywords.value.sort((a, b) => a.label.localeCompare(b.label))
         );
+
+        const generateRef = () => {
+            const prefix = 'REF-';
+            const dateTime = new Date().toISOString().replace(/[-:.]/g, '');
+            const uniqueId = Math.random().toString(36).substr(2, 6).toUpperCase();
+            return `${prefix}${dateTime}-${uniqueId}`;
+        };
 
         const toggleTag = (tag) => {
             tag.selected = !tag.selected;
@@ -134,6 +142,19 @@ export default defineComponent({
 
             try {
                 const result = await submitEvalForm(data);
+
+                const searchHistoryData = {
+                    isMultipleImport: 0,
+                    dataSearch: JSON.stringify([result]),
+                    ref: generateRef(),
+                };
+                await API.graphql({
+                    query: createSearchHistoryMutation,
+                    variables: { input: searchHistoryData },
+                    authMode: 'AMAZON_COGNITO_USER_POOLS',
+                });
+
+
                 emit('close-modal');
                 router.push({
                     path: '/user/eval',

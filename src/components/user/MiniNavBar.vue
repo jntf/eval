@@ -23,6 +23,16 @@
                         </span>
                     </a>
                 </div>
+                <div class="flex-auto hover:w-full group" v-if="isModalVisible == false">
+                    <router-link to="history"
+                        class="flex items-center justify-center text-center mx-auto px-4 py-2 group-hover:w-full text-red-50">
+                        <span
+                            class="block px-1 py-1 border border-transparent group-hover:border-red-50 rounded-full group-hover:flex-grow">
+                            <i class="far fa-history text-2xl pt-1"></i><span
+                                class="hidden group-hover:inline-block ml-3 align-bottom pb-1">History</span>
+                        </span>
+                    </router-link>
+                </div>
                 <div class="flex-auto hover:w-full group" v-if="isModalVisible == false && roles.includes('Admin')">
                     <router-link to="settings"
                         class="flex items-center justify-center text-center mx-auto px-4 py-2 group-hover:w-full text-red-50">
@@ -46,7 +56,8 @@
             </div>
         </div>
     </div>
-    <CustomModal :roles="roles" :is-modal-visible="isModalVisible" :modal-content="customModal" @toggle-modal="isModalVisible = !isModalVisible" />
+    <CustomModal :roles="roles" :is-modal-visible="isModalVisible" :modal-content="customModal"
+        @toggle-modal="isModalVisible = !isModalVisible" />
 </template>
 
 <script>
@@ -56,9 +67,9 @@ import CustomModal from '../reuse/CustomModal.vue';
 
 export default {
     components: {
-    SearchBar,
-    CustomModal
-},
+        SearchBar,
+        CustomModal
+    },
     props: {
         roles: Array
     },
