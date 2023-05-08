@@ -13,10 +13,6 @@ const router = createRouter({
   routes: [
     {
       path: "/",
-      redirect: { name: "home" },
-    },
-    {
-      path: "/home",
       name: "home",
       component: Home,
       meta: { guestOnly: true },
@@ -61,6 +57,25 @@ const router = createRouter({
   ],
 });
 
+router.beforeEach(async (to, from, next) => {
+  const pinia = router.pinia; // Récupérez l'instance Pinia à partir de l'instance du routeur
+  const userStore = useUserStore(pinia); // Utilisez le store avec l'instance Pinia
+
+  try {
+    await Auth.currentAuthenticatedUser();
+    if (to.matched.some((record) => record.meta.guestOnly)) {
+      next({ name: "analyse" });
+    } else {
+      next();
+    }
+  } catch (error) {
+    if (to.matched.some((record) => record.meta.requiresAuth)) {
+      next({ name: "login" });
+    } else {
+      next();
+    }
+  }
+});
 router.beforeEach(async (to, from, next) => {
   const pinia = router.pinia;
   const userStore = useUserStore(pinia);

@@ -60,7 +60,8 @@
           <div class="bg-white rounded-lg shadow-red-900 shadow-lg p-8 h-full border-2 border-gray-100">
             <div class="text-center">
               <div class="text-xl font-semibold text-gray-800 ">Valeur Marché</div>
-              <div class="text-3xl font-bold text-red-800 ">{{ price }} €</div>
+              <div class="font-bold text-red-800 ">{{ price - Math.round(mae) }} € - <span class="text-3xl">{{ price }} €</span> - {{ Math.round(price) +
+                  Math.round(mae) }} € </div>
             </div>
           </div>
         </div>

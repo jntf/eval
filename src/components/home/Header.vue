@@ -1,11 +1,11 @@
 <template>
-    <header class="bg-red-900 shadow-xl rounded-b-lg fixed top-0 left-0 w-full z-50">
+    <header class="bg-gray-800 shadow-xl rounded-b-lg fixed top-0 left-0 w-full z-50">
         <div class="container mx-auto px-6 py-3">
             <nav class="flex items-center justify-between flex-wrap">
                 <a href="/">
                     <div class="flex items-center flex-shrink-0 text-gray-800">
                         <img class="h-16 w-16" src="../../assets/logo.svg" alt="evalia" />
-                        <span class="font-semibold text-xl text-white tracking-tight ml-2">Evaluia</span>
+                        <span class="font-semibold text-xl text-white tracking-tight ml-2">EvaluIA</span>
                     </div>
                 </a>
                 <div class="block lg:hidden">
