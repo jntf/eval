@@ -70,3 +70,36 @@ export const vehiclesByMakeAndModel = /* GraphQL */ `
     }
   }
 `;
+export const getSearchHistory = /* GraphQL */ `
+  query GetSearchHistory($id: ID!) {
+    getSearchHistory(id: $id) {
+      id
+      isMultipleImport
+      dataSearch
+      ref
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
+export const listSearchHistories = /* GraphQL */ `
+  query ListSearchHistories(
+    $filter: ModelSearchHistoryFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listSearchHistories(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        isMultipleImport
+        dataSearch
+        ref
+        createdAt
+        updatedAt
+        owner
+      }
+      nextToken
+    }
+  }
+`;

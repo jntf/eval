@@ -46,3 +46,51 @@ export const onDeleteVehicle = /* GraphQL */ `
     }
   }
 `;
+export const onCreateSearchHistory = /* GraphQL */ `
+  subscription OnCreateSearchHistory(
+    $filter: ModelSubscriptionSearchHistoryFilterInput
+    $owner: String
+  ) {
+    onCreateSearchHistory(filter: $filter, owner: $owner) {
+      id
+      isMultipleImport
+      dataSearch
+      ref
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
+export const onUpdateSearchHistory = /* GraphQL */ `
+  subscription OnUpdateSearchHistory(
+    $filter: ModelSubscriptionSearchHistoryFilterInput
+    $owner: String
+  ) {
+    onUpdateSearchHistory(filter: $filter, owner: $owner) {
+      id
+      isMultipleImport
+      dataSearch
+      ref
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
+export const onDeleteSearchHistory = /* GraphQL */ `
+  subscription OnDeleteSearchHistory(
+    $filter: ModelSubscriptionSearchHistoryFilterInput
+    $owner: String
+  ) {
+    onDeleteSearchHistory(filter: $filter, owner: $owner) {
+      id
+      isMultipleImport
+      dataSearch
+      ref
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
