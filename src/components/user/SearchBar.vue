@@ -2,35 +2,14 @@
     <div class="p-3 relative mx-auto my-auto rounded-xl shadow-lg border-gray-100 z-100">
         <form id="form" class="mx-auto pt-5" @submit.prevent="submitForm">
             <div class="grid lg:grid-cols-2 sm:grid-cols-1 gap-8">
-                <div>
-                    <select v-model="selectedMake" @change="fetchModels"
-                        class="w-full bg-gray-700 text-white hover:bg-gray-600 hover:text-red-50 shadow-lg rounded-lg py-2 px-1 text-sm sm:text-base">
-                        <option disabled value="" class="text-white">Sélectionnez une marque</option>
-                        <option v-for="make in makes" :key="make" :value="make">{{ make.toUpperCase() }}</option>
-                    </select>
-                </div>
-                <div>
-                    <select v-model="selectedModel" :disabled="!selectedMake" @change="fetchDetails"
-                        class="w-full bg-gray-700 text-white hover:bg-gray-500 hover:text-red-50 shadow-lg rounded-lg py-2 px-1 text-sm sm:text-base">
-                        <option disabled value="">Sélectionnez un modèle</option>
-                        <option v-for="model in models" :key="model" :value="model">{{ model.toUpperCase() }}</option>
-                    </select>
-                </div>
-                <div>
-                    <select v-model="selectedEnergies" :disabled="!selectedModel"
-                        class="w-full bg-gray-700 text-white hover:bg-gray-500 hover:text-red-50 shadow-lg rounded-lg py-2 px-1 text-sm sm:text-base">
-                        <option disabled value="">Sélectionnez des énergies</option>
-                        <option v-for="energy in energies" :key="energy" :value="energy">{{ energy.toUpperCase() }}</option>
-                    </select>
-                </div>
-                <div>
-                    <select v-model="selectedTransmissions" :disabled="!selectedModel"
-                        class="w-full bg-gray-700 text-white hover:bg-gray-500 hover:text-red-50 shadow-lg rounded-lg py-2 px-1 text-sm sm:text-base">
-                        <option disabled value="">Sélectionnez des énergies</option>
-                        <option v-for="transmission in transmissions" :key="transmission" :value="transmission">{{
-                            transmission.toUpperCase() }}</option>
-                    </select>
-                </div>
+                <SelectComponent v-model="selectedMake" :options="makes" placeholder="Sélectionnez une marque"
+                    @change="onMakeChange" />
+                <SelectComponent v-model="selectedModel" :options="models" :disabled="!selectedMake"
+                    placeholder="Sélectionnez un modèle" @change="onModelChange" />
+                <SelectComponent v-model="selectedEnergies" :options="energies" :disabled="!selectedModel"
+                    placeholder="Sélectionnez des énergies" />
+                <SelectComponent v-model="selectedTransmissions" :options="transmissions" :disabled="!selectedModel"
+                    placeholder="Sélectionnez des énergies" />
                 <div>
                     <label for="year" class="text-gray-800 ml-5 mb-2 text-sm sm:text-base">Année</label>
                     <Slider v-model="year" :min="1990" :max="2030" class="" />
@@ -38,7 +17,7 @@
                 <div>
                     <label for="kms" class="text-gray-800 ml-5 mb-2 text-sm sm:text-base">Kilométrage</label>
                     <input type="text" v-model="kms"
-                        class="w-full bg-gray-700 text-white hover:bg-gray-500 hover:text-red-50 shadow-lg rounded -lg py-2 px-1 text-sm sm:text-base" />
+                        class="w-full bg-gray-700 text-white hover:bg-gray-500 hover:text-red-50 shadow-lg rounded-lg py-2 px-1 text-sm sm:text-base" />
                 </div>
             </div>
             <div class="pt-5">
@@ -49,10 +28,8 @@
                 <div class="w-full">
                     <label class="text-gray-800 mb-2 text-sm sm:text-base">Sélectionnez les mots clés:</label>
                     <div class="all-tags">
-                        <span v-for="option in sortedKeywords" :key="option.label" @click="toggleTag(option)"
-                            class="text-sm sm:text-base">
-                            {{ option.label.toUpperCase() }} <span v-if="option.selected" class="text-green-500">✓ </span>
-                        </span>
+                        <KeywordToggle v-for="option in sortedKeywords" :key="option.label" :option="option"
+                            @toggle="toggleTag(option)" />
                     </div>
                 </div>
             </div>
@@ -64,7 +41,6 @@
     </div>
 </template>
 
-
 <style src="@vueform/slider/themes/default.css">
 @import '@vueform/multiselect/themes/tailwind.css';
 </style>
@@ -72,16 +48,22 @@
 <script>
 import { defineComponent, ref, computed, onMounted } from 'vue';
 import { API } from 'aws-amplify';
-import { listVehicles } from '../../graphql/queries';
-import Slider from '@vueform/slider';
 import { useRouter } from 'vue-router';
+
+import SelectComponent from './SelectComponent.vue';
+import KeywordToggle from './KeywordToggle.vue';
+import { fetchMakes, fetchModels, fetchDetails } from '../../stores/vehicles.js';
+import { submitEvalForm } from '../../stores/evalForm.js';
+import Slider from '@vueform/slider';
 
 export default defineComponent({
     components: {
         Slider,
+        SelectComponent,
+        KeywordToggle
     },
-    emits: ['close-modal'], // declaration of events emitted by the component
-    setup(_, { emit }) { // declaration of setup methods with the { emit } object
+    emits: ['close-modal'],
+    setup(_, { emit }) {
         const router = useRouter();
 
         const makes = ref([]);
@@ -114,114 +96,31 @@ export default defineComponent({
             }
         };
 
-        const fetchMakes = async () => {
-            try {
-                const response = await API.graphql({
-                    query: listVehicles,
-                    variables: {
-                        limit: 10000,
-                        nextToken: null,
-                        sortDirection: "ASC",
-                        filter: {
-                            make: {
-                                ne: null
-                            },
-                            isActive: {
-                                eq: 1
-                            }
-                        }
-                    }
-                });
-                makes.value = response.data.listVehicles.items.map(item => item.make);
-                makes.value = [...new Set(makes.value)];
-                makes.value = makes.value.sort();
-                console.log(makes.value.length)
-                selectedMake.value = null;
-            } catch (error) {
-                console.log(error);
-            }
-        };
-        const fetchModels = async () => {
-            try {
-                const response = await API.graphql({
-                    query: listVehicles,
-                    variables: {
-                        limit: 10000,
-                        nextToken: null,
-                        sortDirection: "ASC",
-                        filter: {
-                            make: {
-                                eq: selectedMake.value
-                            },
-                            model: {
-                                ne: null
-                            }, 
-                            isActive: {
-                                eq: 1
-                            }
-                        }
-                    }
-                });
-                models.value = response.data.listVehicles.items.map(item => item.model);
-                models.value = [...new Set(models.value)];
-                models.value = models.value.sort();
-                console.log(models.value.length)
-                selectedModel.value = null;
-                keywords.value = [];
-                energies.value = [];
-                transmissions.value = [];
-                selectedKeywords.value = [];
-                selectedEnergies.value = [];
-                selectedTransmissions.value = [];
-            } catch (error) {
-                console.log(error);
-            }
+        const onMakeChange = async () => {
+            models.value = await fetchModels(selectedMake.value);
+            selectedModel.value = null;
+            keywords.value = [];
+            energies.value = [];
+            transmissions.value = [];
+            selectedKeywords.value = [];
+            selectedEnergies.value = [];
+            selectedTransmissions.value = [];
         };
 
-        const fetchDetails = async () => {
-            try {
-                const response = await API.graphql({
-                    query: listVehicles,
-                    variables: {
-                        limit: 10000,
-                        nextToken: null,
-                        sortDirection: "ASC",
-                        filter: {
-                            make: {
-                                eq: selectedMake.value,
-                            },
-                            model: {
-                                eq: selectedModel.value,
-                            },
-                            isActive: {
-                                eq: 1
-                            }
-                        }
-                    }
-                });
-                keywords.value = response.data.listVehicles.items.map(item => item.keywords)[0];
-                keywords.value = [...new Set(keywords.value)];
-                keywords.value = keywords.value.map(keyword => {
-                    return {
-                        label: keyword,
-                        selected: false
-                    };
-                });
-                energies.value = response.data.listVehicles.items.map(item => item.energies)[0];
-                energies.value = [...new Set(energies.value)];
-                energies.value = energies.value.sort();
-                transmissions.value = response.data.listVehicles.items.map(item => item.transmissions)[0];
-                transmissions.value = [...new Set(transmissions.value)];
-                transmissions.value = transmissions.value.sort();
-                selectedKeywords.value = [];
-                selectedEnergies.value = [];
-                selectedTransmissions.value = [];
-            } catch (error) {
-                console.log(error);
-            }
+        const onModelChange = async () => {
+            const details = await fetchDetails(selectedMake.value, selectedModel.value);
+            keywords.value = details.keywords;
+            energies.value = details.energies;
+            transmissions.value = details.transmissions;
+            selectedKeywords.value = [];
+            selectedEnergies.value = [];
+            selectedTransmissions.value = [];
         };
 
-        console.log()
+        onMounted(async () => {
+            makes.value = await fetchMakes();
+        });
+
         const submitForm = async () => {
             const data = {
                 "make": selectedMake.value,
@@ -232,14 +131,9 @@ export default defineComponent({
                 "energies": selectedEnergies.value,
                 "transmissions": selectedTransmissions.value
             }
-            console.log(data)
+
             try {
-                const result = await API.post('eval-lambda', import.meta.env.VITE_EVAL_RESOURCE, {
-                    headers: {
-                        "x-api-key": import.meta.env.VITE_EVAL_KEY,
-                    },
-                    body: data,
-                })
+                const result = await submitEvalForm(data);
                 emit('close-modal');
                 router.push({
                     path: '/user/eval',
@@ -256,15 +150,11 @@ export default defineComponent({
                         mae: result.metrics.mae,
                         rmse: result.metrics.rmse
                     }
-                })
+                });
             } catch (error) {
                 console.log(error);
             }
         };
-
-        onMounted(async () => {
-            await fetchMakes();
-        });
 
         return {
             year,
@@ -281,10 +171,9 @@ export default defineComponent({
             selectedTransmissions,
             sortedKeywords,
             toggleTag,
-            fetchMakes,
-            fetchModels,
-            fetchDetails,
-            submitForm,
+            onMakeChange,
+            onModelChange,
+            submitForm
         };
     },
 });
