@@ -23,7 +23,7 @@
             <div class="pt-5">
                 <div class="selected-tags">
                     <span v-for="tag in selectedKeywords" :key="tag" class="p-1 mx-3 bg-green-400 rounded-lg shadow-lg">{{
-                        tag }}</span>
+                        tag.toUpperCase() }}</span>
                 </div>
                 <div class="w-full">
                     <label class="text-gray-800 mb-2 text-sm sm:text-base">Sélectionnez les mots clés:</label>
@@ -35,7 +35,7 @@
             </div>
             <div class="flex justify-center mt-4">
                 <button type="submit"
-                    class="w-full px-4 py-2 text-white bg-blue-500 rounded-md focus:bg-blue-600 focus:outline-none text-sm sm:text-base">Rechercher</button>
+                    class="w-2/3 px-4 py-2 text-indigo-500 hover:text-white bg-indigo-200 hover:bg-indigo-500 rounded-md focus:bg-indigo-600 focus:outline-none text-sm sm:text-base">Rechercher</button>
             </div>
         </form>
     </div>
