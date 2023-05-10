@@ -9,44 +9,69 @@
                 @input="filterResults" />
         </div>
 
-        <table class="table-auto w-full mb-6">
-            <thead>
-                <tr class="bg-gray-800">
-                    <th class="text-white px-4 py-2">Date</th>
-                    <th class="text-white px-4 py-2">Référence</th>
-                    <th class="text-white px-4 py-2">Marques</th>
-                    <th class="text-white px-4 py-2">Modèles</th>
-                    <th class="text-white px-4 py-2">Années</th>
-                    <th class="text-white px-4 py-2">Prix</th>
-                    <th class="text-white px-4 py-2">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(search, index) in filteredSearchHistory" :key="index">
-                    <td class="border px-4 py-2 text-sm">{{ formatDate(search.createdAt) }}</td>
-                    <td class="border px-4 py-2 text-sm">{{ search.ref }}</td>
-                    <td class="border px-4 py-2 text-sm">
-                        {{ formatArray(search.dataSearch.map((item) => item.make.toUpperCase())) }}
-                    </td>
-                    <td class="border px-4 py-2 text-sm">
-                        {{ formatArray(search.dataSearch.map((item) => item.model.toUpperCase())) }}
-                    </td>
-                    <td class="border px-4 py-2 text-sm">
-                        {{ formatArray(search.dataSearch.map((item) => item.year)) }}
-                    </td>
-                    <td class="border px-4 py-2 text-sm">{{ formatPrice(search.dataSearch) }}</td>
-                    <td class="border px-4 py-2 text-sm">
-                        <button @click="deleteSearchHistory(search.id)">Supprimer</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table-auto w-full mb-6">
+                <thead class="rounded-t-xl">
+                    <tr class="bg-gray-800">
+                        <th class="text-white px-4 py-2">Date</th>
+                        <th class="text-white px-4 py-2">Référence</th>
+                        <th class="text-white px-4 py-2">Marque</th>
+                        <th class="text-white px-4 py-2">Modèle</th>
+                        <th class="text-white px-4 py-2">Version</th>
+                        <th class="text-white px-4 py-2">Années</th>
+                        <th class="text-white px-4 py-2">Kilomètres</th>
+                        <th class="text-white px-4 py-2">Prix</th>
+                        <th class="text-white px-4 py-2">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="shadow-xl">
+                    <tr v-for="(search, index) in filteredSearchHistory" :key="index">
+                        <td class="border px-4 py-2 text-sm">{{ formatDate(search.createdAt) }}</td>
+                        <td class="border px-4 py-2 text-sm">{{ search.ref }}</td>
+                        <td class="border px-4 py-2 text-sm">
+                            {{ formatArray(search.dataSearch.map((item) => item.make.toUpperCase())) }}
+                        </td>
+                        <td class="border px-4 py-2 text-sm">
+                            {{ formatArray(search.dataSearch.map((item) => item.model.toUpperCase())) }}
+                        </td>
+                        <td class="border px-4 py-2 text-sm">
+                            {{ formatArray(search.dataSearch.map((item) => item.keywords)) }}
+                        </td>
+                        <td class="border px-4 py-2 text-sm">
+                            {{ formatArray(search.dataSearch.map((item) => item.year)) }}
+                        </td>
+                        <td class="border px-4 py-2 text-sm">
+                            {{ formatArray(search.dataSearch.map((item) => item.mileage)) }} km
+                        </td>
+                        <td class="border px-4 py-2 text-sm">{{ formatPrice(search.dataSearch) }}</td>
+                        <td class="border px-4 py-2 text-sm">
+                            <button @click="deleteSearchHistory(search.id)"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
         <div>
             <!-- Ajoutez ici la pagination en utilisant une bibliothèque de votre choix ou en créant votre propre solution. -->
         </div>
     </div>
 </template>
+
+<style scoped>
+.table-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+@media screen and (min-width: 640px) {
+    .table-responsive {
+        display: table;
+    }
+}
+</style>
   
 <script>
 import { ref, computed } from 'vue';
@@ -56,6 +81,7 @@ import { deleteSearchHistory as deleteSearchHistoryMutation } from '../../graphq
 
 export default {
     setup() {
+
         const searchHistory = ref([]);
         const searchQuery = ref('');
 
@@ -121,14 +147,15 @@ export default {
 
         const deleteSearchHistory = async (searchId) => {
             try {
-                await API.graphql(
-                    graphqlOperation(deleteSearchHistoryMutation, {
-                        input: { id: searchId },
-                    })
-                );
+                await API.graphql({
+                    query: deleteSearchHistoryMutation,
+                    variables: { input: { id: searchId } },
+                    authMode: 'AMAZON_COGNITO_USER_POOLS',
+                });
                 fetchSearchHistory();
+                alert('Suppression réussie!');
             } catch (error) {
-                console.error('Error deleting search history:', error);
+                alert('Erreur lors de la suppression!');
             }
         };
 
@@ -151,8 +178,5 @@ export default {
     },
 };
 </script>
-  
-<style scoped>
-/* Ajoutez ici vos styles personnalisés pour la page d'historique */
-</style>
+
   
