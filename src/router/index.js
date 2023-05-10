@@ -5,6 +5,7 @@ import User from "../views/user/IndexUser.vue";
 import Analyse from "../views/user/Analyse.vue";
 import Eval from "../views/user/EvalView.vue";
 import History from "../views/user/History.vue";
+import Rafale from "../views/user/Rafale.vue";
 import Settings from "../views/user/Settings.vue";
 import { Auth } from "aws-amplify";
 import { useUserStore } from "../stores/userStore";
@@ -52,6 +53,12 @@ const router = createRouter({
           path: "history",
           name: "history",
           component: History,
+          props: true,
+        },
+        {
+          path: "rafale",
+          name: "rafale",
+          component: Rafale,
           props: true,
         }
       ],
