@@ -82,10 +82,10 @@ export default {
             } else if (file.name.endsWith('.xlsx')) {
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    const bufferData = new Uint8Array(e.target.result); // renommer ici
-                    const workbook = XLSX.read(bufferData, { type: 'array' }); // et ici
+                    const bufferData = new Uint8Array(e.target.result); 
+                    const workbook = XLSX.read(bufferData, { type: 'array' }); 
                     const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-                    data.value = XLSX.utils.sheet_to_json(worksheet); // maintenant cela devrait fonctionner correctement
+                    data.value = XLSX.utils.sheet_to_json(worksheet); 
 
                     columns.value = Object.keys(data.value[0]);
                     sampleValues.value = data.value.reduce((acc, row) => {
@@ -106,14 +106,17 @@ export default {
 
         const invokeLambda = async () => {
             console.log({ data: data.value, columns: selectedColumns.value });
-            const response = await API.post('myApiName', '/myPath', {
+            const response = await API.post('eval-lambda', '/eval-rafale', {
+                headers: {
+                    "x-api-key": import.meta.env.VITE_EVAL_KEY,
+                },
                 body: { data: data.value, columns: selectedColumns.value }
-            });
-            // Handle response
+            })
+            console.log(response);
         };
 
-        return { data, columns, selectedColumns, options, sampleValues, onFileChange, invokeLambda };
-    },
+    return { data, columns, selectedColumns, options, sampleValues, onFileChange, invokeLambda };
+},
 };
 </script>
   
