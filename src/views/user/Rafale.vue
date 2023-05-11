@@ -51,7 +51,7 @@ export default {
             make_model_version: 'Marque Modèle Version',
             model: 'Modèle',
             model_version: 'Modèle Version',
-            version: 'Version',
+            keywords: 'Version',
             energy: 'Énergie',
             transmission: 'Transmission',
             year: 'Année',
@@ -82,10 +82,10 @@ export default {
             } else if (file.name.endsWith('.xlsx')) {
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    const bufferData = new Uint8Array(e.target.result); 
-                    const workbook = XLSX.read(bufferData, { type: 'array' }); 
+                    const bufferData = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(bufferData, { type: 'array' });
                     const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-                    data.value = XLSX.utils.sheet_to_json(worksheet); 
+                    data.value = XLSX.utils.sheet_to_json(worksheet);
 
                     columns.value = Object.keys(data.value[0]);
                     sampleValues.value = data.value.reduce((acc, row) => {
@@ -106,17 +106,21 @@ export default {
 
         const invokeLambda = async () => {
             console.log({ data: data.value, columns: selectedColumns.value });
-            const response = await API.post('eval-lambda', '/eval-rafale', {
+            const response = await API.post('eval-lambda', import.meta.env.VITE_RAFALE_RESOURCE, {
                 headers: {
-                    "x-api-key": import.meta.env.VITE_EVAL_KEY,
+                    "x-api-key": import.meta.env.VITE_RAFALE_KEY,
                 },
-                body: { data: data.value, columns: selectedColumns.value }
-            })
-            console.log(response);
+                body: {
+                    data: data.value,
+                    columns: selectedColumns.value
+                }
+            });
+            const parsedBody = JSON.parse(response.body);
+            console.log(parsedBody.data);
         };
 
-    return { data, columns, selectedColumns, options, sampleValues, onFileChange, invokeLambda };
-},
+        return { data, columns, selectedColumns, options, sampleValues, onFileChange, invokeLambda };
+    },
 };
 </script>
   
