@@ -142,6 +142,7 @@ export default defineComponent({
 
             try {
                 const result = await submitEvalForm(data);
+                console.log(result);
 
                 const searchHistoryData = {
                     isMultipleImport: 0,
@@ -153,6 +154,7 @@ export default defineComponent({
                     variables: { input: searchHistoryData },
                     authMode: 'AMAZON_COGNITO_USER_POOLS',
                 });
+
 
 
                 emit('close-modal');
