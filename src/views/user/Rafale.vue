@@ -1,8 +1,8 @@
 <template>
     <div class="flex flex-col items-center justify-center min-h-screen">
-        <input type="file" @change="onFileChange" class="mb-6 p-2 border border-gray-300 rounded-md" />
+        <input type="file" @change="onFileChange" class="p-2 border border-gray-300 rounded-md" @click="responseData === 0"/>
 
-        <div v-if="columns.length > 0">
+        <div v-if="columns.length > 0 && responseData.length < 1">
             <table class="table-auto border-collapse">
                 <thead class="">
                     <tr>
@@ -28,6 +28,34 @@
             </table>
             <button @click="invokeLambda" class="px-4 py-2 bg-blue-500 text-white rounded-md">Calculer les prix</button>
         </div>
+        <div v-if="responseData.length > 0">
+            <table class="table-auto border-collapse">
+                <thead class="">
+                    <tr>
+                        <th class="px-4 py-2 text-gray-800">Marque</th>
+                        <th class="px-4 py-2 text-gray-800">Modèle</th>
+                        <th class="px-4 py-2 text-gray-800">Version</th>
+                        <th class="px-4 py-2 text-gray-800">Kilomètres</th>
+                        <th class="px-4 py-2 text-gray-800">Année</th>
+                        <th class="px-4 py-2 text-gray-800">Couleur</th>
+                        <th class="px-4 py-2 text-gray-800">Prix</th>
+                        <th class="px-4 py-2 text-gray-800">Evaluation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(row, index) in responseData" :key="index" class="bg-white">
+                        <td class="px-4 py-2">{{ row.make }}</td>
+                        <td class="px-4 py-2">{{ row.model }}</td>
+                        <td class="px-4 py-2">{{ row.keywords }}</td>
+                        <td class="px-4 py-2">{{ row.kms }}</td>
+                        <td class="px-4 py-2">{{ row.year }}</td>
+                        <td class="px-4 py-2">{{ row.color }}</td>
+                        <td class="px-4 py-2">{{ row.price }}</td>
+                        <td class="px-4 py-2">{{ row.evaluation }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </template>
   
@@ -51,7 +79,7 @@ export default {
             make_model_version: 'Marque Modèle Version',
             model: 'Modèle',
             model_version: 'Modèle Version',
-            version: 'Version',
+            keywords: 'Version',
             energy: 'Énergie',
             transmission: 'Transmission',
             year: 'Année',
@@ -59,6 +87,7 @@ export default {
             equipment: 'Équipement',
             color: 'Couleur'
         };
+        const responseData = ref([]);
 
         const onFileChange = (e) => {
             const file = e.target.files[0];
@@ -82,10 +111,10 @@ export default {
             } else if (file.name.endsWith('.xlsx')) {
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    const bufferData = new Uint8Array(e.target.result); 
-                    const workbook = XLSX.read(bufferData, { type: 'array' }); 
+                    const bufferData = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(bufferData, { type: 'array' });
                     const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-                    data.value = XLSX.utils.sheet_to_json(worksheet); 
+                    data.value = XLSX.utils.sheet_to_json(worksheet);
 
                     columns.value = Object.keys(data.value[0]);
                     sampleValues.value = data.value.reduce((acc, row) => {
@@ -106,17 +135,23 @@ export default {
 
         const invokeLambda = async () => {
             console.log({ data: data.value, columns: selectedColumns.value });
-            const response = await API.post('eval-lambda', '/eval-rafale', {
+            const response = await API.post('eval-lambda', import.meta.env.VITE_RAFALE_RESOURCE, {
                 headers: {
-                    "x-api-key": import.meta.env.VITE_EVAL_KEY,
+                    "x-api-key": import.meta.env.VITE_RAFALE_KEY,
                 },
-                body: { data: data.value, columns: selectedColumns.value }
-            })
-            console.log(response);
+                body: {
+                    data: data.value,
+                    columns: selectedColumns.value
+                }
+            });
+            const parsedBody = JSON.parse(response.body);
+            responseData.value = parsedBody.data;
+            print(responseData);
+            console.log(parsedBody.data);
         };
 
-    return { data, columns, selectedColumns, options, sampleValues, onFileChange, invokeLambda };
-},
+        return { data, columns, selectedColumns, options, sampleValues, responseData, onFileChange, invokeLambda };
+    },
 };
 </script>
   
