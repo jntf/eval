@@ -1,8 +1,8 @@
 <template>
     <div class="flex flex-col items-center justify-center min-h-screen">
-        <input type="file" @change="onFileChange" class="mb-6 p-2 border border-gray-300 rounded-md" />
+        <input type="file" @change="onFileChange" class="p-2 border border-gray-300 rounded-md" @click="responseData === 0"/>
 
-        <div v-if="columns.length > 0">
+        <div v-if="columns.length > 0 && responseData.length < 1">
             <table class="table-auto border-collapse">
                 <thead class="">
                     <tr>
@@ -27,6 +27,34 @@
                 </tbody>
             </table>
             <button @click="invokeLambda" class="px-4 py-2 bg-blue-500 text-white rounded-md">Calculer les prix</button>
+        </div>
+        <div v-if="responseData.length > 0">
+            <table class="table-auto border-collapse">
+                <thead class="">
+                    <tr>
+                        <th class="px-4 py-2 text-gray-800">Marque</th>
+                        <th class="px-4 py-2 text-gray-800">Modèle</th>
+                        <th class="px-4 py-2 text-gray-800">Version</th>
+                        <th class="px-4 py-2 text-gray-800">Kilomètres</th>
+                        <th class="px-4 py-2 text-gray-800">Année</th>
+                        <th class="px-4 py-2 text-gray-800">Couleur</th>
+                        <th class="px-4 py-2 text-gray-800">Prix</th>
+                        <th class="px-4 py-2 text-gray-800">Evaluation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(row, index) in responseData" :key="index" class="bg-white">
+                        <td class="px-4 py-2">{{ row.make }}</td>
+                        <td class="px-4 py-2">{{ row.model }}</td>
+                        <td class="px-4 py-2">{{ row.keywords }}</td>
+                        <td class="px-4 py-2">{{ row.kms }}</td>
+                        <td class="px-4 py-2">{{ row.year }}</td>
+                        <td class="px-4 py-2">{{ row.color }}</td>
+                        <td class="px-4 py-2">{{ row.price }}</td>
+                        <td class="px-4 py-2">{{ row.evaluation }}</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </template>
@@ -59,6 +87,7 @@ export default {
             equipment: 'Équipement',
             color: 'Couleur'
         };
+        const responseData = ref([]);
 
         const onFileChange = (e) => {
             const file = e.target.files[0];
@@ -116,10 +145,12 @@ export default {
                 }
             });
             const parsedBody = JSON.parse(response.body);
+            responseData.value = parsedBody.data;
+            print(responseData);
             console.log(parsedBody.data);
         };
 
-        return { data, columns, selectedColumns, options, sampleValues, onFileChange, invokeLambda };
+        return { data, columns, selectedColumns, options, sampleValues, responseData, onFileChange, invokeLambda };
     },
 };
 </script>
