@@ -3,7 +3,7 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 
-import { Amplify } from 'aws-amplify';
+import { Amplify, Storage } from 'aws-amplify';
 import awsExports from './aws-exports';
 Amplify.configure(awsExports);
 Amplify.configure({
@@ -16,6 +16,7 @@ Amplify.configure({
         ],
     },
 });
+Storage.configure({level: "private"})
 
 import './assets/main.css'
 
