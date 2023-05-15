@@ -35,7 +35,7 @@
             </button>
             <a v-if="downloadLink" :href="downloadLink" target="_blank" rel="noopener noreferrer"
                 class="text-blue-500 underline">
-                Voir le fichier CSV {{ downloadLink }}
+                Voir le fichier CSV
             </a>
         </div>
     </div>
