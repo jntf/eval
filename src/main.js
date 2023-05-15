@@ -15,6 +15,12 @@ Amplify.configure({
             },
         ],
     },
+    Storage: {
+        AWSS3: {
+            bucket: 'eval-bulk-import81726-dev',
+            region: 'us-east-1',
+        }
+    }
 });
 Storage.configure({level: "private"})
 

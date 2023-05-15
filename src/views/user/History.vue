@@ -75,7 +75,7 @@
   
 <script>
 import { ref, computed } from 'vue';
-import { Auth, API, graphqlOperation } from 'aws-amplify';
+import { Auth, API, graphqlOperation, Storage } from 'aws-amplify';
 import { listSearchHistories } from '../../graphql/queries';
 import { deleteSearchHistory as deleteSearchHistoryMutation } from '../../graphql/mutations';
 
@@ -139,7 +139,9 @@ export default {
                         };
                     });
 
-                console.log(searchHistory.value);
+                // Fetch S3 files
+                const files = await Storage.list('');
+                console.log(files);
             } catch (error) {
                 console.error('Error fetching search history:', error);
             }
