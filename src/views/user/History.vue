@@ -9,6 +9,13 @@
                 @input="filterResults" />
         </div>
 
+        <h2>Liste des fichiers S3</h2>
+        <ul>
+            <li v-for="(file, index) in s3Files" :key="index">
+                <a :href="file.url" target="_blank">{{ file.datetime }}</a>
+            </li>
+        </ul>
+
         <div class="table-responsive">
             <table class="table-auto w-full mb-6">
                 <thead>
@@ -55,9 +62,9 @@
         <div>
             <!-- Ajoutez ici la pagination en utilisant une bibliothèque de votre choix ou en créant votre propre solution. -->
         </div>
+
     </div>
 </template>
-
 <style scoped>
 .table-responsive {
     display: block;
@@ -72,20 +79,18 @@
     }
 }
 </style>
-  
 <script>
 import { ref, computed } from 'vue';
-import { Auth, API, graphqlOperation } from 'aws-amplify';
+import { Auth, API, graphqlOperation, Storage } from 'aws-amplify';
 import { listSearchHistories } from '../../graphql/queries';
 import { deleteSearchHistory as deleteSearchHistoryMutation } from '../../graphql/mutations';
 
 export default {
     setup() {
-
         const searchHistory = ref([]);
         const searchQuery = ref('');
+        const s3Files = ref([]);
 
-        // Ajoutez cette méthode dans votre composant
         const formatDate = (dateString) => {
             const date = new Date(dateString);
             const day = String(date.getDate()).padStart(2, '0');
@@ -132,14 +137,15 @@ export default {
                 searchHistory.value = data.listSearchHistories.items
                     .filter((item) => item.owner === currentUser.username)
                     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-                    .map(search => {
+                    .map((search) => {
                         return {
                             ...search,
                             dataSearch: JSON.parse(search.dataSearch),
                         };
                     });
 
-                console.log(searchHistory.value);
+                // Fetch S3 files
+                fetchS3Files();
             } catch (error) {
                 console.error('Error fetching search history:', error);
             }
@@ -159,24 +165,62 @@ export default {
             }
         };
 
-        fetchSearchHistory();
+        const fetchS3Files = async () => {
+            try {
+                const response = await Storage.list('');
+                const files = response.results;
+                const filesFiltered = files.filter((file) => file.key.includes('result'))
 
-        const filterResults = () => {
-            // The search will be performed by the computed property filteredSearchHistory.
-        };
+                const filePromises = filesFiltered.map(async (file) => {
+                    const datetimeParts = file.key.split('/')[0].split('-');
+                    const year = datetimeParts[0];
+                    const month = datetimeParts[1];
+                    const day = datetimeParts[2];
+                    const hour = datetimeParts[3];
+                    const minute = datetimeParts[4];
+                    const formattedDatetime = `${day}/${month}/${year} à ${hour}h${minute}`;
 
-        return {
-            formatDate,
-            formatArray,
-            formatPrice,
-            searchHistory,
-            searchQuery,
-            filteredSearchHistory,
-            deleteSearchHistory,
-            filterResults,
-        };
-    },
-};
+                    return {
+                        datetime: formattedDatetime,
+                        url: await getFileUrl(file.key),
+                    };
+                });
+
+                s3Files.value = await Promise.all(filePromises);
+                } catch (error) {
+                    console.error('Error fetching S3 files:', error);
+                }
+            };
+
+            const getFileUrl = async (key) => {
+                try {
+                    const url = await Storage.get(key);
+                    return url;
+                } catch (error) {
+                    console.error(`Error getting file URL for key ${key}:`, error);
+                    return '';
+                }
+            };
+
+            const filterResults = () => {
+                // La recherche sera effectuée par la propriété calculée filteredSearchHistory.
+            };
+
+            fetchSearchHistory();
+
+            return {
+                formatDate,
+                formatArray,
+                formatPrice,
+                searchHistory,
+                searchQuery,
+                filteredSearchHistory,
+                deleteSearchHistory,
+                filterResults,
+                s3Files,
+            };
+        },
+    };
 </script>
 
   
