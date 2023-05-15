@@ -11,7 +11,7 @@
 
         <div class="table-responsive">
             <table class="table-auto w-full mb-6">
-                <thead class="rounded-t-xl">
+                <thead>
                     <tr class="bg-gray-800">
                         <th class="text-white px-4 py-2">Date</th>
                         <th class="text-white px-4 py-2">Référence</th>
@@ -35,7 +35,7 @@
                             {{ formatArray(search.dataSearch.map((item) => item.model.toUpperCase())) }}
                         </td>
                         <td class="border px-4 py-2 text-sm">
-                            {{ formatArray(search.dataSearch.map((item) => item.keywords)) }}
+                            {{ formatArray(search.dataSearch.map((item) => item.keywords.toUpperCase())) }}
                         </td>
                         <td class="border px-4 py-2 text-sm">
                             {{ formatArray(search.dataSearch.map((item) => item.year)) }}

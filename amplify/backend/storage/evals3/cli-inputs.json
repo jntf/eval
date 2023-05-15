@@ -1,0 +1,12 @@
+{
+  "resourceName": "evals3",
+  "policyUUID": "20c71ef5",
+  "bucketName": "eval-bulk-import",
+  "storageAccess": "auth",
+  "guestAccess": [],
+  "authAccess": [
+    "CREATE_AND_UPDATE"
+  ],
+  "triggerFunction": "NONE",
+  "groupAccess": {}
+}
