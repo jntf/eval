@@ -1,8 +1,9 @@
 <template>
     <div class="flex flex-col items-center justify-center min-h-screen">
-        <input type="file" @change="onFileChange" class="p-2 border border-gray-300 rounded-md" @click="responseData === 0"/>
+        <input type="file" @change="onFileChange" class="p-2 border border-gray-300 rounded-md" />
+        <button @click="resetAll">reset</button>
 
-        <div v-if="columns.length > 0 && responseData.length < 1">
+        <div v-if="columns.length > 0 && responseData.length === 0">
             <table class="table-auto border-collapse">
                 <thead class="">
                     <tr>
@@ -26,35 +27,16 @@
                     </tr>
                 </tbody>
             </table>
-            <button @click="invokeLambda" class="px-4 py-2 bg-blue-500 text-white rounded-md">Calculer les prix</button>
+            <button @click="loadToS3" class="px-4 py-2 bg-blue-500 text-white rounded-md">Calculer les prix</button>
         </div>
-        <div v-if="responseData.length > 0">
-            <table class="table-auto border-collapse">
-                <thead class="">
-                    <tr>
-                        <th class="px-4 py-2 text-gray-800">Marque</th>
-                        <th class="px-4 py-2 text-gray-800">Modèle</th>
-                        <th class="px-4 py-2 text-gray-800">Version</th>
-                        <th class="px-4 py-2 text-gray-800">Kilomètres</th>
-                        <th class="px-4 py-2 text-gray-800">Année</th>
-                        <th class="px-4 py-2 text-gray-800">Couleur</th>
-                        <th class="px-4 py-2 text-gray-800">Prix</th>
-                        <th class="px-4 py-2 text-gray-800">Evaluation</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="(row, index) in responseData" :key="index" class="bg-white">
-                        <td class="px-4 py-2">{{ row.make }}</td>
-                        <td class="px-4 py-2">{{ row.model }}</td>
-                        <td class="px-4 py-2">{{ row.keywords }}</td>
-                        <td class="px-4 py-2">{{ row.kms }}</td>
-                        <td class="px-4 py-2">{{ row.year }}</td>
-                        <td class="px-4 py-2">{{ row.color }}</td>
-                        <td class="px-4 py-2">{{ row.price }}</td>
-                        <td class="px-4 py-2">{{ row.evaluation }}</td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="flex justify-between items-center mt-4">
+            <button @click="downloadFile" class="px-4 py-2 bg-green-500 text-white rounded-md">
+                Télécharger le fichier CSV
+            </button>
+            <a v-if="downloadLink" :href="downloadLink" target="_blank" rel="noopener noreferrer"
+                class="text-blue-500 underline">
+                Voir le fichier CSV {{ downloadLink }}
+            </a>
         </div>
     </div>
 </template>
@@ -62,10 +44,11 @@
   
   
 <script>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import Papa from 'papaparse';
 import * as XLSX from 'xlsx';
-import { API } from 'aws-amplify';
+import { API, Auth, Storage } from 'aws-amplify';
+import dayjs from 'dayjs';
 
 export default {
     setup() {
@@ -75,10 +58,10 @@ export default {
         const sampleValues = ref({});
         const options = {
             make: 'Marque',
-            make_model: 'Marque Modèle',
-            make_model_version: 'Marque Modèle Version',
+            // make_model: 'Marque Modèle',
+            // make_model_version: 'Marque Modèle Version',
             model: 'Modèle',
-            model_version: 'Modèle Version',
+            // model_version: 'Modèle Version',
             keywords: 'Version',
             energy: 'Énergie',
             transmission: 'Transmission',
@@ -89,12 +72,34 @@ export default {
         };
         const responseData = ref([]);
 
+        const downloadLink = ref('');
+
+        const itemsPerPage = ref(10); // nombre d'items par page
+        const currentPage = ref(1); // page actuelle
+        const totalPages = computed(() => Math.ceil(responseData.value.length / itemsPerPage.value)); // nombre total de pages
+        const changePage = (newPage) => {
+            if (newPage >= 1 && newPage <= totalPages.value) {
+                currentPage.value = newPage;
+            }
+        };
+
+        const resetAll = () => {
+            responseData.value = []
+            columns.value = []
+        };
+
         const onFileChange = (e) => {
             const file = e.target.files[0];
             if (file.type === "text/csv") {
                 Papa.parse(file, {
                     header: true,
                     complete: (results) => {
+
+                        // responseData.value = [];
+                        columns.value = [];
+                        selectedColumns.value = {};
+                        sampleValues.value = {};
+
                         data.value = results.data;
                         columns.value = results.meta.fields;
                         sampleValues.value = data.value.reduce((acc, row) => {
@@ -106,11 +111,18 @@ export default {
                             });
                             return acc;
                         }, {});
+                        const responseData = data.value
                     }
                 });
             } else if (file.name.endsWith('.xlsx')) {
                 const reader = new FileReader();
                 reader.onload = (e) => {
+
+                    // responseData.value = [];
+                    columns.value = [];
+                    selectedColumns.value = {};
+                    sampleValues.value = {};
+
                     const bufferData = new Uint8Array(e.target.result);
                     const workbook = XLSX.read(bufferData, { type: 'array' });
                     const worksheet = workbook.Sheets[workbook.SheetNames[0]];
@@ -126,6 +138,7 @@ export default {
                         });
                         return acc;
                     }, {});
+                    const responseData = data.value
                 };
                 reader.readAsArrayBuffer(file);
             } else {
@@ -133,24 +146,63 @@ export default {
             }
         };
 
-        const invokeLambda = async () => {
-            console.log({ data: data.value, columns: selectedColumns.value });
-            const response = await API.post('eval-lambda', import.meta.env.VITE_RAFALE_RESOURCE, {
-                headers: {
-                    "x-api-key": import.meta.env.VITE_RAFALE_KEY,
-                },
-                body: {
-                    data: data.value,
-                    columns: selectedColumns.value
-                }
-            });
-            const parsedBody = JSON.parse(response.body);
-            responseData.value = parsedBody.data;
-            print(responseData);
-            console.log(parsedBody.data);
+        const loadToS3 = async () => {
+            const selectedColumnNames = Object.values(selectedColumns.value);
+            const jsonData = {
+                columns: Object.fromEntries(
+                    Object.entries(selectedColumns.value).map(([key, value]) => [key, value])
+                ),
+                data: data.value,
+            };
+            const jsonString = JSON.stringify(jsonData);
+            const currentUser = await Auth.currentAuthenticatedUser();
+            const username = currentUser.username;
+            const dateTime = dayjs().format("YYYY-MM-DD-HH-mm-ss");
+            const directoryPath = `${dateTime}`;
+            const fileName = "data.json";
+            const csvFileName = "result.csv"; // Nom du fichier CSV
+
+            try {
+                await Storage.put(`${directoryPath}/${fileName}`, jsonString, {
+                    contentType: "application/json",
+                    level: "private",
+                });
+
+                // Générer le lien de téléchargement du fichier CSV
+                const csvFilePath = `${directoryPath}/${csvFileName}`;
+                const signedURL = await Storage.get(csvFilePath, { level: "private" });
+
+                // Stocker le lien de téléchargement dans la variable downloadLink
+                downloadLink.value = signedURL;
+
+                alert("Les données ont été chargées sur S3 avec succès.");
+            } catch (error) {
+                console.error(error);
+                alert("Une erreur s'est produite lors du chargement des données sur S3.");
+            }
         };
 
-        return { data, columns, selectedColumns, options, sampleValues, responseData, onFileChange, invokeLambda };
+        const downloadFile = () => {
+            window.open(downloadLink.value, "_blank");
+        };
+
+        return {
+            data,
+            columns,
+            selectedColumns,
+            options,
+            sampleValues,
+            responseData,
+            resetAll,
+            onFileChange,
+            loadToS3,
+            downloadLink,
+            downloadFile,
+            itemsPerPage,
+            currentPage,
+            totalPages,
+            changePage
+        };
     },
 };
 </script>
