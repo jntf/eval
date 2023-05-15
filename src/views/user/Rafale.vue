@@ -1,9 +1,15 @@
 <template>
     <div class="flex flex-col items-center justify-center min-h-screen">
-        <input type="file" @change="onFileChange" class="p-2 border border-gray-300 rounded-md" />
-        <button @click="resetAll">reset</button>
+        <div class="grid grid-cols-3 lg-w-1/3">
+            <div></div>
+            <input type="file" @change="onFileChange" class="p-2 border border-gray-300 rounded-md"
+                v-if="!isFileAvailable" />
+            <button @click="resetAll" class="px-4 py-2 bg-blue-500 text-white rounded-md w-1/6">
+                <i class="fas fa-undo mr-2"></i>
+            </button>
+        </div>
 
-        <div v-if="columns.length > 0 && responseData.length === 0">
+        <div v-if="columns.length > 0 && !isFileAvailable">
             <table class="table-auto border-collapse">
                 <thead class="">
                     <tr>
@@ -30,7 +36,7 @@
             <button @click="loadToS3" class="px-4 py-2 bg-blue-500 text-white rounded-md">Calculer les prix</button>
         </div>
         <div class="flex justify-between items-center mt-4">
-            <button @click="downloadFile" class="px-4 py-2 bg-green-500 text-white rounded-md">
+            <button @click="downloadFile" class="px-4 py-2 bg-green-500 text-white rounded-md" v-if="isFileAvailable">
                 Télécharger le fichier CSV
             </button>
             <a v-if="downloadLink" :href="downloadLink" target="_blank" rel="noopener noreferrer"
@@ -73,6 +79,7 @@ export default {
         const responseData = ref([]);
 
         const downloadLink = ref('');
+        const isFileAvailable = ref(false);
 
         const itemsPerPage = ref(10); // nombre d'items par page
         const currentPage = ref(1); // page actuelle
@@ -84,8 +91,7 @@ export default {
         };
 
         const resetAll = () => {
-            responseData.value = []
-            columns.value = []
+            location.reload();
         };
 
         const onFileChange = (e) => {
@@ -146,6 +152,23 @@ export default {
             }
         };
 
+        const checkFileAvailability = async (filePath, interval = 1000) => {
+            try {
+                const file = await Storage.get(filePath, { level: "private" });
+                if (file) {
+                    // Mettre à jour la variable isFileAvailable
+                    isFileAvailable.value = true;
+                } else {
+                    // Fichier non trouvé, continuer à vérifier après l'intervalle spécifié
+                    setTimeout(() => checkFileAvailability(filePath, interval), interval);
+                }
+            } catch (error) {
+                console.error(error);
+                // Erreur lors de la récupération du fichier, continuer à vérifier après l'intervalle spécifié
+                setTimeout(() => checkFileAvailability(filePath, interval), interval);
+            }
+        };
+
         const loadToS3 = async () => {
             const selectedColumnNames = Object.values(selectedColumns.value);
             const jsonData = {
@@ -168,8 +191,12 @@ export default {
                     level: "private",
                 });
 
-                // Générer le lien de téléchargement du fichier CSV
                 const csvFilePath = `${directoryPath}/${csvFileName}`;
+
+                // Commencer à vérifier la disponibilité du fichier
+                checkFileAvailability(csvFilePath);
+
+                // Générer le lien de téléchargement du fichier CSV
                 const signedURL = await Storage.get(csvFilePath, { level: "private" });
 
                 // Stocker le lien de téléchargement dans la variable downloadLink
@@ -201,7 +228,8 @@ export default {
             itemsPerPage,
             currentPage,
             totalPages,
-            changePage
+            changePage,
+            isFileAvailable,
         };
     },
 };
