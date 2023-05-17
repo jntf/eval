@@ -35,14 +35,25 @@
             </table>
             <button @click="loadToS3" class="px-4 py-2 bg-blue-500 text-white rounded-md">Calculer les prix</button>
         </div>
-        <div class="flex justify-between items-center mt-4">
-            <button @click="downloadFile" class="px-4 py-2 bg-green-500 text-white rounded-md" v-if="isFileAvailable">
-                Télécharger le fichier CSV
+        <div v-if="isFileAvailable">
+            <button @click="downloadFile" class="px-4 py-2 bg-green-500 text-white rounded-md mt-4">
+                <i class="fas fa-file-export"></i>
             </button>
-            <a v-if="downloadLink" :href="downloadLink" target="_blank" rel="noopener noreferrer"
-                class="text-blue-500 underline">
-                Voir le fichier CSV
-            </a>
+            <div class="container w-5/6">
+                <table class="table-auto border-collapse">
+                    <thead class="">
+                        <tr>
+                            <th v-for="(value, key) in fileData[0]" :key="key" class="px-4 py-2 text-gray-800">{{ key }}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(row, index) in fileData.slice(0, 25)" :key="index" class="bg-white text-sm">
+                            <td v-for="value in Object.values(row)" :key="value" class="px-4 py-2 text-sm">{{ value }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </template>
@@ -53,11 +64,13 @@
 import { ref, computed } from 'vue';
 import Papa from 'papaparse';
 import * as XLSX from 'xlsx';
-import { API, Auth, Storage } from 'aws-amplify';
+import { Storage } from 'aws-amplify';
 import dayjs from 'dayjs';
+import { useLoadingStore } from '../../stores/loadingStore';
 
 export default {
     setup() {
+        const loadingStore = useLoadingStore();
         const data = ref([]);
         const columns = ref([]);
         const selectedColumns = ref({});
@@ -80,6 +93,7 @@ export default {
 
         const downloadLink = ref('');
         const isFileAvailable = ref(false);
+        const fileData = ref([]);
 
         const itemsPerPage = ref(10); // nombre d'items par page
         const currentPage = ref(1); // page actuelle
@@ -154,10 +168,21 @@ export default {
 
         const checkFileAvailability = async (filePath, interval = 1000) => {
             try {
-                const file = await Storage.get(filePath, { level: "private" });
-                if (file) {
-                    // Mettre à jour la variable isFileAvailable
+                const fileUrl = await Storage.get(filePath, { level: "private" });
+                const response = await fetch(fileUrl);
+
+                if (response.ok) {
+                    // Le fichier existe, mettre à jour la variable isFileAvailable
                     isFileAvailable.value = true;
+
+                    // Lire le fichier CSV et stocker les données dans la variable fileData
+                    Papa.parse(fileUrl, {
+                        download: true,
+                        header: true,
+                        complete: (results) => {
+                            fileData.value = results.data;
+                        }
+                    });
                 } else {
                     // Fichier non trouvé, continuer à vérifier après l'intervalle spécifié
                     setTimeout(() => checkFileAvailability(filePath, interval), interval);
@@ -170,7 +195,7 @@ export default {
         };
 
         const loadToS3 = async () => {
-            const selectedColumnNames = Object.values(selectedColumns.value);
+            loadingStore.setLoading(true);
             const jsonData = {
                 columns: Object.fromEntries(
                     Object.entries(selectedColumns.value).map(([key, value]) => [key, value])
@@ -178,12 +203,10 @@ export default {
                 data: data.value,
             };
             const jsonString = JSON.stringify(jsonData);
-            const currentUser = await Auth.currentAuthenticatedUser();
-            const username = currentUser.username;
             const dateTime = dayjs().format("YYYY-MM-DD-HH-mm-ss");
             const directoryPath = `${dateTime}`;
             const fileName = "data.json";
-            const csvFileName = "result.csv"; // Nom du fichier CSV
+            const csvFileName = "result.csv";
 
             try {
                 await Storage.put(`${directoryPath}/${fileName}`, jsonString, {
@@ -207,6 +230,7 @@ export default {
                 console.error(error);
                 alert("Une erreur s'est produite lors du chargement des données sur S3.");
             }
+            loadingStore.setLoading(false)
         };
 
         const downloadFile = () => {
@@ -230,6 +254,7 @@ export default {
             totalPages,
             changePage,
             isFileAvailable,
+            fileData,
         };
     },
 };
