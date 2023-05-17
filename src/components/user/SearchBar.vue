@@ -57,6 +57,8 @@ import { createSearchHistory as createSearchHistoryMutation } from '../../graphq
 import { submitEvalForm } from '../../stores/evalForm.js';
 import Slider from '@vueform/slider';
 
+import { useLoadingStore } from '../../stores/loadingStore';
+
 export default defineComponent({
     components: {
         Slider,
@@ -66,6 +68,8 @@ export default defineComponent({
     emits: ['close-modal'],
     setup(_, { emit }) {
         const router = useRouter();
+
+        const loadingStore = useLoadingStore();
 
         const makes = ref([]);
         const models = ref([]);
@@ -130,6 +134,7 @@ export default defineComponent({
         });
 
         const submitForm = async () => {
+            loadingStore.setLoading(true)
             const data = {
                 "make": selectedMake.value,
                 "model": selectedModel.value,
@@ -177,6 +182,7 @@ export default defineComponent({
             } catch (error) {
                 console.log(error);
             }
+            loadingStore.setLoading(false)
         };
 
         return {
