@@ -36,13 +36,13 @@
                         <td class="border px-4 py-2 text-sm">{{ formatDate(search.createdAt) }}</td>
                         <td class="border px-4 py-2 text-sm">{{ search.ref }}</td>
                         <td class="border px-4 py-2 text-sm">
-                            {{ formatArray(search.dataSearch.map((item) => item.make.toUpperCase())) }}
+                            {{ formatArray(search.dataSearch.map((item) => item.make)) }}
                         </td>
                         <td class="border px-4 py-2 text-sm">
-                            {{ formatArray(search.dataSearch.map((item) => item.model.toUpperCase())) }}
+                            {{ formatArray(search.dataSearch.map((item) => item.model)) }}
                         </td>
                         <td class="border px-4 py-2 text-sm">
-                            {{ formatArray(search.dataSearch.map((item) => item.keywords.toUpperCase())) }}
+                            {{ formatArray(search.dataSearch.map((item) => item.keywords)) }}
                         </td>
                         <td class="border px-4 py-2 text-sm">
                             {{ formatArray(search.dataSearch.map((item) => item.year)) }}
