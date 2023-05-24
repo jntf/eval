@@ -33,25 +33,67 @@
                 </thead>
                 <tbody class="shadow-xl">
                     <tr v-for="(search, index) in filteredSearchHistory" :key="index">
-                        <td class="border px-4 py-2 text-sm">{{ formatDate(search.createdAt) }}</td>
-                        <td class="border px-4 py-2 text-sm">{{ search.ref }}</td>
-                        <td class="border px-4 py-2 text-sm">
-                            {{ formatArray(search.dataSearch.map((item) => item.make)) }}
+                        <td class="border px-4 py-2 text-xs">{{ formatDate(search.createdAt) }}</td>
+                        <td class="border px-4 py-2 text-xs">{{ search.ref }}</td>
+                        <td class="border px-4 py-2 text-xs">
+                            {{
+                                Array.from(
+                                    new Set(
+                                        Array.isArray(search.dataSearch[0])
+                                            ? search.dataSearch.flat().map(item => item.make)
+                                            : search.dataSearch.map(item => item.make)
+                                    )
+                                ).join(', ').toUpperCase()
+                            }}
                         </td>
-                        <td class="border px-4 py-2 text-sm">
-                            {{ formatArray(search.dataSearch.map((item) => item.model)) }}
+                        <td class="border px-4 py-2 text-xs">
+                            {{
+                                Array.from(
+                                    new Set(
+                                        Array.isArray(search.dataSearch[0])
+                                            ? search.dataSearch.flat().map(item => item.model)
+                                            : search.dataSearch.map(item => item.model)
+                                    )
+                                ).join(', ').toUpperCase()
+                            }}
                         </td>
-                        <td class="border px-4 py-2 text-sm">
-                            {{ formatArray(search.dataSearch.map((item) => item.keywords)) }}
+                        <td class="border px-4 py-2 text-xs">
+                            {{
+                                Array.from(
+                                    new Set(
+                                        Array.isArray(search.dataSearch[0])
+                                            ? search.dataSearch.flat().map(item => item.keywords)
+                                            : search.dataSearch.map(item => item.keywords)
+                                    )
+                                ).join(', ').toUpperCase()
+                            }}
                         </td>
-                        <td class="border px-4 py-2 text-sm">
-                            {{ formatArray(search.dataSearch.map((item) => item.year)) }}
+                        <td class="border px-4 py-2 text-xs">
+                            {{
+                                Array.from(
+                                    new Set(
+                                        Array.isArray(search.dataSearch[0])
+                                            ? search.dataSearch.flat().map(item => item.year)
+                                            : search.dataSearch.map(item => item.year)
+                                    )
+                                ).join(', ').toUpperCase()
+                            }}
                         </td>
-                        <td class="border px-4 py-2 text-sm">
-                            {{ formatArray(search.dataSearch.map((item) => item.mileage)) }} km
+                        <td class="border px-4 py-2 text-xs">
+                            {{
+                                Array.from(
+                                    new Set(
+                                        Array.isArray(search.dataSearch[0])
+                                            ? search.dataSearch.flat().map(item => item.kms)
+                                            : search.dataSearch.map(item => item.mileage)
+                                    )
+                                ).join(', ').toUpperCase()
+                            }}
                         </td>
-                        <td class="border px-4 py-2 text-sm">{{ formatPrice(search.dataSearch) }}</td>
-                        <td class="border px-4 py-2 text-sm">
+                        <td class="border px-4 py-2 text-xs">
+                            {{ formatPrice(search.dataSearch) }} <span>{{ search.isMultipleImport ? "€ en moyenne" : "€" }}</span>
+                        </td>
+                        <td class="border px-4 py-2 text-xs">
                             <button @click="deleteSearchHistory(search.id)"><i class="fas fa-trash"></i></button>
                         </td>
                     </tr>
@@ -106,9 +148,19 @@ export default {
         };
 
         const formatPrice = (dataSearch) => {
-            if (dataSearch.length === 1) return dataSearch[0].price;
-            const total = dataSearch.reduce((sum, item) => sum + item.price, 0);
-            return (total / dataSearch.length).toFixed(2);
+            let prices;
+            if (Array.isArray(dataSearch[0])) {
+                prices = dataSearch.flat().filter(item => !isNaN(item.evaluation)).map(item => parseFloat(item.evaluation));
+            } else {
+                prices = dataSearch.filter(item => !isNaN(item.price)).map(item => parseFloat(item.price));
+            }
+
+            if (prices.length === 0) {
+                return 'N/A';
+            }
+
+            const sum = prices.reduce((a, b) => a + b, 0);
+            return parseFloat((sum / prices.length).toFixed(0));
         };
 
         const filteredSearchHistory = computed(() => {
@@ -143,7 +195,6 @@ export default {
                             dataSearch: JSON.parse(search.dataSearch),
                         };
                     });
-
                 // Fetch S3 files
                 fetchS3Files();
             } catch (error) {
@@ -187,40 +238,40 @@ export default {
                 });
 
                 s3Files.value = await Promise.all(filePromises);
-                } catch (error) {
-                    console.error('Error fetching S3 files:', error);
-                }
-            };
+            } catch (error) {
+                console.error('Error fetching S3 files:', error);
+            }
+        };
 
-            const getFileUrl = async (key) => {
-                try {
-                    const url = await Storage.get(key);
-                    return url;
-                } catch (error) {
-                    console.error(`Error getting file URL for key ${key}:`, error);
-                    return '';
-                }
-            };
+        const getFileUrl = async (key) => {
+            try {
+                const url = await Storage.get(key);
+                return url;
+            } catch (error) {
+                console.error(`Error getting file URL for key ${key}:`, error);
+                return '';
+            }
+        };
 
-            const filterResults = () => {
-                // La recherche sera effectuée par la propriété calculée filteredSearchHistory.
-            };
+        const filterResults = () => {
+            // La recherche sera effectuée par la propriété calculée filteredSearchHistory.
+        };
 
-            fetchSearchHistory();
+        fetchSearchHistory();
 
-            return {
-                formatDate,
-                formatArray,
-                formatPrice,
-                searchHistory,
-                searchQuery,
-                filteredSearchHistory,
-                deleteSearchHistory,
-                filterResults,
-                s3Files,
-            };
-        },
-    };
+        return {
+            formatDate,
+            formatArray,
+            formatPrice,
+            searchHistory,
+            searchQuery,
+            filteredSearchHistory,
+            deleteSearchHistory,
+            filterResults,
+            s3Files,
+        };
+    },
+};
 </script>
 
   
