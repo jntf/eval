@@ -218,6 +218,8 @@ export default {
                         header: true,
                         complete: (results) => {
                             fileData.value = results.data;
+                            console.log(fileData.value)
+                            saveDatabase(fileData.value)
                         }
                     });
                 } else {
@@ -242,15 +244,10 @@ export default {
             const processedData = jsonData.data.map(item => {
                 const newData = {};
                 Object.keys(jsonData.columns).forEach(key => {
-                    const value = item[key];
-                    const type = isNaN(value) ? 'S' : 'N';
-                    if (!newData[key]) {
-                        newData[key] = { "M": { [value]: { [type]: [] } } };
-                    }
-                    newData[key]["M"][value][type].push(value);
+                    newData[jsonData.columns[key]] = item[key];
                 });
                 return newData;
-            });
+            }); 
             console.log(processedData)
             const jsonString = JSON.stringify(jsonData);
             const dateTime = dayjs().format("YYYY-MM-DD-HH-mm-ss");
@@ -314,4 +311,3 @@ export default {
     },
 };
 </script>
-  
