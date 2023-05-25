@@ -93,6 +93,7 @@ export const listSearchHistories = /* GraphQL */ `
       items {
         id
         isMultipleImport
+        s3Link
         dataSearch
         ref
         createdAt

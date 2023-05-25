@@ -188,9 +188,10 @@ export default {
             }
         };
 
-        const saveDatabase = async (processedData) => {
+        const saveDatabase = async (processedData, filePath) => {
             const searchHistoryData = {
                 isMultipleImport: true,
+                s3Link: filePath,
                 dataSearch: JSON.stringify([processedData]),
                 ref: refId,
             };
@@ -218,8 +219,7 @@ export default {
                         header: true,
                         complete: (results) => {
                             fileData.value = results.data;
-                            console.log(fileData.value)
-                            saveDatabase(fileData.value)
+                            saveDatabase(fileData.value, filePath)
                         }
                     });
                 } else {
@@ -264,9 +264,6 @@ export default {
 
                 const csvFilePath = `${directoryPath}/${csvFileName}`;
                 const xlsxFilePath = `${directoryPath}/${xlsxFileName}`;
-
-                // Enregistrement des données transformées dans la base de données
-                saveDatabase(processedData);
 
                 // Commencer à vérifier la disponibilité du fichier
                 checkFileAvailability(csvFilePath);
