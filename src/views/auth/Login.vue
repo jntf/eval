@@ -16,13 +16,15 @@ import Header from '../../components/home/Header.vue';
 import Login from '../../components/auth/Login.vue';
 import ForgotPassword from '../../components/auth/ForgotPassword.vue';
 import VerifyCode from '../../components/auth/VerifyCode.vue';
+import ChangeTempPassword from '../../components/auth/ChangeTempPassword.vue';
 
 export default {
   components: {
     Header,
     Login,
     ForgotPassword,
-    VerifyCode
+    VerifyCode,
+    ChangeTempPassword
   },
   data() {
     return {
@@ -35,7 +37,7 @@ export default {
       this.currentStep = step;
       this.email = email;
     }
-  }
+  },
 }
 </script>
   

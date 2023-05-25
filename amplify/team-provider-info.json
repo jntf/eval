@@ -20,6 +20,12 @@
       },
       "storage": {
         "evals3": {}
+      },
+      "function": {
+        "evaladmingetusers": {
+          "deploymentBucketName": "amplify-evalio-dev-81726-deployment",
+          "s3Key": "amplify-builds/evaladmingetusers-4b4e4b6f744d48315670-build.zip"
+        }
       }
     }
   }

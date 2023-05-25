@@ -20,6 +20,8 @@ export const useUserStore = defineStore({
 
   getters: {
     isLoggedIn: (state) => !!state.id,
+    isSuperAdmin: (state) => state.roles?.includes("SuperAdmin"),
+    isAdmin: (state) => state.roles?.includes("Admin"),
   },
 
   actions: {
@@ -29,7 +31,11 @@ export const useUserStore = defineStore({
 
         if (currentUser) {
           const { attributes } = currentUser;
-          const roles = currentUser.signInUserSession?.accessToken?.payload?.["cognito:groups"] ?? "";
+          const roles =
+            currentUser.signInUserSession?.accessToken?.payload?.[
+              "cognito:groups"
+            ] ?? "";
+
           this.setUserData({
             id: attributes.sub,
             name: attributes.name,
@@ -47,7 +53,6 @@ export const useUserStore = defineStore({
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
-      
     },
 
     setUserData(data) {
@@ -71,7 +76,7 @@ export const useUserStore = defineStore({
       try {
         await Auth.signOut();
         this.clearUserData();
-        this.router.push({ path: '/' });
+        this.router.push({ path: "/" });
       } catch (error) {
         console.error("Error signing out:", error);
       }

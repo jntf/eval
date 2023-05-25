@@ -75,7 +75,6 @@
         </div>
       </div>
     </div>
-    <div id="chart" class="bg-red-800 p-5" style="width: 1000px; height: 400px;"></div>
   </div>
 </template>
 
