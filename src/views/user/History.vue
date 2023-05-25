@@ -9,13 +9,6 @@
                 @input="filterResults" />
         </div>
 
-        <h2>Liste des fichiers S3</h2>
-        <ul>
-            <li v-for="(file, index) in s3Files" :key="index">
-                <a :href="file.url" target="_blank">{{ file.datetime }}</a>
-            </li>
-        </ul>
-
         <div class="table-responsive">
             <table class="table-auto w-full mb-6">
                 <thead>
@@ -43,8 +36,9 @@
                                             ? search.dataSearch.flat().map(item => item.make)
                                             : search.dataSearch.map(item => item.make)
                                     )
-                                ).join(', ').toUpperCase()
-                            }}
+                                ).join(', ').toUpperCase().slice(0, 30)
+                            }}<span
+                                v-if="search.isMultipleImport"> ...</span>
                         </td>
                         <td class="border px-4 py-2 text-xs">
                             {{
@@ -54,8 +48,9 @@
                                             ? search.dataSearch.flat().map(item => item.model)
                                             : search.dataSearch.map(item => item.model)
                                     )
-                                ).join(', ').toUpperCase()
-                            }}
+                                ).join(', ').toUpperCase().slice(0, 30)
+                            }}<span
+                                v-if="search.isMultipleImport"> ...</span>
                         </td>
                         <td class="border px-4 py-2 text-xs">
                             {{
@@ -65,8 +60,9 @@
                                             ? search.dataSearch.flat().map(item => item.keywords)
                                             : search.dataSearch.map(item => item.keywords)
                                     )
-                                ).join(', ').toUpperCase()
-                            }}
+                                ).join(', ').toUpperCase().slice(0, 30)
+                            }}<span
+                                v-if="search.isMultipleImport">...</span>
                         </td>
                         <td class="border px-4 py-2 text-xs">
                             {{
@@ -76,8 +72,9 @@
                                             ? search.dataSearch.flat().map(item => item.year)
                                             : search.dataSearch.map(item => item.year)
                                     )
-                                ).join(', ').toUpperCase()
-                            }}
+                                ).join(', ').toUpperCase().slice(0, 30)
+                            }}<span
+                                v-if="search.isMultipleImport"> ...</span>
                         </td>
                         <td class="border px-4 py-2 text-xs">
                             {{
@@ -87,14 +84,20 @@
                                             ? search.dataSearch.flat().map(item => item.kms)
                                             : search.dataSearch.map(item => item.mileage)
                                     )
-                                ).join(', ').toUpperCase()
-                            }}
+                                ).join(', ').toUpperCase().slice(0, 30)
+                            }}<span
+                                v-if="search.isMultipleImport"> ...</span>
                         </td>
                         <td class="border px-4 py-2 text-xs">
-                            {{ formatPrice(search.dataSearch) }} <span>{{ search.isMultipleImport ? "€ en moyenne" : "€" }}</span>
+                            {{ formatPrice(search.dataSearch) }} <span>{{ search.isMultipleImport ? "€ en moyenne" : "€"
+                            }}</span>
                         </td>
-                        <td class="border px-4 py-2 text-xs">
-                            <button @click="deleteSearchHistory(search.id)"><i class="fas fa-trash"></i></button>
+                        <td class="border px-4 py-2 text-xs mx-auto">
+                            <button v-if="search.isMultipleImport" @click="downloadFile(search)"
+                                class="bg-green-500 text-white rounded-md p-1 mx-1">
+                                <i class="fas fa-file-export"></i>
+                            </button>
+                            <button @click="deleteSearchHistory(search.id)" class="bg-red-500 text-white rounded-md p-1"><i class="fas fa-trash"></i></button>
                         </td>
                     </tr>
                 </tbody>
@@ -123,7 +126,7 @@
 </style>
 <script>
 import { ref, computed } from 'vue';
-import { Auth, API, graphqlOperation, Storage } from 'aws-amplify';
+import { Auth, API, Storage } from 'aws-amplify';
 import { listSearchHistories } from '../../graphql/queries';
 import { deleteSearchHistory as deleteSearchHistoryMutation } from '../../graphql/mutations';
 
@@ -132,6 +135,7 @@ export default {
         const searchHistory = ref([]);
         const searchQuery = ref('');
         const s3Files = ref([]);
+        const downloadLink = ref('');
 
         const formatDate = (dateString) => {
             const date = new Date(dateString);
@@ -188,15 +192,22 @@ export default {
                     authMode: 'AMAZON_COGNITO_USER_POOLS',
                 });
 
-                searchHistory.value = data.listSearchHistories.items
+                const items = data.listSearchHistories.items
                     .filter((item) => item.owner === currentUser.username)
-                    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-                    .map((search) => {
-                        return {
-                            ...search,
-                            dataSearch: JSON.parse(search.dataSearch),
-                        };
-                    });
+                    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+                // Map over items, transforming each search and fetching signed URL
+                searchHistory.value = await Promise.all(items.map(async (search) => {
+                    const linkXlsx = search.s3Link ? search.s3Link.replace('.csv', '.xlsx') : null;
+                    const signedURL = await Storage.get(linkXlsx, { level: "private" });
+                    console.log()
+                    return {
+                        ...search,
+                        dataSearch: JSON.parse(search.dataSearch),
+                        downloadLink: signedURL,
+                    };
+                }));
+
                 // Fetch S3 files
                 fetchS3Files();
             } catch (error) {
@@ -255,6 +266,10 @@ export default {
             }
         };
 
+        const downloadFile = (search) => {
+            window.open(search.downloadLink, "_blank");
+        };
+
         const filterResults = () => {
             // La recherche sera effectuée par la propriété calculée filteredSearchHistory.
         };
@@ -270,6 +285,8 @@ export default {
             filteredSearchHistory,
             deleteSearchHistory,
             filterResults,
+            downloadLink,
+            downloadFile,
             s3Files,
         };
     },
