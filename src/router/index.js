@@ -7,6 +7,7 @@ import Eval from "../views/user/EvalView.vue";
 import History from "../views/user/History.vue";
 import Rafale from "../views/user/Rafale.vue";
 import Settings from "../views/user/Settings.vue";
+import Admin from "../views/admin/Admin.vue";
 import { Auth } from "aws-amplify";
 import { useUserStore } from "../stores/userStore";
 
@@ -24,6 +25,12 @@ const router = createRouter({
       name: "login",
       component: Login,
       meta: { guestOnly: true },
+    },
+    {
+      path: "/adminpanel",
+      name: "adminpanel",
+      component: Admin,
+      meta: { isSuperAdmin: true },
     },
     {
       path: "/user",
@@ -60,7 +67,7 @@ const router = createRouter({
           name: "rafale",
           component: Rafale,
           props: true,
-        }
+        },
       ],
     },
     // Fallback
@@ -72,13 +79,17 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-  const pinia = router.pinia; // Récupérez l'instance Pinia à partir de l'instance du routeur
-  const userStore = useUserStore(pinia); // Utilisez le store avec l'instance Pinia
+  const userStore = useUserStore();
+  if (!userStore.isLoggedIn) {
+    await userStore.fetchUserData();
+  }
 
   try {
     await Auth.currentAuthenticatedUser();
     if (to.matched.some((record) => record.meta.guestOnly)) {
       next({ name: "analyse" });
+    } else if (to.matched.some((record) => record.meta.isSuperAdmin && !userStore.isSuperAdmin)) {
+      next({ name: "home" });
     } else {
       next();
     }
@@ -90,24 +101,4 @@ router.beforeEach(async (to, from, next) => {
     }
   }
 });
-router.beforeEach(async (to, from, next) => {
-  const pinia = router.pinia;
-  const userStore = useUserStore(pinia);
-
-  try {
-    await Auth.currentAuthenticatedUser();
-    if (to.matched.some((record) => record.meta.guestOnly)) {
-      next({ name: "analyse" });
-    } else {
-      next();
-    }
-  } catch (error) {
-    if (to.matched.some((record) => record.meta.requiresAuth)) {
-      next({ name: "login" }); // Redirection vers la page de connexion
-    } else {
-      next();
-    }
-  }
-});
-
 export default router;
