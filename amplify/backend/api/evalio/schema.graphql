@@ -17,6 +17,7 @@ type Vehicle @model {
 type SearchHistory @model @auth(rules: [{ allow: owner }]) {
   id: ID!
   isMultipleImport: Boolean!
+  link: String
   dataSearch: AWSJSON!
   ref: String
   createdAt: AWSDateTime!
