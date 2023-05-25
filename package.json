@@ -18,8 +18,7 @@
     "papaparse": "^5.4.1",
     "pinia": "^2.0.35",
     "vue": "^3.2.45",
-    "vue-router": "^4.1.6",
-    "xlsx": "^0.18.5"
+    "vue-router": "^4.1.6"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.0.0",
