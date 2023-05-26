@@ -24,6 +24,7 @@
                         <td class="px-4 py-2">
                             <select v-model="selectedColumns[column]"
                                 class="block w-full p-2 border border-gray-300 rounded-md mb-2">
+                                <option value="" selected>Sélectionner...</option>
                                 <option v-for="(optionValue, optionKey) in options" :key="optionKey" :value="optionKey">{{
                                     optionValue }}</option>
                             </select>
@@ -62,15 +63,19 @@
   
 <script>
 import { ref, computed } from 'vue';
+import { API } from 'aws-amplify';
 import Papa from 'papaparse';
-import * as XLSX from 'xlsx';
+import * as ExcelJS from 'exceljs';
 import { Storage } from 'aws-amplify';
 import dayjs from 'dayjs';
 import { useLoadingStore } from '../../stores/loadingStore';
+import generateRef from '../../stores/getRef';
+import { createSearchHistory } from '../../graphql/mutations.js';
 
 export default {
     setup() {
         const loadingStore = useLoadingStore();
+        const refId = generateRef();
         const data = ref([]);
         const columns = ref([]);
         const selectedColumns = ref({});
@@ -136,7 +141,7 @@ export default {
                 });
             } else if (file.name.endsWith('.xlsx')) {
                 const reader = new FileReader();
-                reader.onload = (e) => {
+                reader.onload = async (e) => {
 
                     // responseData.value = [];
                     columns.value = [];
@@ -144,27 +149,60 @@ export default {
                     sampleValues.value = {};
 
                     const bufferData = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(bufferData, { type: 'array' });
-                    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-                    data.value = XLSX.utils.sheet_to_json(worksheet);
+                    const workbook = new ExcelJS.Workbook();
+                    await workbook.xlsx.load(bufferData);
+                    const worksheet = workbook.worksheets[0];
 
-                    columns.value = Object.keys(data.value[0]);
-                    sampleValues.value = data.value.reduce((acc, row) => {
-                        Object.keys(row).forEach((key) => {
-                            if (!acc[key]) {
-                                acc[key] = new Set();
-                            }
-                            acc[key].add(row[key]);
+                    // Create array to hold data
+                    let jsonData = [];
+                    worksheet.eachRow({ includeEmpty: true }, function (row, rowNumber) {
+                        let rowObj = {};
+                        row.eachCell({ includeEmpty: true }, function (cell, colNumber) {
+                            let columnHeader = worksheet.getRow(1).getCell(colNumber).value;
+                            rowObj[columnHeader] = cell.value;
                         });
-                        return acc;
-                    }, {});
-                    const responseData = data.value
+                        if (rowNumber !== 1) {
+                            jsonData.push(rowObj);
+                        }
+                    });
+
+                    data.value = jsonData;
+                    if (data.value.length > 0) {
+                        columns.value = Object.keys(data.value[0]);
+                        sampleValues.value = data.value.reduce((acc, row) => {
+                            Object.keys(row).forEach((key) => {
+                                if (!acc[key]) {
+                                    acc[key] = new Set();
+                                }
+                                acc[key].add(row[key]);
+                            });
+                            return acc;
+                        }, {});
+                    }
+
+                    const responseData = data.value;
                 };
                 reader.readAsArrayBuffer(file);
             } else {
                 alert('Format de fichier non supporté');
             }
         };
+
+        const saveDatabase = async (processedData, filePath) => {
+            const searchHistoryData = {
+                isMultipleImport: true,
+                s3Link: filePath,
+                dataSearch: JSON.stringify([processedData]),
+                ref: refId,
+            };
+            console.log(searchHistoryData)
+
+            await API.graphql({
+                query: createSearchHistory,
+                variables: { input: searchHistoryData },
+                authMode: 'AMAZON_COGNITO_USER_POOLS',
+            });
+        }
 
         const checkFileAvailability = async (filePath, interval = 1000) => {
             try {
@@ -181,6 +219,7 @@ export default {
                         header: true,
                         complete: (results) => {
                             fileData.value = results.data;
+                            saveDatabase(fileData.value, filePath)
                         }
                     });
                 } else {
@@ -202,11 +241,20 @@ export default {
                 ),
                 data: data.value,
             };
+            const processedData = jsonData.data.map(item => {
+                const newData = {};
+                Object.keys(jsonData.columns).forEach(key => {
+                    newData[jsonData.columns[key]] = item[key];
+                });
+                return newData;
+            }); 
+            console.log(processedData)
             const jsonString = JSON.stringify(jsonData);
             const dateTime = dayjs().format("YYYY-MM-DD-HH-mm-ss");
             const directoryPath = `${dateTime}`;
             const fileName = "data.json";
             const csvFileName = "result.csv";
+            const xlsxFileName = "result.xlsx";
 
             try {
                 await Storage.put(`${directoryPath}/${fileName}`, jsonString, {
@@ -215,12 +263,13 @@ export default {
                 });
 
                 const csvFilePath = `${directoryPath}/${csvFileName}`;
+                const xlsxFilePath = `${directoryPath}/${xlsxFileName}`;
 
                 // Commencer à vérifier la disponibilité du fichier
                 checkFileAvailability(csvFilePath);
 
                 // Générer le lien de téléchargement du fichier CSV
-                const signedURL = await Storage.get(csvFilePath, { level: "private" });
+                const signedURL = await Storage.get(xlsxFilePath, { level: "private" });
 
                 // Stocker le lien de téléchargement dans la variable downloadLink
                 downloadLink.value = signedURL;
@@ -259,4 +308,3 @@ export default {
     },
 };
 </script>
-  

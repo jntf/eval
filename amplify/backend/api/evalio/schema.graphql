@@ -3,7 +3,6 @@
 input AMPLIFY {
   globalAuthRule: AuthRule = { allow: public }
 } # FOR TESTING ONLY!
-
 # Choix de l'approche de denormalisation afin d'avoir un temps de requete optimal puisque utilisé par des selecteurs
 type Vehicle @model {
   make: String! @index(name: "byMake", sortKeyFields: ["model"]) # index sur la marque (partition key) et le model (sort key)
@@ -18,8 +17,55 @@ type Vehicle @model {
 type SearchHistory @model @auth(rules: [{ allow: owner }]) {
   id: ID!
   isMultipleImport: Boolean!
+  s3Link: String
   dataSearch: AWSJSON!
   ref: String
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
+}
+
+# KPIs
+
+type BrandDistribution @model {
+  date: String! @index(name: "byDate", sortKeyFields: ["brand"])
+  brand: String!
+  count: Int!
+}
+
+type ModelDistribution @model {
+  date: String! @index(name: "byDate", sortKeyFields: ["model"])
+  model: String!
+  count: Int!
+}
+
+type AvgDaysInStock @model {
+  date: String! @index(name: "byDate", sortKeyFields: ["brand"])
+  brand: String!
+  model: String
+  avgDaysInStock: Float!
+}
+
+type YearDistribution @model {
+  date: String! @index(name: "byDate", sortKeyFields: ["year"])
+  year: String!
+  count: Int!
+}
+
+type ActiveSellers @model {
+  date: String! @index(name: "byDate", sortKeyFields: ["seller"])
+  seller: String!
+  count: Int!
+}
+
+type EnergyDistribution @model {
+  date: String! @index(name: "byDate", sortKeyFields: ["energy"])
+  energy: String!
+  count: Int!
+}
+
+type AvgPrice @model {
+  date: String! @index(name: "byDate", sortKeyFields: ["brand"])
+  brand: String!
+  model: String
+  avgPrice: Float!
 }
