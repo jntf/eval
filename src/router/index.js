@@ -8,6 +8,7 @@ import History from "../views/user/History.vue";
 import Rafale from "../views/user/Rafale.vue";
 import Settings from "../views/user/Settings.vue";
 import Admin from "../views/admin/Admin.vue";
+import UsersList from "../views/admin/UsersList.vue";
 import { Auth } from "aws-amplify";
 import { useUserStore } from "../stores/userStore";
 
@@ -25,12 +26,6 @@ const router = createRouter({
       name: "login",
       component: Login,
       meta: { guestOnly: true },
-    },
-    {
-      path: "/adminpanel",
-      name: "adminpanel",
-      component: Admin,
-      meta: { isSuperAdmin: true },
     },
     {
       path: "/user",
@@ -70,6 +65,19 @@ const router = createRouter({
         },
       ],
     },
+    {
+      path: "/adminpanel",
+      name: "adminpanel",
+      component: Admin,
+      meta: { isSuperAdmin: true },
+      children: [
+        {
+          path: "/users-list",
+          name: "users-list",
+          component: UsersList,
+        }
+      ],
+    },
     // Fallback
     {
       path: "/:pathMatch(.*)*",
@@ -86,7 +94,11 @@ router.beforeEach(async (to, from, next) => {
 
   try {
     await Auth.currentAuthenticatedUser();
-    if (to.matched.some((record) => record.meta.guestOnly)) {
+    if (userStore.isActiveUser !== '1') {
+      await userStore.signOut();
+      alert("Le compte n'est pas actif.")
+      next({ name: "home" });
+    } else if (to.matched.some((record) => record.meta.guestOnly)) {
       next({ name: "analyse" });
     } else if (to.matched.some((record) => record.meta.isSuperAdmin && !userStore.isSuperAdmin)) {
       next({ name: "home" });
@@ -95,7 +107,7 @@ router.beforeEach(async (to, from, next) => {
     }
   } catch (error) {
     if (to.matched.some((record) => record.meta.requiresAuth)) {
-      next({ name: "login" });
+      next({ name: "home" });
     } else {
       next();
     }

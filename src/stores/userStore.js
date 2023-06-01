@@ -12,6 +12,7 @@ export const useUserStore = defineStore({
     roles: null,
     email: null,
     phone_number: null,
+    isActive: null,
     fixedFees: null,
     frevo: null,
     margin: null,
@@ -22,6 +23,7 @@ export const useUserStore = defineStore({
     isLoggedIn: (state) => !!state.id,
     isSuperAdmin: (state) => state.roles?.includes("SuperAdmin"),
     isAdmin: (state) => state.roles?.includes("Admin"),
+    isActiveUser: (state) => state.isActive
   },
 
   actions: {
@@ -43,6 +45,7 @@ export const useUserStore = defineStore({
             email: attributes.email,
             phone_number: attributes.phone_number,
             roles: roles,
+            isActive: attributes["custom:isActive"],
             fixedFees: attributes["custom:fixedFees"],
             frevo: attributes["custom:frevo"],
             margin: attributes["custom:margin"],
@@ -66,6 +69,7 @@ export const useUserStore = defineStore({
       this.roles = null;
       this.email = null;
       this.phone_number = null;
+      this.isActive = null;
       this.fixedFees = null;
       this.frevo = null;
       this.margin = null;

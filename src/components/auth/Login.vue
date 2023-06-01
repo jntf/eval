@@ -13,7 +13,7 @@
           </div>
           <div class="mb-6">
             <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
-              Password
+              Mot de passe
             </label>
             <input v-model="password"
               class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -23,11 +23,11 @@
             <button
               class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="submit">
-              Sign In
+              Connexion
             </button>
             <a class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="#"
               @click.prevent="forgotPassword">
-              Forgot Password?
+              Mot de passe oublié?
             </a>
           </div>
         </form>
@@ -37,35 +37,43 @@
 </template>
   
 <script>
+import { ref } from 'vue';
 import { Auth } from 'aws-amplify';
+import { useRouter } from 'vue-router';
 
 export default {
-  data() {
-    return {
-      email: '',
-      password: ''
-    }
-  },
-  methods: {
-    async login() {
+  setup(props, context) {
+    const email = ref('');
+    const password = ref('');
+    const router = useRouter();
+
+    const login = async () => {
       try {
-        const user = await Auth.signIn(this.email, this.password)
+        const user = await Auth.signIn(email.value, password.value);
         if (user.challengeName === 'NEW_PASSWORD_REQUIRED') {
-          this.$emit('nextStep', 'ChangeTempPassword', this.email)
+          context.emit('nextStep', 'ChangeTempPassword', email.value);
         } else {
-          console.log('Logged in')
-          this.$router.push('/analyse')
+          console.log('Logged in');
+          router.push('/analyse');
         }
       } catch (error) {
-        console.error(error)
-        alert('Invalid email or password')
+        console.error(error);
+        alert('Invalid email or password');
       }
-    },
-    forgotPassword() {
-      this.$emit('nextStep', 'ForgotPassword', this.email)
-    }
-  }
-}
+    };
+
+    const forgotPassword = () => {
+      context.emit('nextStep', 'ForgotPassword', email.value);
+    };
+
+    return {
+      email,
+      password,
+      login,
+      forgotPassword,
+    };
+  },
+};
 </script>
   
   

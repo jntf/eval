@@ -63,29 +63,27 @@
     }
   },
   "function": {
+    "evalValidateAdminUser": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput",
+            "GraphQLAPIKeyOutput"
+          ],
+          "category": "api",
+          "resourceName": "evalio"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "evaladmingetusers": {
       "build": true,
       "dependsOn": [],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
-    }
-  },
-  "parameters": {
-    "AMPLIFY_function_evaladmingetusers_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "evaladmingetusers"
-        }
-      ]
-    },
-    "AMPLIFY_function_evaladmingetusers_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "evaladmingetusers"
-        }
-      ]
     }
   },
   "storage": {

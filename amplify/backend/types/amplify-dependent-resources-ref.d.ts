@@ -18,6 +18,13 @@ export type AmplifyDependentResourcesAttributes = {
     }
   },
   "function": {
+    "evalValidateAdminUser": {
+      "Arn": "string",
+      "LambdaExecutionRole": "string",
+      "LambdaExecutionRoleArn": "string",
+      "Name": "string",
+      "Region": "string"
+    },
     "evaladmingetusers": {
       "Arn": "string",
       "LambdaExecutionRole": "string",

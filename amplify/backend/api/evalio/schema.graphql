@@ -24,6 +24,33 @@ type SearchHistory @model @auth(rules: [{ allow: owner }]) {
   updatedAt: AWSDateTime!
 }
 
+# Users et Company Table en complément des données cognito.
+type User
+  @model
+  @auth(rules: [{ allow: owner }, { allow: groups, groups: ["Admin"] }]) {
+  id: ID!
+  email: String!
+  name: String
+  family_name: String
+  phoneNumber: String
+  isActiveUser: Boolean
+  isAdminCompany: Boolean
+  company: Company @belongsTo
+}
+
+type Company
+  @model
+  @auth(rules: [{ allow: owner }, { allow: groups, groups: ["Admin"] }]) {
+  id: ID!
+  companyName: String!
+  vatNumber: String
+  address: String
+  postalCode: String
+  city: String
+  isActiveCompany: Boolean
+  users: [User] @hasMany
+}
+
 # KPIs
 
 type BrandDistribution @model {
