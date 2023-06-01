@@ -19,8 +19,10 @@ exports.handler = async (event) => {
     
     const body = JSON.parse(event);
     
+    const userId = body.userId;
 
     console.log(body);
+    console.log('le userId est : ', userId);
 
     const userData = await getUserData(userId);
     if (!userData) {
@@ -197,7 +199,7 @@ async function copyUserDataToDynamoDB(
   firstName,
   lastName,
   phoneNumber,
-  companyId // nouvel argument
+  companyId
 ) {
   const dynamoDB = new AWS.DynamoDB.DocumentClient();
 

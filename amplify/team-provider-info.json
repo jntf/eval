@@ -28,7 +28,7 @@
         },
         "evalValidateAdminUser": {
           "deploymentBucketName": "amplify-evalio-dev-81726-deployment",
-          "s3Key": "amplify-builds/evalValidateAdminUser-555a455a5a4736474342-build.zip"
+          "s3Key": "amplify-builds/evalValidateAdminUser-56687349332f4d394b59-build.zip"
         }
       }
     }
