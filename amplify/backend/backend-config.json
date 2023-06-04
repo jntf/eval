@@ -63,6 +63,11 @@
     }
   },
   "function": {
+    "evalAdminAddUser": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "evalValidateAdminUser": {
       "build": true,
       "dependsOn": [
@@ -87,6 +92,22 @@
     }
   },
   "parameters": {
+    "AMPLIFY_function_evalAdminAddUser_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "evalAdminAddUser"
+        }
+      ]
+    },
+    "AMPLIFY_function_evalAdminAddUser_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "evalAdminAddUser"
+        }
+      ]
+    },
     "AMPLIFY_function_evalValidateAdminUser_deploymentBucketName": {
       "usedBy": [
         {

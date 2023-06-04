@@ -20,6 +20,10 @@ Amplify.configure({
       {
         name: "evalValidateUser",
         endpoint: import.meta.env.VITE_EVAL_ENDPOINT,
+      },
+      {
+        name: "evalAdminAddUser",
+        endpoint: import.meta.env.VITE_EVAL_ENDPOINT,
       }
     ],
   },

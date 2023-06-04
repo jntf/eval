@@ -16,7 +16,11 @@
                 <tbody class="bg-gray-100">
                     <tr>
                         <td class="text-sm">{{ getUserAttribute(user, 'custom:companyName') }}</td>
-                        <td class="text-sm">{{ getUserAttribute(user, 'custom:vatNumber') }}</td>
+                        <td class="text-sm">
+                            <a href="https://www.societe.com/cgi-bin/search?champs=${getUserAttribute(user, 'custom:vatNumber')}" target="_blank">
+                                {{ getUserAttribute(user, 'custom:vatNumber') }}
+                            </a>
+                        </td>
                         <td class="text-sm">{{ getUserAttribute(user, 'custom:city') }}</td>
                         <td class="text-sm">{{ getUserAttribute(user, 'name') }} {{ getUserAttribute(user, 'family_name') }}
                         </td>
@@ -78,8 +82,8 @@ export default {
                         }
                     }
                 )
+                location.reload();
                 console.log(response)
-                // location.reload();
             } catch (error) {
                 console.log('An error occurred when trying to validate user', error)
             }

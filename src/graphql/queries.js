@@ -565,13 +565,14 @@ export const getUser = /* GraphQL */ `
         postalCode
         city
         isActiveCompany
+        ownerId
         createdAt
         updatedAt
         owner
       }
+      companyId
       createdAt
       updatedAt
-      companyUsersId
       owner
     }
   }
@@ -591,9 +592,9 @@ export const listUsers = /* GraphQL */ `
         phoneNumber
         isActiveUser
         isAdminCompany
+        companyId
         createdAt
         updatedAt
-        companyUsersId
         owner
       }
       nextToken
@@ -613,6 +614,7 @@ export const getCompany = /* GraphQL */ `
       users {
         nextToken
       }
+      ownerId
       createdAt
       updatedAt
       owner
@@ -634,6 +636,7 @@ export const listCompanies = /* GraphQL */ `
         postalCode
         city
         isActiveCompany
+        ownerId
         createdAt
         updatedAt
         owner

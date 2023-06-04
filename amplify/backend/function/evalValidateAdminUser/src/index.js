@@ -15,14 +15,10 @@ const uuid = require("uuid");
 
 exports.handler = async (event) => {
   try {
-    console.log("l'event est le suivant: ",event)
-    
     const body = JSON.parse(event);
-    
     const userId = body.userId;
 
-    console.log(body);
-    console.log('le userId est : ', userId);
+    const date = new Date().toISOString();
 
     const userData = await getUserData(userId);
     if (!userData) {
@@ -34,6 +30,8 @@ exports.handler = async (event) => {
         body: JSON.stringify("Failed to fetch user data"),
       };
     }
+
+    console.log("userData", userData);
 
     const {
       email,
@@ -50,29 +48,32 @@ exports.handler = async (event) => {
     // Mettre le user dans le groupe Admin
     await addUserToAdminGroup(userId);
 
+    // Activer le user
+    await isActiveUser(userId);
+
+    // Créer une nouvelle compagnie
     const companyId = await createCompany(
+      userId,
       company,
       vatNumber,
       address,
       city,
-      postalCode
+      postalCode, 
+      date
     );
+    // Créer un nouvel utilisateur et l'affecter à la compagnie
     await copyUserDataToDynamoDB(
       userId,
       email,
       firstName,
       lastName,
-      company,
-      address,
-      city,
-      postalCode,
-      vatNumber,
       phoneNumber,
-      companyId // passez cet argument
+      companyId,
+      date
     );
 
-    // Envoyer un e-mail au user pour l'avertir que le compte est actif
-    await sendActivationEmail(email);
+    // // Envoyer un e-mail au user pour l'avertir que le compte est actif
+    // await sendActivationEmail(email);
 
     return {
       statusCode: 200,
@@ -122,8 +123,6 @@ async function getUserData(userId) {
       return null;
     }
 
-    console.log(userAttributes);
-
     const firstName = getUserAttribute(userAttributes, "name");
     const lastName = getUserAttribute(userAttributes, "family_name");
     const email = getUserAttribute(userAttributes, "email");
@@ -163,12 +162,31 @@ async function addUserToAdminGroup(userId) {
   await cognito.adminAddUserToGroup(params).promise();
 }
 
+async function isActiveUser(userId) {
+  const cognito = new AWS.CognitoIdentityServiceProvider();
+
+  const params = {
+    UserAttributes: [
+      {
+        Name: "custom:isActive",
+        Value: "1",
+      },
+    ],
+    UserPoolId: "us-east-1_ZFywPsG67",
+    Username: userId,
+  };
+
+  await cognito.adminUpdateUserAttributes(params).promise();
+}
+
 async function createCompany(
+  userId,
   companyName,
   vatNumber,
   address,
   city,
-  postalCode
+  postalCode,
+  date
 ) {
   const dynamoDB = new AWS.DynamoDB.DocumentClient();
 
@@ -184,7 +202,9 @@ async function createCompany(
       postalCode: postalCode,
       city: city,
       isActiveCompany: true,
-      users: [],
+      ownerId: userId,
+      createdAt: date,
+      updatedAt: date,
     },
   };
   await dynamoDB.put(companyParams).promise();
@@ -192,14 +212,14 @@ async function createCompany(
   return companyId;
 }
 
-// Modifier cette fonction pour qu'elle prenne companyId en argument
 async function copyUserDataToDynamoDB(
   userId,
   email,
   firstName,
   lastName,
   phoneNumber,
-  companyId
+  companyId,
+  date
 ) {
   const dynamoDB = new AWS.DynamoDB.DocumentClient();
 
@@ -213,21 +233,13 @@ async function copyUserDataToDynamoDB(
       phoneNumber: phoneNumber,
       isActiveUser: true,
       isAdminCompany: true,
-      company: companyId,
+      companyId: companyId,
+      owner: userId,
+      createdAt: date,
+      updatedAt: date,
     },
   };
   await dynamoDB.put(userParams).promise();
-
-  // Ajouter le nouvel utilisateur à la liste des utilisateurs de l'entreprise
-  const companyParams = {
-    TableName: "Company-fqsbdtc5czfz3ipqimbhfgttke-dev",
-    Key: { id: companyId },
-    UpdateExpression: "ADD users :newUser",
-    ExpressionAttributeValues: {
-      ":newUser": dynamoDB.createSet([userId]),
-    },
-  };
-  await dynamoDB.update(companyParams).promise();
 }
 
 async function sendActivationEmail(email) {

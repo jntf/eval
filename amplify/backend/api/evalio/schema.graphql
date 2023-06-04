@@ -35,7 +35,8 @@ type User
   phoneNumber: String
   isActiveUser: Boolean
   isAdminCompany: Boolean
-  company: Company @belongsTo
+  company: Company @belongsTo(fields: ["companyId"])
+  companyId: ID
 }
 
 type Company
@@ -48,7 +49,8 @@ type Company
   postalCode: String
   city: String
   isActiveCompany: Boolean
-  users: [User] @hasMany
+  users: [User] @hasMany(fields: ["id"])
+  ownerId: ID
 }
 
 # KPIs

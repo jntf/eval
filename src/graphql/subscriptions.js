@@ -412,13 +412,14 @@ export const onCreateUser = /* GraphQL */ `
         postalCode
         city
         isActiveCompany
+        ownerId
         createdAt
         updatedAt
         owner
       }
+      companyId
       createdAt
       updatedAt
-      companyUsersId
       owner
     }
   }
@@ -444,13 +445,14 @@ export const onUpdateUser = /* GraphQL */ `
         postalCode
         city
         isActiveCompany
+        ownerId
         createdAt
         updatedAt
         owner
       }
+      companyId
       createdAt
       updatedAt
-      companyUsersId
       owner
     }
   }
@@ -476,13 +478,14 @@ export const onDeleteUser = /* GraphQL */ `
         postalCode
         city
         isActiveCompany
+        ownerId
         createdAt
         updatedAt
         owner
       }
+      companyId
       createdAt
       updatedAt
-      companyUsersId
       owner
     }
   }
@@ -503,6 +506,7 @@ export const onCreateCompany = /* GraphQL */ `
       users {
         nextToken
       }
+      ownerId
       createdAt
       updatedAt
       owner
@@ -525,6 +529,7 @@ export const onUpdateCompany = /* GraphQL */ `
       users {
         nextToken
       }
+      ownerId
       createdAt
       updatedAt
       owner
@@ -547,6 +552,7 @@ export const onDeleteCompany = /* GraphQL */ `
       users {
         nextToken
       }
+      ownerId
       createdAt
       updatedAt
       owner
