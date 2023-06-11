@@ -8,12 +8,11 @@
             <!-- Users Admin -->
             <div
                 class="col-span-2 bg-indigo-50 shadow-lg border-gray-700 rounded px-8 pt-6 pb-8 mb-4 w-full max-w-3xl mx-auto">
-                <UsersAdminList/>
+                <CreateUser />
+                <UsersAdminList />
             </div>
         </div>
-        <div class="col-span-2 bg-indigo-50 shadow-lg border-gray-700 rounded px-8 pt-6 pb-8 mb-4 w-full max-w-3xl mx-auto">
-            <CreateUser />
-        </div>
+
     </div>
 </template>
   

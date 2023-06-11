@@ -2,20 +2,20 @@
     <table class="table-auto w-full">
         <thead>
             <tr>
-                <td>Nom</td>
-                <td>Prenom</td>
-                <td>Email</td>
-                <td>Admin</td>
-                <td>Action</td>
+                <td class="text-sm py-2 mx-auto">Nom</td>
+                <td class="text-sm py-2 mx-auto">Prenom</td>
+                <td class="text-sm py-2 mx-auto">Email</td>
+                <td class="text-sm py-2 mx-auto">Admin</td>
+                <td class="text-sm py-2 mx-auto">Action</td>
             </tr>
         </thead>
         <tbody>
             <tr v-for="user in users" :key="user.id">
-                <td>{{ user.name }}</td>
-                <td>{{ user.family_name }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.isAdminCompany ? "Oui": "Non" }}</td>
-                <td>
+                <td class="text-sm py-2 mx-auto">{{ user.name }}</td>
+                <td class="text-sm py-2 mx-auto">{{ user.family_name }}</td>
+                <td class="text-sm py-2 mx-auto">{{ user.email }}</td>
+                <td class="text-sm py-2 mx-auto">{{ user.isAdminCompany ? "Oui": "Non" }}</td>
+                <td class="text-sm py-2 mx-auto">
                     <!-- Ici, vous pouvez ajouter des boutons pour effectuer des actions sur l'utilisateur (modifier, supprimer, etc.) -->
                 </td>
             </tr>
