@@ -63,6 +63,27 @@
     }
   },
   "function": {
+    "evalAdminAddUser": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "evalValidateAdminUser": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput",
+            "GraphQLAPIKeyOutput"
+          ],
+          "category": "api",
+          "resourceName": "evalio"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "evaladmingetusers": {
       "build": true,
       "dependsOn": [],
@@ -71,6 +92,38 @@
     }
   },
   "parameters": {
+    "AMPLIFY_function_evalAdminAddUser_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "evalAdminAddUser"
+        }
+      ]
+    },
+    "AMPLIFY_function_evalAdminAddUser_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "evalAdminAddUser"
+        }
+      ]
+    },
+    "AMPLIFY_function_evalValidateAdminUser_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "evalValidateAdminUser"
+        }
+      ]
+    },
+    "AMPLIFY_function_evalValidateAdminUser_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "evalValidateAdminUser"
+        }
+      ]
+    },
     "AMPLIFY_function_evaladmingetusers_deploymentBucketName": {
       "usedBy": [
         {

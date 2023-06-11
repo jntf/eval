@@ -83,7 +83,6 @@ import { computed, ref, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
 import { Auth } from "aws-amplify";
 import ReliabilityIndicator from '../../components/eval/ReliabilityIndicator.vue';
-import * as echarts from 'echarts';
 
 export default {
   components: { ReliabilityIndicator },
@@ -101,13 +100,6 @@ export default {
     const r2 = ref("");
     const mae = ref("");
     const rmse = ref("");
-    const chartData = ref([
-      { model: "Modèle A", sales: 450 },
-      { model: "Modèle B", sales: 340 },
-      { model: "Modèle C", sales: 280 },
-      { model: "Modèle D", sales: 200 },
-      { model: "Modèle E", sales: 180 },
-    ]);
 
     const userAttributes = ref({
       margin: 1200,
@@ -132,8 +124,6 @@ export default {
     onMounted(async () => {
       await loadUserAttributes();
       updateData();
-      const chart = echarts.init(document.getElementById("chart"));
-      renderChart(chart);
     });
 
     const marginValue = computed(() => {
@@ -160,10 +150,6 @@ export default {
 
     watch(
       price,
-      () => {
-        const chart = echarts.init(document.getElementById("chart"));
-        renderChart(chart);
-      }
     );
 
     function updateData() {
@@ -184,33 +170,6 @@ export default {
       return parseFloat(value);
     }
 
-    function renderChart(chart) {
-      const option = {
-        tooltip: {
-          trigger: "axis",
-          axisPointer: {
-            type: "shadow",
-          },
-        },
-        xAxis: {
-          type: "value",
-          boundaryGap: [0, 0.01],
-        },
-        yAxis: {
-          type: "category",
-          data: chartData.value.map((item) => item.model),
-        },
-        series: [
-          {
-            name: "Ventes",
-            type: "bar",
-            data: chartData.value.map((item) => item.sales),
-          },
-        ],
-      };
-      chart.setOption(option);
-    }
-
     return {
       make,
       model,
@@ -223,7 +182,6 @@ export default {
       r2,
       mae,
       rmse,
-      chartData,
       marginValue,
       frevoValue,
       fixedFeesValue,

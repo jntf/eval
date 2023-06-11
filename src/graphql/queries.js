@@ -75,6 +75,7 @@ export const getSearchHistory = /* GraphQL */ `
     getSearchHistory(id: $id) {
       id
       isMultipleImport
+      s3Link
       dataSearch
       ref
       createdAt
@@ -96,6 +97,104 @@ export const listSearchHistories = /* GraphQL */ `
         s3Link
         dataSearch
         ref
+        createdAt
+        updatedAt
+        owner
+      }
+      nextToken
+    }
+  }
+`;
+export const getUser = /* GraphQL */ `
+  query GetUser($id: ID!) {
+    getUser(id: $id) {
+      id
+      email
+      name
+      family_name
+      phoneNumber
+      isActiveUser
+      isAdminCompany
+      company {
+        id
+        companyName
+        vatNumber
+        address
+        postalCode
+        city
+        isActiveCompany
+        ownerId
+        createdAt
+        updatedAt
+        owner
+      }
+      companyId
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
+export const listUsers = /* GraphQL */ `
+  query ListUsers(
+    $filter: ModelUserFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listUsers(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        email
+        name
+        family_name
+        phoneNumber
+        isActiveUser
+        isAdminCompany
+        companyId
+        createdAt
+        updatedAt
+        owner
+      }
+      nextToken
+    }
+  }
+`;
+export const getCompany = /* GraphQL */ `
+  query GetCompany($id: ID!) {
+    getCompany(id: $id) {
+      id
+      companyName
+      vatNumber
+      address
+      postalCode
+      city
+      isActiveCompany
+      users {
+        nextToken
+      }
+      ownerId
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
+export const listCompanies = /* GraphQL */ `
+  query ListCompanies(
+    $filter: ModelCompanyFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listCompanies(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        companyName
+        vatNumber
+        address
+        postalCode
+        city
+        isActiveCompany
+        ownerId
         createdAt
         updatedAt
         owner

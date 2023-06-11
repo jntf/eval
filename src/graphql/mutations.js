@@ -63,6 +63,7 @@ export const createSearchHistory = /* GraphQL */ `
     createSearchHistory(input: $input, condition: $condition) {
       id
       isMultipleImport
+      s3Link
       dataSearch
       ref
       createdAt
@@ -79,6 +80,7 @@ export const updateSearchHistory = /* GraphQL */ `
     updateSearchHistory(input: $input, condition: $condition) {
       id
       isMultipleImport
+      s3Link
       dataSearch
       ref
       createdAt
@@ -95,8 +97,177 @@ export const deleteSearchHistory = /* GraphQL */ `
     deleteSearchHistory(input: $input, condition: $condition) {
       id
       isMultipleImport
+      s3Link
       dataSearch
       ref
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
+export const createUser = /* GraphQL */ `
+  mutation CreateUser(
+    $input: CreateUserInput!
+    $condition: ModelUserConditionInput
+  ) {
+    createUser(input: $input, condition: $condition) {
+      id
+      email
+      name
+      family_name
+      phoneNumber
+      isActiveUser
+      isAdminCompany
+      company {
+        id
+        companyName
+        vatNumber
+        address
+        postalCode
+        city
+        isActiveCompany
+        ownerId
+        createdAt
+        updatedAt
+        owner
+      }
+      companyId
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
+export const updateUser = /* GraphQL */ `
+  mutation UpdateUser(
+    $input: UpdateUserInput!
+    $condition: ModelUserConditionInput
+  ) {
+    updateUser(input: $input, condition: $condition) {
+      id
+      email
+      name
+      family_name
+      phoneNumber
+      isActiveUser
+      isAdminCompany
+      company {
+        id
+        companyName
+        vatNumber
+        address
+        postalCode
+        city
+        isActiveCompany
+        ownerId
+        createdAt
+        updatedAt
+        owner
+      }
+      companyId
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
+export const deleteUser = /* GraphQL */ `
+  mutation DeleteUser(
+    $input: DeleteUserInput!
+    $condition: ModelUserConditionInput
+  ) {
+    deleteUser(input: $input, condition: $condition) {
+      id
+      email
+      name
+      family_name
+      phoneNumber
+      isActiveUser
+      isAdminCompany
+      company {
+        id
+        companyName
+        vatNumber
+        address
+        postalCode
+        city
+        isActiveCompany
+        ownerId
+        createdAt
+        updatedAt
+        owner
+      }
+      companyId
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
+export const createCompany = /* GraphQL */ `
+  mutation CreateCompany(
+    $input: CreateCompanyInput!
+    $condition: ModelCompanyConditionInput
+  ) {
+    createCompany(input: $input, condition: $condition) {
+      id
+      companyName
+      vatNumber
+      address
+      postalCode
+      city
+      isActiveCompany
+      users {
+        nextToken
+      }
+      ownerId
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
+export const updateCompany = /* GraphQL */ `
+  mutation UpdateCompany(
+    $input: UpdateCompanyInput!
+    $condition: ModelCompanyConditionInput
+  ) {
+    updateCompany(input: $input, condition: $condition) {
+      id
+      companyName
+      vatNumber
+      address
+      postalCode
+      city
+      isActiveCompany
+      users {
+        nextToken
+      }
+      ownerId
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
+export const deleteCompany = /* GraphQL */ `
+  mutation DeleteCompany(
+    $input: DeleteCompanyInput!
+    $condition: ModelCompanyConditionInput
+  ) {
+    deleteCompany(input: $input, condition: $condition) {
+      id
+      companyName
+      vatNumber
+      address
+      postalCode
+      city
+      isActiveCompany
+      users {
+        nextToken
+      }
+      ownerId
       createdAt
       updatedAt
       owner

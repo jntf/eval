@@ -25,6 +25,14 @@
         "evaladmingetusers": {
           "deploymentBucketName": "amplify-evalio-dev-81726-deployment",
           "s3Key": "amplify-builds/evaladmingetusers-4b4e4b6f744d48315670-build.zip"
+        },
+        "evalValidateAdminUser": {
+          "deploymentBucketName": "amplify-evalio-dev-81726-deployment",
+          "s3Key": "amplify-builds/evalValidateAdminUser-4d547a3967426b6c4b72-build.zip"
+        },
+        "evalAdminAddUser": {
+          "deploymentBucketName": "amplify-evalio-dev-81726-deployment",
+          "s3Key": "amplify-builds/evalAdminAddUser-2b355669537a7932662b-build.zip"
         }
       }
     }
