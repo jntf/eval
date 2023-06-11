@@ -59,7 +59,7 @@ export default {
 
 
         onMounted(() => {
-            fetchUsers();
+            fetchUsers(companyId);
         });
 
         return { users, company };
