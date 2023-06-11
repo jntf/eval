@@ -28,6 +28,12 @@ const router = createRouter({
       meta: { guestOnly: true },
     },
     {
+      path: "/adminpanel",
+      name: "adminpanel",
+      component: Admin,
+      meta: { isSuperAdmin: true },
+    },
+    {
       path: "/user",
       name: "user",
       component: User,
