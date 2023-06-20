@@ -19,6 +19,7 @@
               class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               id="password" type="password" placeholder="Password">
           </div>
+          <div v-if="errorMessage" class="error-message italic text-red-700 pb-3 text-sm">{{ errorMessage }}</div>
           <div class="flex items-center justify-between">
             <button
               class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
@@ -46,6 +47,7 @@ export default {
     const email = ref('');
     const password = ref('');
     const router = useRouter();
+    const errorMessage = ref(''); // New
 
     const login = async () => {
       try {
@@ -54,11 +56,12 @@ export default {
           context.emit('nextStep', 'ChangeTempPassword', email.value);
         } else {
           console.log('Logged in');
+          context.emit('login', email.value, password.value);
           router.push('/analyse');
         }
       } catch (error) {
         console.error(error);
-        alert('Invalid email or password');
+        errorMessage.value = 'L\'identifiant ou le mot de passe sont invalide, veuillez les ressaisir svp...'; // New
       }
     };
 
@@ -71,6 +74,7 @@ export default {
       password,
       login,
       forgotPassword,
+      errorMessage, // New
     };
   },
 };
