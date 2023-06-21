@@ -2,7 +2,7 @@
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-md-6">
-        <form @submit.prevent="login" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        <form @submit.prevent="login" class="bg-white shadow-lg border border-indigo-50 rounded px-8 pt-6 pb-8 mb-4">
           <div class="mb-4">
             <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
               Email
@@ -41,6 +41,7 @@
 import { ref } from 'vue';
 import { Auth } from 'aws-amplify';
 import { useRouter } from 'vue-router';
+import { isEmail, isLength } from 'validator';
 
 export default {
   setup(props, context) {
@@ -50,6 +51,15 @@ export default {
     const errorMessage = ref(''); // New
 
     const login = async () => {
+      if (!isEmail(email.value)) {
+        errorMessage.value = 'L\'email n\'est pas valide.';
+        return;
+      }
+
+      if (!isLength(password.value, { min: 8 })) {
+        errorMessage.value = 'Le mot de passe doit contenir au moins 8 caractères.';
+        return;
+      }
       try {
         const user = await Auth.signIn(email.value, password.value);
         if (user.challengeName === 'NEW_PASSWORD_REQUIRED') {

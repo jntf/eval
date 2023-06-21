@@ -3,10 +3,13 @@
         <!-- Sidebar / Navigation -->
         <div class="bg-gray-600 w-64 fixed pin-l h-full shadow">
             <div class="px-8">
-                <h1 class="py-4 text-white text-2xl font-semibold">Admin Panel</h1>
+                <a href="/adminpanel">
+                    <h1 class="py-4 text-white text-2xl font-semibold">Admin Panel</h1>
+                </a>
                 <ul class="mt-6">
                     <router-link to="/users-list" class="text-white font-semibold py-2">Users</router-link>
                     <li class="text-white font-semibold py-2">Settings</li>
+                    <router-link to="/home" class="text-white font-semibold py-2">Back to EvaluIA</router-link>
                 </ul>
             </div>
         </div>
@@ -38,10 +41,6 @@ const fetchUsers = async () => {
     } catch (error) {
         console.error('An error occurred when trying to fetch users', error);
     }
-};
-const getUserAttribute = (user, attributeName) => {
-    const attribute = user.Attributes.find(attr => attr.Name === attributeName);
-    return attribute ? attribute.Value : null;
 };
 
 onMounted(fetchUsers);

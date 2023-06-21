@@ -4,7 +4,13 @@ import { RouterView } from "vue-router";
 </script>
 
 <template>
-    <router-view />
+  <div class="flex flex-col min-h-screen">
+    <Header />
+    <div class="flex-grow">
+      <router-view />
+    </div>
+    <Footer />
+  </div>
 </template>
 
 <style scoped>
