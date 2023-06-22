@@ -27,7 +27,7 @@
                         <td class="text-sm">{{ getUserAttribute(user, 'email') }}</td>
                         <td class="text-sm">{{ getUserAttribute(user, 'phone_number') }}</td>
                         <td class="text-sm">
-                            <button @click="validateUser(getUserAttribute(user, 'sub'))">Validate</button>
+                            <button @click="validateUser(getUserAttribute(user, 'sub'))"><span class="bg-green-500 hover:bg-green-700 text-white p-2 rounded-md">OK</span></button>
                         </td>
                     </tr>
                 </tbody>

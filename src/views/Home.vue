@@ -1,9 +1,17 @@
 <script setup>
 import '@aws-amplify/ui-vue/styles.css';
-
 import Header from '../components/home/Header.vue';
 import Footer from '../components/home/Footer.vue';
+import { ref } from 'vue';
 
+let name = ref("");
+let email = ref("");
+let message = ref("");
+
+const submitForm = () => {
+    // Message du formulaire envoyé
+    const message = "Le formulaire à bien été envoyé"
+}
 </script>
 
 <template>
@@ -34,7 +42,7 @@ import Footer from '../components/home/Footer.vue';
             <div class="container mx-auto">
                 <h2 class="text-3xl md:text-4xl font-bold mb-10">Optimisez la vente de vos voitures avec notre outil de
                     prédiction de prix</h2>
-                <p class="text-lg md:text-xl leading-8 mb-10">Notre application utilise les dernières avancées de l'IA pour
+                <p class="text-lg md:text-xl leading-8 mb-10 mx-2">Notre application utilise les dernières avancées de l'IA pour
                     prédire les fluctuations des prix des véhicules en fonction de divers facteurs tels que le marché, les
                     réseaux sociaux, le lieu de vente et la conjoncture. Grâce à cette prédiction, vous pouvez coter en
                     rafale un grand nombre de véhicules et connaître la valeur de votre stock tous les jours. Vous pouvez
@@ -47,10 +55,10 @@ import Footer from '../components/home/Footer.vue';
         </section>
 
         <!-- Comment ça marche -->
-        <section id="comment-ca-marche" class="h-screen flex justify-center items-center">
+        <section id="comment-ca-marche" class="min-h-screen flex justify-center items-center py-8">
             <div class="container mx-auto">
                 <h2 class="text-3xl md:text-4xl font-bold mb-10">Comment ça marche ?</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mx-2">
                     <div class="flex flex-col items-center">
                         <div
                             class="h-20 w-20 rounded-full bg-red-500 flex items-center justify-center text-white font-bold mb-4">
@@ -97,32 +105,35 @@ import Footer from '../components/home/Footer.vue';
         </section>
 
         <!-- Tarifs -->
-        <section id="tarifs" class="h-screen flex justify-center items-center bg-emerald-50">
+        <section id="tarifs" class="min-h-screen flex justify-center items-center py-8 bg-emerald-50">
             <div class="container mx-auto">
                 <h2 class="text-3xl md:text-4xl font-bold mb-10">Tarifs</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                    <div class="border rounded-lg shadow-sm p-6 text-center">
+                    <div class="border rounded-lg shadow-sm p-6 text-center mx-2">
                         <h3 class="text-lg font-bold mb-4">1 à 4 utilisateurs</h3>
                         <p class="text-green-500 mb-4">Côtes illimitées</p>
                         <p class="text-green-500 mb-4">Analyse de marché illimitée</p>
                         <p class="font-black mb-4">0,50€ par rafale</p>
-                        <p class="text-4xl text-purple-600 font-bold">19,90€<br><span class="text-sm font-light"> par utilisateur</span></p>
+                        <p class="text-4xl text-purple-600 font-bold">19,90€<br><span class="text-sm font-light"> par
+                                utilisateur</span></p>
                     </div>
-                    <div class="border rounded-lg shadow-sm p-6 text-center">
+                    <div class="border rounded-lg shadow-sm p-6 text-center mx-2">
                         <h3 class="text-lg font-bold mb-4">5 à 9 utilisateurs</h3>
                         <p class="text-green-500 mb-4">Côtes illimitées</p>
                         <p class="text-green-500 mb-4">Analyse de marché illimitée</p>
                         <p class="font-black mb-4">0,50€ par rafale</p>
-                        <p class="text-4xl text-purple-600 font-bold">16,90€<br><span class="text-sm font-light"> par utilisateur</span></p>
+                        <p class="text-4xl text-purple-600 font-bold">16,90€<br><span class="text-sm font-light"> par
+                                utilisateur</span></p>
                     </div>
-                    <div class="border rounded-lg shadow-sm p-6 text-center">
+                    <div class="border rounded-lg shadow-sm p-6 text-center mx-2">
                         <h3 class="text-lg font-bold mb-4">10 à 19 utilisateurs</h3>
                         <p class="text-green-500 mb-4">Côtes illimitées</p>
                         <p class="text-green-500 mb-4">Analyse de marché illimitée</p>
                         <p class="font-black mb-4">Illimité</p>
-                        <p class="text-4xl text-purple-600 font-bold">14,90€<br><span class="text-sm font-light"> par utilisateur</span></p>
+                        <p class="text-4xl text-purple-600 font-bold">14,90€<br><span class="text-sm font-light"> par
+                                utilisateur</span></p>
                     </div>
-                    <div class="border rounded-lg shadow-sm p-6 text-center">
+                    <div class="border rounded-lg shadow-sm p-6 text-center mx-2">
                         <h3 class="text-lg font-bold mb-4">20 utilisateurs ou plus</h3>
                         <p class="text-green-500 mb-4">Côtes illimitées</p>
                         <p class="text-green-500 mb-4">Analyse de marché illimitée</p>
@@ -135,38 +146,28 @@ import Footer from '../components/home/Footer.vue';
 
 
         <!-- Nous contacter -->
-        <section id="nous-contacter" class="h-screen flex justify-center items-center bg-red-800">
+        <section id="nous-contacter" class="min-h-screen flex justify-center items-center py-8 bg-red-800">
             <div class="container mx-auto">
                 <h2 class="text-3xl md:text-4xl font-bold mb-10 text-white">Nous contacter</h2>
-                <form class="max-w-lg mx-auto">
+                <form class="max-w-lg mx-auto" @submit.prevent="submitForm">
                     <div class="mb-4">
-                        <label class="block text-white font-bold mb-2" for="name">
-                            Nom complet
-                        </label>
-                        <input
-                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            id="name" type="text" placeholder="Entrez votre nom">
+                        <label class="block text-white font-bold mb-2" for="name">Nom complet</label>
+                        <input v-model="name" id="name" type="text" placeholder="Entrez votre nom"
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                     </div>
                     <div class="mb-4">
-                        <label class="block text-white font-bold mb-2" for="email">
-                            Adresse email
-                        </label>
-                        <input
-                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            id="email" type="email" placeholder="Entrez votre adresse email">
+                        <label class="block text-white font-bold mb-2" for="email">Adresse email</label>
+                        <input v-model="email" id="email" type="email" placeholder="Entrez votre adresse email"
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                     </div>
                     <div class="mb-4">
-                        <label class="block text-white font-bold mb-2" for="message">
-                            Message
-                        </label>
-                        <textarea
-                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            id="message" placeholder="Entrez votre message"></textarea>
+                        <label class="block text-white font-bold mb-2" for="message">Message</label>
+                        <textarea v-model="message" id="message" placeholder="Entrez votre message"
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></textarea>
                     </div>
                     <div class="flex justify-end">
-                        <button
-                            class="bg-red-900 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                            type="button">
+                        <button type="submit"
+                            class="bg-red-900 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                             Envoyer
                         </button>
                     </div>

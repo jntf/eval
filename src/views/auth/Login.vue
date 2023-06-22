@@ -1,21 +1,21 @@
 <template>
-  <div class="">
-    <div class="bg-red-900 text-white py-4">
-      <Header />
-    </div>
-    <div class="fixed inset-0 flex items-center justify-center z-50 pt-36">
-      <div class="w-full max-w-xl px-4">
-        <div class="grid grid-cols-2">
-          <div class="w-full bg-blue-400 text-center text-white hover:bg-blue-800 py-3" @click="currentStep = 'Login'">
+  <div class="flex flex-col min-h-screen">
+    <Header />
+    <div class="flex-grow flex items-center justify-center pt-36">
+      <div class="w-full sm:max-w-xl">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-1 md:gap-4 pb-5">
+          <div class="w-full bg-gray-300 text-center text-white hover:bg-green-600 py-3 rounded-xl" @click="currentStep = 'Login'">
             Connexion</div>
-          <div class="w-full bg-blue-400 text-center text-white hover:bg-blue-800 py-3" @click="currentStep = 'SignUp'">
+          <div class="w-full bg-gray-300 text-center text-white hover:bg-green-600 py-3 rounded-xl" @click="currentStep = 'SignUp'">
             Demande d'inscription</div>
         </div>
         <component :is="currentStep" :email="email" @nextStep="nextStep" />
       </div>
     </div>
+    <Footer />
   </div>
 </template>
+
 
 <script>
 import { ref } from 'vue';

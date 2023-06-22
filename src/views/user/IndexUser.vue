@@ -18,19 +18,13 @@ onMounted(() => {
 <template>
   <authenticator>
     <nav>
-      <TopRight
-        :name="userStore.name"
-        :familyName="userStore.family_name"
-        :roles="userStore.roles"
-        :signOut="userStore.signOut"
-      />
-      <MiniNavBar :roles="userStore.roles"/>
+      <TopRight :name="userStore.name" :familyName="userStore.family_name" :roles="userStore.roles"
+        :signOut="userStore.signOut" />
+      <MiniNavBar :roles="userStore.roles" />
     </nav>
-    <div class="container mx-auto">
-      <div class="flex flex-col flex-grow">
-        <router-view 
-
-        />
+    <div class="container mx-auto flex-grow">
+      <div class="flex flex-col">
+        <router-view />
       </div>
     </div>
   </authenticator>
