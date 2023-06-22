@@ -1,5 +1,5 @@
 <template>
-    <div class="container mx-auto px-4 py-6">
+    <div class="container min-h-screen mx-auto px-4 py-6">
         <h1 class="text-2xl font-semibold mb-4">Historique des recherches</h1>
 
         <div class="mb-4">

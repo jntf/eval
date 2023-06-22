@@ -14,7 +14,7 @@
                 <td class="text-sm py-2 mx-auto">{{ user.name }}</td>
                 <td class="text-sm py-2 mx-auto">{{ user.family_name }}</td>
                 <td class="text-sm py-2 mx-auto">{{ user.email }}</td>
-                <td class="text-sm py-2 mx-auto">{{ user.isAdminCompany ? "Oui": "Non" }}</td>
+                <td class="text-sm py-2 mx-auto">{{ user.isAdminCompany ? "Oui" : "Non" }}</td>
                 <td class="text-sm py-2 mx-auto">
                     <!-- Ici, vous pouvez ajouter des boutons pour effectuer des actions sur l'utilisateur (modifier, supprimer, etc.) -->
                 </td>
@@ -24,16 +24,15 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
-import { API, graphqlOperation } from 'aws-amplify';
+import { API, graphqlOperation } from 'aws-amplify'; // Ajoutez ceci
+import { computed, onMounted } from 'vue';
 import { useUserStore } from "../../../stores/userStore";
 import { listUsers } from '../../../graphql/queries';
 
 export default {
     setup() {
         const userStore = useUserStore();
-        const users = ref([]);
-        const company = ref(null);
+        const users = computed(() => userStore.usersList);
         const companyId = userStore.companyId;
 
         const fetchUsers = async (companyId) => {
@@ -50,19 +49,18 @@ export default {
                     authMode: 'AMAZON_COGNITO_USER_POOLS'
                 });
 
-                users.value = usersData.data.listUsers.items;
+                userStore.setUsersList(usersData.data.listUsers.items);
             } catch (error) {
                 console.error('Error fetching users', error);
                 console.log(error.errors)
             }
         };
 
-
         onMounted(() => {
             fetchUsers(companyId);
         });
 
-        return { users, company };
+        return { users };
     },
 };
 </script>

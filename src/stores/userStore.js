@@ -19,6 +19,7 @@ export const useUserStore = defineStore({
     frevo: null,
     margin: null,
     marginType: null,
+    usersList: [],
   }),
 
   getters: {
@@ -75,6 +76,10 @@ export const useUserStore = defineStore({
 
     setUserData(data) {
       Object.assign(this, data);
+    },
+
+    setUsersList(users) {
+      this.usersList = users;
     },
 
     clearUserData() {
