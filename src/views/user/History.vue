@@ -100,8 +100,9 @@
             </table>
         </div>
 
-        <div>
-            <pagination :records="searchHistory" :per-page="10" @paginate="filteredSearchHistory = $event"></pagination>
+        <div class="">
+            <button @click="prevPage" class="bg-gray-50 hover:bg-gray-400 hover:text-white py-2 px-4 gap-5 rounded">Précédent</button>
+            <button @click="nextPage" class="bg-gray-50 hover:bg-gray-400 hover:text-white py-2 px-4 gap-5 rounded">Suivant</button>
         </div>
 
     </div>
@@ -126,18 +127,14 @@ import { Auth, API, Storage } from 'aws-amplify';
 import { listSearchHistories } from '../../graphql/queries';
 import { deleteSearchHistory as deleteSearchHistoryMutation } from '../../graphql/mutations';
 
-import Pagination from 'vue-pagination-2';
-
 export default {
-    components: {
-        'pagination': Pagination
-    },
     setup() {
         const searchHistory = ref([]);
         const searchQuery = ref('');
         const s3Files = ref([]);
         const downloadLink = ref('');
-        const perPage = ref(10);
+        const nextToken = ref(null);
+        const prevTokens = ref([]);
 
         const formatDate = (dateString) => {
             const date = new Date(dateString);
@@ -173,7 +170,7 @@ export default {
 
         const filteredSearchHistory = computed(() => {
             if (!searchQuery.value) {
-                return searchHistory.value.slice(0, perPage.value);
+                return searchHistory.value;
             }
             return searchHistory.value.filter((search) => {
                 const query = searchQuery.value.toLowerCase();
@@ -183,7 +180,7 @@ export default {
                     search.dataSearch.make.toLowerCase().includes(query) ||
                     search.dataSearch.model.toLowerCase().includes(query)
                 );
-            }).slice(0, perPage.value);
+            });
         });
 
         const fetchSearchHistory = async () => {
@@ -192,7 +189,14 @@ export default {
                 const { data } = await API.graphql({
                     query: listSearchHistories,
                     authMode: 'AMAZON_COGNITO_USER_POOLS',
+                    variables: {
+                        nextToken: nextToken.value,
+                        limit: 10,
+                    },
                 });
+
+                nextToken.value = data.listSearchHistories.nextToken;
+                searchHistory.value = data.listSearchHistories.items;
 
                 const items = data.listSearchHistories.items
                     .filter((item) => item.owner === currentUser.username)
@@ -272,6 +276,17 @@ export default {
             window.open(search.downloadLink, "_blank");
         };
 
+
+        const nextPage = () => {
+            prevTokens.value.push(nextToken.value);
+            fetchSearchHistory();
+        };
+
+        const prevPage = () => {
+            nextToken.value = prevTokens.value.pop();
+            fetchSearchHistory();
+        };
+
         const filterResults = () => {
             // La recherche sera effectuée par la propriété calculée filteredSearchHistory.
         };
@@ -290,7 +305,8 @@ export default {
             downloadLink,
             downloadFile,
             s3Files,
-            perPage
+            nextPage,
+            prevPage
         };
     },
 };
