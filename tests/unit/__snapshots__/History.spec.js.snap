@@ -1,0 +1,118 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`History.vue renders correctly 1`] = `
+<div
+  class="container min-h-screen mx-auto px-4 py-6"
+>
+  <h1
+    class="text-2xl font-semibold mb-4"
+  >
+    Historique des recherches
+  </h1>
+  <div
+    class="mb-4"
+  >
+    <input
+      class="border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+      placeholder="Rechercher par date, référence, marque ou modèle"
+      type="text"
+    />
+  </div>
+  <div
+    class="table-responsive"
+  >
+    <table
+      class="table-auto w-full mb-6"
+    >
+      <thead>
+        <tr
+          class="bg-gray-800"
+        >
+          <th
+            class="text-white px-4 py-2"
+          >
+            Date
+          </th>
+          <th
+            class="text-white px-4 py-2"
+          >
+            Référence
+          </th>
+          <th
+            class="text-white px-4 py-2"
+          >
+            Marque
+          </th>
+          <th
+            class="text-white px-4 py-2"
+          >
+            Modèle
+          </th>
+          <th
+            class="text-white px-4 py-2"
+          >
+            Version
+          </th>
+          <th
+            class="text-white px-4 py-2"
+          >
+            Années
+          </th>
+          <th
+            class="text-white px-4 py-2"
+          >
+            Kilomètres
+          </th>
+          <th
+            class="text-white px-4 py-2"
+          >
+            Prix
+          </th>
+          <th
+            class="text-white px-4 py-2"
+          >
+            Actions
+          </th>
+        </tr>
+      </thead>
+      <tbody
+        class="shadow-xl"
+      >
+        
+        
+      </tbody>
+    </table>
+  </div>
+  <div>
+    <!-- Ajoutez ici la pagination en utilisant une bibliothèque de votre choix ou en créant votre propre solution. -->
+  </div>
+</div>
+`;
+
+exports[`History.vue renders the component 1`] = `
+"<div class=\\"container min-h-screen mx-auto px-4 py-6\\">
+  <h1 class=\\"text-2xl font-semibold mb-4\\">Historique des recherches</h1>
+  <div class=\\"mb-4\\"><input type=\\"text\\" class=\\"border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline\\" placeholder=\\"Rechercher par date, référence, marque ou modèle\\"></div>
+  <div class=\\"table-responsive\\">
+    <table class=\\"table-auto w-full mb-6\\">
+      <thead>
+        <tr class=\\"bg-gray-800\\">
+          <th class=\\"text-white px-4 py-2\\">Date</th>
+          <th class=\\"text-white px-4 py-2\\">Référence</th>
+          <th class=\\"text-white px-4 py-2\\">Marque</th>
+          <th class=\\"text-white px-4 py-2\\">Modèle</th>
+          <th class=\\"text-white px-4 py-2\\">Version</th>
+          <th class=\\"text-white px-4 py-2\\">Années</th>
+          <th class=\\"text-white px-4 py-2\\">Kilomètres</th>
+          <th class=\\"text-white px-4 py-2\\">Prix</th>
+          <th class=\\"text-white px-4 py-2\\">Actions</th>
+        </tr>
+      </thead>
+      <tbody class=\\"shadow-xl\\"></tbody>
+    </table>
+  </div>
+  <div>
+    <!-- Ajoutez ici la pagination en utilisant une bibliothèque de votre choix ou en créant votre propre solution. -->
+  </div>
+</div>"
+`;
