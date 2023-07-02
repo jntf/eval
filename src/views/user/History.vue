@@ -37,8 +37,7 @@
                                             : search.dataSearch.map(item => item.make)
                                     )
                                 ).join(', ').toUpperCase().slice(0, 30)
-                            }}<span
-                                v-if="search.isMultipleImport"> ...</span>
+                            }}<span v-if="search.isMultipleImport"> ...</span>
                         </td>
                         <td class="border px-4 py-2 text-xs">
                             {{
@@ -49,8 +48,7 @@
                                             : search.dataSearch.map(item => item.model)
                                     )
                                 ).join(', ').toUpperCase().slice(0, 30)
-                            }}<span
-                                v-if="search.isMultipleImport"> ...</span>
+                            }}<span v-if="search.isMultipleImport"> ...</span>
                         </td>
                         <td class="border px-4 py-2 text-xs">
                             {{
@@ -61,8 +59,7 @@
                                             : search.dataSearch.map(item => item.keywords)
                                     )
                                 ).join(', ').toUpperCase().slice(0, 30)
-                            }}<span
-                                v-if="search.isMultipleImport">...</span>
+                            }}<span v-if="search.isMultipleImport">...</span>
                         </td>
                         <td class="border px-4 py-2 text-xs">
                             {{
@@ -73,8 +70,7 @@
                                             : search.dataSearch.map(item => item.year)
                                     )
                                 ).join(', ').toUpperCase().slice(0, 30)
-                            }}<span
-                                v-if="search.isMultipleImport"> ...</span>
+                            }}<span v-if="search.isMultipleImport"> ...</span>
                         </td>
                         <td class="border px-4 py-2 text-xs">
                             {{
@@ -85,8 +81,7 @@
                                             : search.dataSearch.map(item => item.mileage)
                                     )
                                 ).join(', ').toUpperCase().slice(0, 30)
-                            }}<span
-                                v-if="search.isMultipleImport"> ...</span>
+                            }}<span v-if="search.isMultipleImport"> ...</span>
                         </td>
                         <td class="border px-4 py-2 text-xs">
                             {{ formatPrice(search.dataSearch) }} <span>{{ search.isMultipleImport ? "€ en moyenne" : "€"
@@ -97,7 +92,8 @@
                                 class="bg-green-500 text-white rounded-md p-1 mx-1">
                                 <i class="fas fa-file-export"></i>
                             </button>
-                            <button @click="deleteSearchHistory(search.id)" class="bg-red-500 text-white rounded-md p-1"><i class="fas fa-trash"></i></button>
+                            <button @click="deleteSearchHistory(search.id)" class="bg-red-500 text-white rounded-md p-1"><i
+                                    class="fas fa-trash"></i></button>
                         </td>
                     </tr>
                 </tbody>
@@ -105,7 +101,7 @@
         </div>
 
         <div>
-            <!-- Ajoutez ici la pagination en utilisant une bibliothèque de votre choix ou en créant votre propre solution. -->
+            <pagination :records="searchHistory" :per-page="10" @paginate="filteredSearchHistory = $event"></pagination>
         </div>
 
     </div>
@@ -130,12 +126,18 @@ import { Auth, API, Storage } from 'aws-amplify';
 import { listSearchHistories } from '../../graphql/queries';
 import { deleteSearchHistory as deleteSearchHistoryMutation } from '../../graphql/mutations';
 
+import Pagination from 'vue-pagination-2';
+
 export default {
+    components: {
+        'pagination': Pagination
+    },
     setup() {
         const searchHistory = ref([]);
         const searchQuery = ref('');
         const s3Files = ref([]);
         const downloadLink = ref('');
+        const perPage = ref(10);
 
         const formatDate = (dateString) => {
             const date = new Date(dateString);
@@ -171,7 +173,7 @@ export default {
 
         const filteredSearchHistory = computed(() => {
             if (!searchQuery.value) {
-                return searchHistory.value;
+                return searchHistory.value.slice(0, perPage.value);
             }
             return searchHistory.value.filter((search) => {
                 const query = searchQuery.value.toLowerCase();
@@ -181,7 +183,7 @@ export default {
                     search.dataSearch.make.toLowerCase().includes(query) ||
                     search.dataSearch.model.toLowerCase().includes(query)
                 );
-            });
+            }).slice(0, perPage.value);
         });
 
         const fetchSearchHistory = async () => {
@@ -288,6 +290,7 @@ export default {
             downloadLink,
             downloadFile,
             s3Files,
+            perPage
         };
     },
 };
