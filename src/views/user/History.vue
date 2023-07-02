@@ -100,9 +100,12 @@
             </table>
         </div>
 
-        <div class="">
-            <button @click="prevPage" class="bg-gray-50 hover:bg-gray-400 hover:text-white py-2 px-4 gap-5 rounded">Précédent</button>
-            <button @click="nextPage" class="bg-gray-50 hover:bg-gray-400 hover:text-white py-2 px-4 gap-5 rounded">Suivant</button>
+
+        <div class="pagination">
+            <button @click="prevPage" v-bind:disabled="!prevPage"
+                class="bg-gray-200 hover:bg-gray-400 hover:text-white py-2 px-4 gap-5 rounded">Précédent</button>
+            <button @click="nextPage" v-bind:disabled="!nextToken"
+                class="bg-gray-200 hover:bg-gray-400 hover:text-white py-2 px-4 gap-5 rounded">Suivant</button>
         </div>
 
     </div>
@@ -113,6 +116,11 @@
     width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
 }
 
 @media screen and (min-width: 640px) {
@@ -186,10 +194,12 @@ export default {
         const fetchSearchHistory = async () => {
             try {
                 const currentUser = await Auth.currentAuthenticatedUser();
+                console.log(currentUser)
                 const { data } = await API.graphql({
                     query: listSearchHistories,
                     authMode: 'AMAZON_COGNITO_USER_POOLS',
                     variables: {
+                        filter: { owner: { eq: currentUser.username } },
                         nextToken: nextToken.value,
                         limit: 10,
                     },
