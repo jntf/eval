@@ -9,6 +9,11 @@
                 @input="filterResults" />
         </div>
 
+        <div>
+            <pagination :items="filteredSearchHistory" @page-change="handlePageChange"
+                @items-per-page-change="itemsPerPageChange"></pagination>
+        </div>
+
         <div class="table-responsive">
             <table class="table-auto w-full mb-6">
                 <thead>
@@ -25,7 +30,7 @@
                     </tr>
                 </thead>
                 <tbody class="shadow-xl">
-                    <tr v-for="(search, index) in filteredSearchHistory" :key="index">
+                    <tr v-for="(search, index) in displayedSearchHistory" :key="index">
                         <td class="border px-4 py-2 text-xs">{{ formatDate(search.createdAt) }}</td>
                         <td class="border px-4 py-2 text-xs">{{ search.ref }}</td>
                         <td class="border px-4 py-2 text-xs">
@@ -99,50 +104,33 @@
                 </tbody>
             </table>
         </div>
-
-
-        <div class="pagination">
-            <button @click="prevPage" v-bind:disabled="!prevPage"
-                class="bg-gray-200 hover:bg-gray-400 hover:text-white py-2 px-4 gap-5 rounded">Précédent</button>
-            <button @click="nextPage" v-bind:disabled="!nextToken"
-                class="bg-gray-200 hover:bg-gray-400 hover:text-white py-2 px-4 gap-5 rounded">Suivant</button>
-        </div>
-
     </div>
 </template>
-<style scoped>
-.table-responsive {
-    display: block;
-    width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-}
 
-.pagination {
-    display: flex;
-    justify-content: center;
-}
-
-@media screen and (min-width: 640px) {
-    .table-responsive {
-        display: table;
-    }
-}
-</style>
 <script>
 import { ref, computed } from 'vue';
 import { Auth, API, Storage } from 'aws-amplify';
 import { listSearchHistories } from '../../graphql/queries';
 import { deleteSearchHistory as deleteSearchHistoryMutation } from '../../graphql/mutations';
+import Pagination from '../../components/reuse/Pagination.vue';
 
 export default {
+    components: {
+        Pagination,
+    },
+    methods: {
+        handlePageChange(newPage) {
+            this.currentPage = newPage;
+        },
+    },
     setup() {
         const searchHistory = ref([]);
         const searchQuery = ref('');
         const s3Files = ref([]);
         const downloadLink = ref('');
-        const nextToken = ref(null);
-        const prevTokens = ref([]);
+        const currentPage = ref(1);
+        const totalPages = computed(() => Math.ceil(searchHistory.value.length / 10));
+        const itemsPerPage = ref(10);
 
         const formatDate = (dateString) => {
             const date = new Date(dateString);
@@ -194,19 +182,10 @@ export default {
         const fetchSearchHistory = async () => {
             try {
                 const currentUser = await Auth.currentAuthenticatedUser();
-                console.log(currentUser)
                 const { data } = await API.graphql({
                     query: listSearchHistories,
                     authMode: 'AMAZON_COGNITO_USER_POOLS',
-                    variables: {
-                        filter: { owner: { eq: currentUser.username } },
-                        nextToken: nextToken.value,
-                        limit: 10,
-                    },
                 });
-
-                nextToken.value = data.listSearchHistories.nextToken;
-                searchHistory.value = data.listSearchHistories.items;
 
                 const items = data.listSearchHistories.items
                     .filter((item) => item.owner === currentUser.username)
@@ -286,15 +265,18 @@ export default {
             window.open(search.downloadLink, "_blank");
         };
 
+        const displayedSearchHistory = computed(() => {
+            const start = (currentPage.value - 1) * itemsPerPage.value;
+            const end = start + itemsPerPage.value;
+            return filteredSearchHistory.value.slice(start, end);
+        });
 
-        const nextPage = () => {
-            prevTokens.value.push(nextToken.value);
-            fetchSearchHistory();
+        const itemsPerPageChange = (newItemsPerPage) => {
+            itemsPerPage.value = newItemsPerPage;
         };
 
-        const prevPage = () => {
-            nextToken.value = prevTokens.value.pop();
-            fetchSearchHistory();
+        const pageChange = (newPage) => {
+            currentPage.value = newPage;
         };
 
         const filterResults = () => {
@@ -310,16 +292,39 @@ export default {
             searchHistory,
             searchQuery,
             filteredSearchHistory,
+            currentPage,
+            totalPages,
+            displayedSearchHistory,
             deleteSearchHistory,
             filterResults,
             downloadLink,
             downloadFile,
             s3Files,
-            nextPage,
-            prevPage
+            itemsPerPageChange,
+            pageChange,
         };
     },
 };
 </script>
+
+<style scoped>
+.table-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.pagination {
+    display: flex;
+    justify-content: right;
+}
+
+@media screen and (min-width: 640px) {
+    .table-responsive {
+        display: table;
+    }
+}
+</style>
 
   
