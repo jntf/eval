@@ -28,12 +28,16 @@
 
 <script>
 import { ref, onMounted } from "vue";
-import { Auth } from "aws-amplify";
+import { Auth, API } from "aws-amplify";
 import { useUserStore } from "../../../stores/userStore";
+import { messageStore } from "../../../stores/messageStore";
+import { createSettingsCompany, updateSettingsCompany } from "../../../graphql/mutations";
+import { listSettingsCompanies } from "../../../graphql/queries";
 
 export default {
     setup() {
         const userStore = useUserStore();
+        const mess = messageStore();
         const name = ref(userStore.name);
         const familyName = ref(userStore.familyName);
         const isEditing = ref(false);
@@ -53,32 +57,84 @@ export default {
         });
         async function loadSettings() {
             try {
-                const user = await Auth.currentAuthenticatedUser();
-                const userAttributes = user.attributes;
-                settings.value.margin.value = parseFloat(userAttributes["custom:margin"]) || 0;
-                settings.value.marginType.value = userAttributes["custom:marginType"] || "euro";
-                settings.value.frevo.value = parseFloat(userAttributes["custom:frevo"]) || 0;
-                settings.value.fixedFees.value = parseFloat(userAttributes["custom:fixedFees"]) || 0;
+                if (userStore.fixedFees && userStore.frevo && userStore.margin && userStore.marginType) {
+                    settings.value.fixedFees.value = parseFloat(userStore.fixedFees);
+                    settings.value.frevo.value = parseFloat(userStore.frevo);
+                    settings.value.margin.value = parseFloat(userStore.margin);
+                    settings.value.marginType.value = userStore.marginType;
+                } else if (userAttributes.length > 0) {
+                    const user = await Auth.currentAuthenticatedUser();
+                    const userAttributes = user.attributes;
+                    settings.value.fixedFees.value = parseFloat(userAttributes["custom:fixedFees"]) || 0;
+                    settings.value.frevo.value = parseFloat(userAttributes["custom:frevo"]) || 0;
+                    settings.value.margin.value = parseFloat(userAttributes["custom:margin"]) || 0;
+                    settings.value.marginType.value = userAttributes["custom:marginType"] || "euro";
+                } else {
+                    console.warn("Aucune entreprise associée à l'utilisateur, impossible de charger les paramètres");
+                }
             } catch (error) {
                 console.error("Erreur lors du chargement des paramètres", error);
             }
         }
+
         async function saveSettings() {
             try {
-                const user = await Auth.currentAuthenticatedUser();
-                await Auth.updateUserAttributes(user, {
-                    "custom:margin": settings.value.margin.value.toString(),
-                    "custom:marginType": settings.value.marginType.value,
-                    "custom:frevo": settings.value.frevo.value.toString(),
-                    "custom:fixedFees": settings.value.fixedFees.value.toString(),
-                });
+                const companyId = userStore.companyId;
+
+                if (companyId) {
+                    const settingsData = {
+                        fixedFees: settings.value.fixedFees.value,
+                        freVo: settings.value.frevo.value,
+                        margin: settings.value.margin.value,
+                        marginType: settings.value.marginType.value,
+                        companyId: companyId,  // Ajoutez l'ID de l'entreprise aux données des paramètres
+                    };
+
+                    // Vérifiez si les paramètres de l'entreprise existent déjà
+                    const { data } = await API.graphql({
+                        authMode: 'AMAZON_COGNITO_USER_POOLS',
+                        query: listSettingsCompanies,
+                        variables: {
+                            filter: { companyId: { eq: companyId } },
+                            limit: 1
+                        },
+                    });
+
+                    const settingsCompany = data.listSettingsCompanies.items[0];
+
+                    let mutation;
+                    if (settingsCompany) {
+                        // Si les paramètres existent déjà, utilisez la mutation updateSettingsCompany
+                        mutation = updateSettingsCompany;
+                        settingsData.id = settingsCompany.id;  // Ajoutez l'ID des paramètres existants
+                    } else {
+                        // Sinon, utilisez la mutation createSettingsCompany
+                        mutation = createSettingsCompany;
+                    }
+
+                    await API.graphql({
+                        authMode: 'AMAZON_COGNITO_USER_POOLS',
+                        query: mutation,
+                        variables: {
+                            input: settingsData,
+                        },
+                    });
+                    mess.setMessage('success', 'Mise à jour des paramètres réussie');
+                    // alert("Paramètres sauvegardés avec succès");
+                } else {
+                    mess.setMessage('error', 'Aucune entreprise associée à l\'utilisateur');
+                }
+
                 isEditing.value = false;
-                alert("Paramètres sauvegardés avec succès");
             } catch (error) {
                 console.error("Erreur lors de la sauvegarde des paramètres", error);
-                alert("Erreur lors de la sauvegarde des paramètres");
+                if (error.errors && error.errors.length > 0) {
+                    console.error("Détails de l'erreur GraphQL: ", error.errors);
+                }
+                mess.setMessage('error', 'Erreur lors de la sauvegarde des paramètres');
             }
         }
+
         onMounted(loadSettings);
         return {
             name,

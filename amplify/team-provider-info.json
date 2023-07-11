@@ -32,7 +32,7 @@
         },
         "evalAdminAddUser": {
           "deploymentBucketName": "amplify-evalio-dev-81726-deployment",
-          "s3Key": "amplify-builds/evalAdminAddUser-2b355669537a7932662b-build.zip"
+          "s3Key": "amplify-builds/evalAdminAddUser-63546b51434a587a485a-build.zip"
         }
       }
     }

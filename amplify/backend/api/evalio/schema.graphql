@@ -49,8 +49,20 @@ type Company
   postalCode: String
   city: String
   isActiveCompany: Boolean
+  settings: SettingsCompany @hasOne(fields: ["settingsCompanyId"])
+  settingsCompanyId: ID
   users: [User] @hasMany(fields: ["id"])
   ownerId: ID
 }
 
+type SettingsCompany @model 
+  @auth(rules: [{ allow: owner }]) {
+  id: ID!
+  fixedFees: Float
+  freVo: Float
+  margin: Float
+  marginType: String
+  company: Company @belongsTo(fields: ["companyId"])
+  companyId: ID
+}
 # KPIs

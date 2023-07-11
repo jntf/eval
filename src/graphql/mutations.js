@@ -16,6 +16,7 @@ export const createVehicle = /* GraphQL */ `
       id
       createdAt
       updatedAt
+      __typename
     }
   }
 `;
@@ -34,6 +35,7 @@ export const updateVehicle = /* GraphQL */ `
       id
       createdAt
       updatedAt
+      __typename
     }
   }
 `;
@@ -52,6 +54,7 @@ export const deleteVehicle = /* GraphQL */ `
       id
       createdAt
       updatedAt
+      __typename
     }
   }
 `;
@@ -69,6 +72,7 @@ export const createSearchHistory = /* GraphQL */ `
       createdAt
       updatedAt
       owner
+      __typename
     }
   }
 `;
@@ -86,6 +90,7 @@ export const updateSearchHistory = /* GraphQL */ `
       createdAt
       updatedAt
       owner
+      __typename
     }
   }
 `;
@@ -103,6 +108,7 @@ export const deleteSearchHistory = /* GraphQL */ `
       createdAt
       updatedAt
       owner
+      __typename
     }
   }
 `;
@@ -127,15 +133,18 @@ export const createUser = /* GraphQL */ `
         postalCode
         city
         isActiveCompany
+        settingsCompanyId
         ownerId
         createdAt
         updatedAt
         owner
+        __typename
       }
       companyId
       createdAt
       updatedAt
       owner
+      __typename
     }
   }
 `;
@@ -160,15 +169,18 @@ export const updateUser = /* GraphQL */ `
         postalCode
         city
         isActiveCompany
+        settingsCompanyId
         ownerId
         createdAt
         updatedAt
         owner
+        __typename
       }
       companyId
       createdAt
       updatedAt
       owner
+      __typename
     }
   }
 `;
@@ -193,15 +205,18 @@ export const deleteUser = /* GraphQL */ `
         postalCode
         city
         isActiveCompany
+        settingsCompanyId
         ownerId
         createdAt
         updatedAt
         owner
+        __typename
       }
       companyId
       createdAt
       updatedAt
       owner
+      __typename
     }
   }
 `;
@@ -218,13 +233,28 @@ export const createCompany = /* GraphQL */ `
       postalCode
       city
       isActiveCompany
+      settings {
+        id
+        fixedFees
+        freVo
+        margin
+        marginType
+        companyId
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      settingsCompanyId
       users {
         nextToken
+        __typename
       }
       ownerId
       createdAt
       updatedAt
       owner
+      __typename
     }
   }
 `;
@@ -241,13 +271,28 @@ export const updateCompany = /* GraphQL */ `
       postalCode
       city
       isActiveCompany
+      settings {
+        id
+        fixedFees
+        freVo
+        margin
+        marginType
+        companyId
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      settingsCompanyId
       users {
         nextToken
+        __typename
       }
       ownerId
       createdAt
       updatedAt
       owner
+      __typename
     }
   }
 `;
@@ -264,13 +309,130 @@ export const deleteCompany = /* GraphQL */ `
       postalCode
       city
       isActiveCompany
+      settings {
+        id
+        fixedFees
+        freVo
+        margin
+        marginType
+        companyId
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      settingsCompanyId
       users {
         nextToken
+        __typename
       }
       ownerId
       createdAt
       updatedAt
       owner
+      __typename
+    }
+  }
+`;
+export const createSettingsCompany = /* GraphQL */ `
+  mutation CreateSettingsCompany(
+    $input: CreateSettingsCompanyInput!
+    $condition: ModelSettingsCompanyConditionInput
+  ) {
+    createSettingsCompany(input: $input, condition: $condition) {
+      id
+      fixedFees
+      freVo
+      margin
+      marginType
+      company {
+        id
+        companyName
+        vatNumber
+        address
+        postalCode
+        city
+        isActiveCompany
+        settingsCompanyId
+        ownerId
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      companyId
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const updateSettingsCompany = /* GraphQL */ `
+  mutation UpdateSettingsCompany(
+    $input: UpdateSettingsCompanyInput!
+    $condition: ModelSettingsCompanyConditionInput
+  ) {
+    updateSettingsCompany(input: $input, condition: $condition) {
+      id
+      fixedFees
+      freVo
+      margin
+      marginType
+      company {
+        id
+        companyName
+        vatNumber
+        address
+        postalCode
+        city
+        isActiveCompany
+        settingsCompanyId
+        ownerId
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      companyId
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const deleteSettingsCompany = /* GraphQL */ `
+  mutation DeleteSettingsCompany(
+    $input: DeleteSettingsCompanyInput!
+    $condition: ModelSettingsCompanyConditionInput
+  ) {
+    deleteSettingsCompany(input: $input, condition: $condition) {
+      id
+      fixedFees
+      freVo
+      margin
+      marginType
+      company {
+        id
+        companyName
+        vatNumber
+        address
+        postalCode
+        city
+        isActiveCompany
+        settingsCompanyId
+        ownerId
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      companyId
+      createdAt
+      updatedAt
+      owner
+      __typename
     }
   }
 `;

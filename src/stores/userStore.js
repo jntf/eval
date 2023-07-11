@@ -1,7 +1,10 @@
 import { defineStore } from "pinia";
 import { Auth, API } from "aws-amplify";
-import { useRouter } from "vue-router";
-import { getUser as getUserQuery } from "../graphql/queries";
+// import { useRouter } from "vue-router";
+import {
+  getUser as getUserQuery,
+  listSettingsCompanies,
+} from "../graphql/queries";
 
 export const useUserStore = defineStore({
   id: "user",
@@ -41,6 +44,7 @@ export const useUserStore = defineStore({
             ] ?? "";
 
           let companyId = null;
+          let settingsCompany = null;
 
           if (roles.includes("Admin") && !roles.includes("SuperAdmin")) {
             const userData = await API.graphql({
@@ -49,6 +53,21 @@ export const useUserStore = defineStore({
               authMode: "AMAZON_COGNITO_USER_POOLS",
             });
             companyId = userData.data.getUser.companyId;
+          }
+
+          if (companyId) {         
+            const { data } = await API.graphql({
+              authMode: 'AMAZON_COGNITO_USER_POOLS',
+              query: listSettingsCompanies,
+              variables: {
+                filter: { companyId: { eq: companyId } },
+                limit: 1,
+              },
+            });
+          
+            if (data.listSettingsCompanies && data.listSettingsCompanies.items.length > 0) {
+              settingsCompany = data.listSettingsCompanies.items[0];
+            }
           }
 
           this.setUserData({
@@ -60,10 +79,18 @@ export const useUserStore = defineStore({
             phone_number: attributes.phone_number,
             roles: roles,
             isActiveCognito: attributes["custom:isActive"],
-            fixedFees: attributes["custom:fixedFees"],
-            frevo: attributes["custom:frevo"],
-            margin: attributes["custom:margin"],
-            marginType: attributes["custom:marginType"],
+            fixedFees: companyId
+              ? parseFloat(settingsCompany.fixedFees)
+              : attributes["custom:fixedFees"],
+            frevo: companyId
+              ? parseFloat(settingsCompany.freVo)
+              : attributes["custom:frevo"],
+            margin: companyId
+              ? parseFloat(settingsCompany.margin)
+              : attributes["custom:margin"],
+            marginType: companyId
+              ? settingsCompany.marginType
+              : attributes["custom:marginType"],
           });
           this.router = router;
         }

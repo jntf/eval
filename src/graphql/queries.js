@@ -13,6 +13,7 @@ export const getVehicle = /* GraphQL */ `
       id
       createdAt
       updatedAt
+      __typename
     }
   }
 `;
@@ -33,8 +34,10 @@ export const listVehicles = /* GraphQL */ `
         id
         createdAt
         updatedAt
+        __typename
       }
       nextToken
+      __typename
     }
   }
 `;
@@ -65,8 +68,10 @@ export const vehiclesByMakeAndModel = /* GraphQL */ `
         id
         createdAt
         updatedAt
+        __typename
       }
       nextToken
+      __typename
     }
   }
 `;
@@ -81,6 +86,7 @@ export const getSearchHistory = /* GraphQL */ `
       createdAt
       updatedAt
       owner
+      __typename
     }
   }
 `;
@@ -100,8 +106,10 @@ export const listSearchHistories = /* GraphQL */ `
         createdAt
         updatedAt
         owner
+        __typename
       }
       nextToken
+      __typename
     }
   }
 `;
@@ -123,15 +131,18 @@ export const getUser = /* GraphQL */ `
         postalCode
         city
         isActiveCompany
+        settingsCompanyId
         ownerId
         createdAt
         updatedAt
         owner
+        __typename
       }
       companyId
       createdAt
       updatedAt
       owner
+      __typename
     }
   }
 `;
@@ -154,8 +165,10 @@ export const listUsers = /* GraphQL */ `
         createdAt
         updatedAt
         owner
+        __typename
       }
       nextToken
+      __typename
     }
   }
 `;
@@ -169,13 +182,28 @@ export const getCompany = /* GraphQL */ `
       postalCode
       city
       isActiveCompany
+      settings {
+        id
+        fixedFees
+        freVo
+        margin
+        marginType
+        companyId
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      settingsCompanyId
       users {
         nextToken
+        __typename
       }
       ownerId
       createdAt
       updatedAt
       owner
+      __typename
     }
   }
 `;
@@ -194,12 +222,74 @@ export const listCompanies = /* GraphQL */ `
         postalCode
         city
         isActiveCompany
+        settingsCompanyId
         ownerId
         createdAt
         updatedAt
         owner
+        __typename
       }
       nextToken
+      __typename
+    }
+  }
+`;
+export const getSettingsCompany = /* GraphQL */ `
+  query GetSettingsCompany($id: ID!) {
+    getSettingsCompany(id: $id) {
+      id
+      fixedFees
+      freVo
+      margin
+      marginType
+      company {
+        id
+        companyName
+        vatNumber
+        address
+        postalCode
+        city
+        isActiveCompany
+        settingsCompanyId
+        ownerId
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      companyId
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const listSettingsCompanies = /* GraphQL */ `
+  query ListSettingsCompanies(
+    $filter: ModelSettingsCompanyFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listSettingsCompanies(
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        fixedFees
+        freVo
+        margin
+        marginType
+        companyId
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      nextToken
+      __typename
     }
   }
 `;
