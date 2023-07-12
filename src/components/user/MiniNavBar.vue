@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full max-w-md mx-auto sticky z-10">
+    <div class="w-full max-w-md mx-auto sticky z-10 pt-24">
         <div class="px-5 bg-gray-800 rounded-2xl mb-5 shadow-2xl">
             <div class="flex">
                 <div class="flex-auto hover:w-full group" v-if="isModalVisible == false">

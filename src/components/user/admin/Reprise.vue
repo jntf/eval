@@ -25,7 +25,6 @@
         </div>
     </form>
 </template>
-
 <script>
 import { ref, onMounted } from "vue";
 import { Auth, API } from "aws-amplify";
@@ -36,12 +35,13 @@ import { listSettingsCompanies } from "../../../graphql/queries";
 
 export default {
     setup() {
-        const userStore = useUserStore();
-        const mess = messageStore();
-        const name = ref(userStore.name);
-        const familyName = ref(userStore.familyName);
-        const isEditing = ref(false);
-        const settings = ref({
+        // Importation des fonctions et des variables nécessaires
+        const userStore = useUserStore(); // Utilisation du store pour récupérer les informations de l'utilisateur
+        const mess = messageStore(); // Utilisation du store pour afficher des messages à l'utilisateur
+        const name = ref(userStore.name); // Référence à la variable name de l'utilisateur
+        const familyName = ref(userStore.familyName); // Référence à la variable familyName de l'utilisateur
+        const isEditing = ref(false); // Variable pour savoir si l'utilisateur est en train d'éditer les paramètres
+        const settings = ref({ // Référence à l'objet settings contenant les paramètres de l'entreprise
             margin: { label: "Marge souhaitée", value: 0, type: "number", step: "0.01" },
             marginType: {
                 label: "Type de marge",
@@ -55,14 +55,18 @@ export default {
             frevo: { label: "Frais de remise en état (FREVO)", value: 0, type: "number", step: "0.01" },
             fixedFees: { label: "Frais fixes", value: 0, type: "number", step: "0.01" },
         });
+
+        // Fonction pour charger les paramètres de l'entreprise
         async function loadSettings() {
             try {
                 if (userStore.fixedFees && userStore.frevo && userStore.margin && userStore.marginType) {
+                    // Si les paramètres sont déjà définis dans le store, on les récupère
                     settings.value.fixedFees.value = parseFloat(userStore.fixedFees);
                     settings.value.frevo.value = parseFloat(userStore.frevo);
                     settings.value.margin.value = parseFloat(userStore.margin);
                     settings.value.marginType.value = userStore.marginType;
                 } else if (userAttributes.length > 0) {
+                    // Sinon, on récupère les paramètres depuis le serveur
                     const user = await Auth.currentAuthenticatedUser();
                     const userAttributes = user.attributes;
                     settings.value.fixedFees.value = parseFloat(userAttributes["custom:fixedFees"]) || 0;
@@ -77,11 +81,13 @@ export default {
             }
         }
 
+        // Fonction pour sauvegarder les paramètres de l'entreprise
         async function saveSettings() {
             try {
                 const companyId = userStore.companyId;
 
                 if (companyId) {
+                    // Si l'utilisateur est associé à une entreprise, on sauvegarde les paramètres
                     const settingsData = {
                         fixedFees: settings.value.fixedFees.value,
                         freVo: settings.value.frevo.value,
@@ -119,6 +125,16 @@ export default {
                             input: settingsData,
                         },
                     });
+
+                    // Mettre à jour l'état du store manuellement
+                    userStore.setUserData({
+                        fixedFees: settings.value.fixedFees.value,
+                        frevo: settings.value.frevo.value,
+                        margin: settings.value.margin.value,
+                        marginType: settings.value.marginType.value,
+                    });
+
+                    // Message de succès
                     mess.setMessage('success', 'Mise à jour des paramètres réussie');
                     // alert("Paramètres sauvegardés avec succès");
                 } else {
@@ -135,7 +151,10 @@ export default {
             }
         }
 
+        // Fonction exécutée après le montage du composant
         onMounted(loadSettings);
+
+        // Retourne les variables et fonctions nécessaires au composant
         return {
             name,
             familyName,
