@@ -1,6 +1,6 @@
 <template>
   <div class="grid justify-items-end mx-2 sm:mx-10 pb-2 pt-12">
-    <div>
+    <div class="justify-self-end">
       <!-- Icône du Notification -->
       <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"
       class="fill-current mr-1 sm:mr-3 hover:text-blue-500 -ml-2 sm:-ml-10" hidden>

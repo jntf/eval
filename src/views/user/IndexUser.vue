@@ -22,9 +22,9 @@ const store = messageStore();
     <nav>
       <TopRight :name="userStore.name" :familyName="userStore.family_name" :roles="userStore.roles"
         :signOut="userStore.signOut" />
-      <MiniNavBar :roles="userStore.roles" />
+      <MiniNavBar :roles="userStore.roles"/>
     </nav>
-    <div class="container mx-auto flex-grow">
+    <div class="container mx-auto flex-grow pt-28">
       <transition name="fade">
         <div v-if="store.message" class="global-message w-full text-white rounded-lg shadow-lg text-center py-2"
           :class="{ 'bg-green-400': store.messageType === 'success', 'bg-red-400': store.messageType === 'error' }">
