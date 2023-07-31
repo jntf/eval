@@ -69,7 +69,7 @@ import * as ExcelJS from 'exceljs';
 import { Storage } from 'aws-amplify';
 import dayjs from 'dayjs';
 import { useLoadingStore } from '../../stores/loadingStore';
-import generateRef from '../../stores/getRef';
+import generateRef from '../../helpers/getRef';
 import { createSearchHistory } from '../../graphql/mutations.js';
 
 export default {

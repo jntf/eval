@@ -20,7 +20,7 @@ export default {
         onMounted(async () => {
             try {
                 // Charger le thème
-                const response = await fetch('../../../theme/echarts/custom.json');
+                const response = await fetch('/custom.json');
                 const theme = await response.json();
 
                 // Enregistrer le thème

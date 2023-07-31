@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { onMounted, onUnmounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref, watch, reactive } from 'vue';
 import * as echarts from 'echarts';
 
 export default {
@@ -16,41 +16,34 @@ export default {
     setup(props) {
         const chart = ref(null);
         const chartInstance = ref(null);
+        const theme = reactive({ color: [] });  // Initialiser le thème comme un objet réactif
 
         onMounted(async () => {
             try {
-                // Charger le thème
-                const response = await fetch('../../../theme/echarts/custom.json');
-                const theme = await response.json();
+                const response = await fetch('/custom.json');
+                const themeData = await response.json();
 
-                // Enregistrer le thème
-                echarts.registerTheme('customTheme', theme);
-
-                // Initialiser le graphique avec le thème
+                echarts.registerTheme('customTheme', themeData);
                 chartInstance.value = echarts.init(chart.value, 'customTheme');
 
-                // Obtenir une liste de couleurs
-                const colorList = theme.color;
+                // Mettre à jour le thème avec les données récupérées
+                Object.assign(theme, themeData);
 
                 chartInstance.value.setOption({
-                    title: {
-                        text: props.title,
-                    },
+                    title: { text: props.title },
                     tooltip: {},
                     xAxis: {
                         data: props.data.labels,
-                        axisLabel: {
-                            rotate: 45, // Rotation à 45 degrés pour imiter la position 7h30
-                            interval: 0, // Tous les noms seront affichés
-                        },
+                        axisLabel: { rotate: 45, interval: 0 },
                     },
                     yAxis: {},
                     series: props.data.datasets.map((dataset, index) => ({
                         name: 'Cumul',
                         type: 'bar',
+                        stack: 'x',
                         data: dataset.data.map((value, index) => ({
                             value: value,
-                            itemStyle: { color: colorList[index % colorList.length] }
+                            itemStyle: { color: theme.color[index % theme.color.length] }
                         })),
                     })),
                     ...props.options,
@@ -59,6 +52,22 @@ export default {
                 console.error("Une erreur s'est produite :", error);
             }
         });
+
+        watch(() => props.data, (newData) => {
+            if (chartInstance.value) {
+                chartInstance.value.setOption({
+                    xAxis: { data: newData.labels },
+                    series: newData.datasets.map((dataset, index) => ({
+                        name: 'Cumul',
+                        type: 'bar',
+                        data: dataset.data.map((value, index) => ({
+                            value: value,
+                            itemStyle: { color: theme.color[index % theme.color.length] }
+                        })),
+                    })),
+                });
+            }
+        }, { deep: true });
 
         onUnmounted(() => {
             if (chartInstance.value) {
@@ -72,11 +81,3 @@ export default {
     },
 };
 </script>
-
-  
-
-  
-
-  
-
-  

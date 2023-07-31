@@ -7,13 +7,14 @@
 
     <div class="col-span-12 lg:col-span-3 lg:pt-20">
       <!-- KPI Components -->
-      <kpi-component title="Nombre de cotations" value="28" color="bg-blue-400" icon="fas fa-chart-line"></kpi-component>
-      <kpi-component title="Prix moyen des cotations" value="19040" color="bg-blue-500"
+      <kpi-component title="Nombre de cotations" :value="totalQuotations.toString()" color="bg-blue-400"
+        icon="fas fa-chart-line"></kpi-component>
+      <kpi-component title="Prix moyen des cotations" :value="averageQuotationPrice.toString()" color="bg-blue-500"
         icon="fas fa-euro-sign"></kpi-component>
-      <kpi-component title="Kilométrage moyen" value="52450" color="bg-blue-600"
+      <kpi-component title="Kilométrage moyen" :value="averageMileage.toString()" color="bg-blue-600"
         icon="fas fa-tachometer-alt"></kpi-component>
-      <kpi-component title="Année moyenne d'immatriculation" value="2017" color="bg-blue-700"
-        icon="fas fa-calendar-alt"></kpi-component>
+      <kpi-component title="Année moyenne d'immatriculation" :value="averageRegistrationYear.toString()"
+        color="bg-blue-700" icon="fas fa-calendar-alt"></kpi-component>
     </div>
 
     <div class="col-span-12 lg:col-span-9 space-y-4 -top-10">
@@ -21,10 +22,10 @@
         <div class="col-span-1 lg:col-span-1 p-5">
           <!-- Top 10 Marques -->
           <BarChart title="Top 10 des marques les plus côtées" :data="{
-            labels: ['Peugeot', 'Renault', 'Citroën', 'Volkswagen', 'Ford', 'Toyota', 'Audi', 'BMW', 'Mercedes', 'Opel'],
+            labels: makeLabels,
             datasets: [
               {
-                data: [30, 25, 20, 15, 10, 5, 4, 3, 2, 1],
+                data: makeData,
               },
             ],
           }" class="lg:w-full bg-white" />
@@ -32,23 +33,22 @@
         <div class="col-span-1 lg:col-span-1 p-5">
           <!-- Top 10 Modèles -->
           <BarChart title="Top 10 des modèles les plus côtées" :data="{
-            labels: ['208', 'Clio', '308', 'Golf', 'C3', 'C4', 'Megane', 'Polo', 'Corsa', 'A3'],
+            labels: modelLabels,
             datasets: [
               {
-                data: [24, 20, 18, 15, 12, 10, 8, 6, 4, 2],
+                data: modelData,
               },
             ],
           }" class="lg:w-full bg-white" />
         </div>
+        <BarChart :data="{ labels: labels, datasets: datasets }" />
         <div class="col-span-1 lg:col-span-1 p-5">
           <BarChart title="Top 10 des marques les plus côtées" :data="{
-            labels: ['Toyota', 'Volkswagen', 'Ford', 'Hyundai', 'Chevrolet'],
+            labels: ['Marque A', 'Marque B', 'Marque C', 'Marque D', 'Marque E'],
             datasets: [
-              {
-                data: [50, 35, 45, 30, 55],
-                backgroundColor: ['#77CEFF', '#0079AF', '#123E6B', '#97B0C4', '#A5C8ED'],
-              },
-            ],
+              { data: [10, 22, 28, 43, 49], label: 'Modèle 1' },
+              { data: [12, 19, 30, 40, 45], label: 'Modèle 2' },
+              { data: [15, 25, 35, 45, 50], label: 'Modèle 3' },],
           }" class="lg:w-full bg-white" />
         </div>
         <div class="col-span-1 lg:col-span-1 p-5">
@@ -66,11 +66,8 @@
       </div>
 
       <!-- Linear Price -->
-      <LinearChart
-        title="Prix de vente moyen (90 derniers jours)"
-        :data="averageSellingPriceData"
-        class="lg:w-full bg-white"
-      />
+      <LinearChart title="Prix de vente moyen (90 derniers jours)" :data="averageSellingPriceData"
+        class="lg:w-full bg-white" />
       <!-- Add your graph or table components here -->
 
       <!-- <table-component class="lg:w-full"></table-component> -->
@@ -80,7 +77,8 @@
 
 <script>
 import { useUserStore } from "../../stores/userStore";
-import { ref } from 'vue';
+import { useUserGraphStore } from "../../stores/userGraphStore";
+import { ref, computed, watch } from 'vue';
 import KpiComponent from '../../components/reuse/KpiComponent.vue';
 import BarChart from '../../components/reuse/BarChart.vue';
 import LinearChart from "../../components/reuse/LinearChart.vue";
@@ -95,19 +93,139 @@ export default {
     const userStore = useUserStore();
     const firstName = ref(userStore.name);
 
+    const userGraphStore = useUserGraphStore();
+    userGraphStore.fetchGraphData();
+    const totalQuotations = computed(() => userGraphStore.totalQuotations);
+    const averageQuotationPrice = computed(() => userGraphStore.averageQuotationPrice);
+    const averageMileage = computed(() => userGraphStore.averageMileage);
+    const averageRegistrationYear = computed(() => userGraphStore.averageRegistrationYear);
+    const carData = computed(() => userGraphStore.getCarData);
+
+    // Top 10 des marques
+    let makeCounts = ref({});
+    let makeLabels = ref([]);
+    let makeData = ref([]);
+
+    watch(carData, (newCarData) => {
+      let newMakeCounts = {};
+      newCarData.forEach(car => {
+        if (!newMakeCounts.hasOwnProperty(car.make)) {
+          newMakeCounts[car.make] = 0;
+        }
+        newMakeCounts[car.make] += 1;
+      });
+
+      let sortedMakes = Object.entries(newMakeCounts).sort((a, b) => b[1] - a[1]).slice(0, 10);
+      makeLabels.value = sortedMakes.map(item => item[0]);
+      makeData.value = sortedMakes.map(item => item[1]);
+    });
+
+    // Top 10 des modèles
+    let modelCounts = ref({});
+    let modelLabels = ref([]);
+    let modelData = ref([]);
+
+    watch(carData, (newCarData) => {
+      let newModelCounts = {};
+      newCarData.forEach(car => {
+        if (!newModelCounts.hasOwnProperty(car.model)) {
+          newModelCounts[car.model] = 0;
+        }
+        newModelCounts[car.model] += 1;
+      });
+
+      let sortedModels = Object.entries(newModelCounts).sort((a, b) => b[1] - a[1]).slice(0, 10);
+      modelLabels.value = sortedModels.map(item => item[0]);
+      modelData.value = sortedModels.map(item => item[1]);
+    });
+
+    // Comptage des marques et des modèles
+    let counts = ref({});
+
+    watch(carData, (newCarData) => {
+      let newCounts = {};
+
+      newCarData.forEach(car => {
+        if (!newCounts.hasOwnProperty(car.make)) {
+          newCounts[car.make] = {};
+        }
+
+        if (!newCounts[car.make].hasOwnProperty(car.model)) {
+          newCounts[car.make][car.model] = 0;
+        }
+
+        newCounts[car.make][car.model] += 1;
+      });
+
+      counts.value = newCounts;
+    });
+
+    // Préparation des données pour le graphique à barres empilées
+    let labels = ref([]);
+    let datasets = ref([]);
+
+    watch(counts, (newCounts) => {
+      // Trier les marques par nombre total de voitures
+      let sortedMakes = Object.entries(newCounts)
+        .map(([make, models]) => [make, Object.values(models).reduce((a, b) => a + b, 0)])
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10);
+
+      labels.value = sortedMakes.map(item => item[0]);
+
+      // Préparation des données de modèle pour chaque marque
+      let newDatasets = [];
+      sortedMakes.forEach(([make, total]) => {
+        Object.entries(newCounts[make]).forEach(([model, count]) => {
+          let dataset = newDatasets.find(ds => ds.label === model);
+          if (!dataset) {
+            dataset = { label: model, data: [] };
+            newDatasets.push(dataset);
+          }
+
+          while (dataset.data.length < labels.value.indexOf(make)) {
+            // S'assurer que chaque série de données a une valeur pour chaque marque, même si ce n'est que 0
+            dataset.data.push(0);
+          }
+
+          dataset.data.push(count);
+        });
+      });
+
+      // S'assurer que chaque série de données a une valeur pour chaque marque
+      newDatasets.forEach(dataset => {
+        while (dataset.data.length < labels.value.length) {
+          dataset.data.push(0);
+        }
+      });
+
+      datasets.value = newDatasets;
+    });
+
     // Créer des données factices pour les prix de vente moyens
     const averageSellingPriceData = ref({
-      labels: Array.from({length: 90}, (_, i) => new Date(Date.now() - i * 24 * 60 * 60 * 1000)),
+      labels: Array.from({ length: 90 }, (_, i) => new Date(Date.now() - i * 24 * 60 * 60 * 1000)),
       datasets: [
         {
-          data: Array.from({length: 90}, () => Math.floor(Math.random() * 10000) + 10000),
+          data: Array.from({ length: 90 }, () => Math.floor(Math.random() * 10000) + 10000),
         },
       ],
     });
 
     return {
       firstName,
-      averageSellingPriceData
+      averageSellingPriceData,
+      totalQuotations,
+      averageQuotationPrice,
+      averageMileage,
+      averageRegistrationYear,
+      carData,
+      makeLabels,
+      makeData,
+      modelLabels,
+      modelData,
+      labels,
+      datasets,
     };
   },
 };

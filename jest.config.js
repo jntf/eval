@@ -1,16 +1,14 @@
-const path = require("path");
-
 module.exports = {
-  moduleFileExtensions: [
-    "js",
-    "json",
-    "vue" // Ajoutez "vue" à la liste des extensions
-  ],
   transform: {
-    "^.+\\.js$": "babel-jest", // Modifiez le pattern de transformation pour les fichiers JavaScript
-    ".*\\.(vue)$": "vue-jest"
+    '^.+\\.vue$': 'vue-jest',
+    '^.+\\.js$': 'babel-jest' 
   },
-  moduleNameMapper: {
-    "^@/(.*)$": path.join(__dirname, "./src/$1")
-  }
-};
+  
+  setupFilesAfterEnv: ['<rootDir>/tests/unit/setup.js'],
+
+  moduleFileExtensions: [
+    'js',
+    'json',
+    'vue'
+  ]
+}
