@@ -24,15 +24,15 @@
       "function": {
         "evaladmingetusers": {
           "deploymentBucketName": "amplify-evalio-dev-81726-deployment",
-          "s3Key": "amplify-builds/evaladmingetusers-4b4e4b6f744d48315670-build.zip"
+          "s3Key": "amplify-builds/evaladmingetusers-4972422f67495a667063-build.zip"
         },
         "evalValidateAdminUser": {
           "deploymentBucketName": "amplify-evalio-dev-81726-deployment",
-          "s3Key": "amplify-builds/evalValidateAdminUser-4d547a3967426b6c4b72-build.zip"
+          "s3Key": "amplify-builds/evalValidateAdminUser-6156757379336252376d-build.zip"
         },
         "evalAdminAddUser": {
           "deploymentBucketName": "amplify-evalio-dev-81726-deployment",
-          "s3Key": "amplify-builds/evalAdminAddUser-63546b51434a587a485a-build.zip"
+          "s3Key": "amplify-builds/evalAdminAddUser-634f796f4f3142523361-build.zip"
         }
       }
     }

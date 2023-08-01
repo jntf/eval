@@ -109,7 +109,7 @@ const submitForm = () => {
             <div class="container mx-auto">
                 <h2 class="text-3xl md:text-4xl font-bold mb-10">Tarifs</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                    <div class="border rounded-lg shadow-sm p-6 text-center mx-2">
+                    <div class="pricing border rounded-lg shadow-sm p-6 text-center mx-2">
                         <h3 class="text-lg font-bold mb-4">1 à 4 utilisateurs</h3>
                         <p class="text-green-500 mb-4">Côtes illimitées</p>
                         <p class="text-green-500 mb-4">Analyse de marché illimitée</p>
@@ -117,7 +117,7 @@ const submitForm = () => {
                         <p class="text-4xl text-purple-600 font-bold">19,90€<br><span class="text-sm font-light"> par
                                 utilisateur</span></p>
                     </div>
-                    <div class="border rounded-lg shadow-sm p-6 text-center mx-2">
+                    <div class="pricing border rounded-lg shadow-sm p-6 text-center mx-2">
                         <h3 class="text-lg font-bold mb-4">5 à 9 utilisateurs</h3>
                         <p class="text-green-500 mb-4">Côtes illimitées</p>
                         <p class="text-green-500 mb-4">Analyse de marché illimitée</p>
@@ -125,7 +125,7 @@ const submitForm = () => {
                         <p class="text-4xl text-purple-600 font-bold">16,90€<br><span class="text-sm font-light"> par
                                 utilisateur</span></p>
                     </div>
-                    <div class="border rounded-lg shadow-sm p-6 text-center mx-2">
+                    <div class="pricing border rounded-lg shadow-sm p-6 text-center mx-2">
                         <h3 class="text-lg font-bold mb-4">10 à 19 utilisateurs</h3>
                         <p class="text-green-500 mb-4">Côtes illimitées</p>
                         <p class="text-green-500 mb-4">Analyse de marché illimitée</p>
@@ -133,7 +133,7 @@ const submitForm = () => {
                         <p class="text-4xl text-purple-600 font-bold">14,90€<br><span class="text-sm font-light"> par
                                 utilisateur</span></p>
                     </div>
-                    <div class="border rounded-lg shadow-sm p-6 text-center mx-2">
+                    <div class="pricing border rounded-lg shadow-sm p-6 text-center mx-2">
                         <h3 class="text-lg font-bold mb-4">20 utilisateurs ou plus</h3>
                         <p class="text-green-500 mb-4">Côtes illimitées</p>
                         <p class="text-green-500 mb-4">Analyse de marché illimitée</p>
