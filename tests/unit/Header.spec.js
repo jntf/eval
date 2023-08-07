@@ -2,19 +2,19 @@ import { shallowMount } from "@vue/test-utils";
 import Header from "../../src/components/home/Header.vue";
 
 describe("Header.vue", () => {
-  it("renders company name", () => {
+  it("affiche le nom de l'entreprise", () => {
     const wrapper = shallowMount(Header);
     expect(wrapper.text()).toMatch("EvaluIA");
   });
 
-  it("toggles menu on button click", () => {
+  it("active/désactive le menu lors du clic sur le bouton", () => {
     const wrapper = shallowMount(Header);
     const button = wrapper.find(".navbar-burger");
     button.trigger("click");
     expect(wrapper.vm.isActive).toBe(true);
   });
 
-  it("renders navigation links", () => {
+  it("affiche les liens de navigation", () => {
     const wrapper = shallowMount(Header);
     const links = wrapper.findAll(".navbar-menu a");
     expect(links.length).toBe(5);

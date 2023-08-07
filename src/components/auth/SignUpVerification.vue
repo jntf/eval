@@ -47,7 +47,6 @@ export default {
       try {
         await Auth.confirmSignUp(props.email, code.value);
         verified.value = true;
-        // Navigate to login or another page here
       } catch (error) {
         console.error('error confirming sign up', error);
       }

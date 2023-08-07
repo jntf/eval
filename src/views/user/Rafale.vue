@@ -1,65 +1,71 @@
 <template>
-    <div class="flex flex-col items-center justify-center min-h-screen">
-        <div class="grid grid-cols-3 lg-w-1/3">
-            <div></div>
-            <input type="file" @change="onFileChange" class="p-2 border border-gray-300 rounded-md"
-                v-if="!isFileAvailable" />
-            <button @click="resetAll" class="px-4 py-2 bg-blue-500 text-white rounded-md w-1/6">
-                <i class="fas fa-undo mr-2"></i>
+    <div class="h-full flex flex-col items-center justify-center pt-8 pb-24 bg-white">
+
+        <!-- Section for file upload and reset -->
+        <div v-if="!isFileAvailable" class="mb-8 w-full flex justify-center">
+            <label class="relative inline-flex items-center">
+                <input type="file" @change="onFileChange" class="absolute w-full h-full opacity-0 cursor-pointer" />
+                <div
+                    class="flex px-4 py-2 bg-white text-red-700 border-2 border-red-700 hover:bg-red-700 hover:text-white rounded-l-md">
+                    Charger</div>
+            </label>
+            <button @click="resetAll" class="px-4 py-2 bg-red-700 text-white border-l border-red-700 rounded-r-md">
+                <i class="fas fa-undo"></i>
             </button>
         </div>
 
-        <div v-if="columns.length > 0 && !isFileAvailable">
-            <table class="table-auto border-collapse">
-                <thead class="">
-                    <tr>
-                        <th class="px-4 py-2 text-gray-800">Colonne du Fichier</th>
-                        <th class="px-4 py-2 text-gray-800">Sélectionner Colonne</th>
-                        <th class="px-4 py-2 text-gray-800">Exemple</th>
+        <!-- Table for column mapping -->
+        <div v-if="columns.length > 0 && !isFileAvailable" class="w-full mb-8 overflow-x-auto">
+            <table class="min-w-full bg-gray-800 text-white border rounded-lg shadow-md text-xs md:text-sm">
+                <thead>
+                    <tr class="border-b">
+                        <th class="px-4 py-3">Colonne du Fichier</th>
+                        <th class="px-4 py-3">Sélectionner Colonne</th>
+                        <th class="px-4 py-3">Exemple</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr v-for="(column, index) in columns" :key="index" class="bg-white">
-                        <td class="px-4 py-2">{{ column }}</td>
-                        <td class="px-4 py-2">
+                <tbody class="bg-white text-gray-800">
+                    <tr v-for="(column, index) in columns" :key="index" :class="{ 'bg-gray-50': index % 2 === 0 }">
+                        <td class="px-4 py-3 border-b">{{ column }}</td>
+                        <td class="px-4 py-3 border-b">
                             <select v-model="selectedColumns[column]"
-                                class="block w-full p-2 border border-gray-300 rounded-md mb-2">
+                                class="block w-full p-2 border rounded-md bg-gray-700 text-white">
                                 <option value="" selected>Sélectionner...</option>
-                                <option v-for="(optionValue, optionKey) in options" :key="optionKey" :value="optionKey">{{
-                                    optionValue }}</option>
+                                <option v-for="(optionValue, optionKey) in options" :key="optionKey" :value="optionKey">{{ optionValue }}</option>
                             </select>
                         </td>
-                        <td class="px-4 py-2">{{ Array.from(sampleValues[column]).join(', ').slice(0, 50) }}<span
-                                v-if="Array.from(sampleValues[column]).join(', ').length >= 50"> ...</span></td>
+                        <td class="px-4 py-3 border-b">{{ Array.from(sampleValues[column]).join(', ').slice(0, 50) }}<span v-if="Array.from(sampleValues[column]).join(', ').length >= 50"> ...</span></td>
                     </tr>
                 </tbody>
             </table>
-            <button @click="loadToS3" class="px-4 py-2 bg-blue-500 text-white rounded-md">Calculer les prix</button>
+            <button @click="loadToS3" class="mt-4 px-4 py-2 bg-red-700 text-white rounded-md self-center">Calculer les prix</button>
         </div>
-        <div v-if="isFileAvailable">
-            <button @click="downloadFile" class="px-4 py-2 bg-green-500 text-white rounded-md mt-4">
+
+        <!-- Section for displaying the file data -->
+        <div v-if="isFileAvailable" class="flex flex-col items-center w-full">
+            <button @click="downloadFile" class="px-4 py-2 bg-red-700 text-white rounded-md mb-4">
                 <i class="fas fa-file-export"></i>
             </button>
-            <div class="container w-5/6">
-                <table class="table-auto border-collapse">
-                    <thead class="">
-                        <tr>
-                            <th v-for="(value, key) in fileData[0]" :key="key" class="px-4 py-2 text-gray-800">{{ key }}
-                            </th>
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-gray-800 border rounded-lg shadow-md text-xs md:text-sm">
+                    <thead>
+                        <tr class="bg-gray-800 text-white">
+                            <th v-for="(value, key) in fileData[0]" :key="key" class="px-4 py-3" :class="getColumnClass(key)">{{ capitalize(key) }}</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr v-for="(row, index) in fileData.slice(0, 25)" :key="index" class="bg-white text-sm">
-                            <td v-for="value in Object.values(row)" :key="value" class="px-4 py-2 text-sm">{{ value }}</td>
+                    <tbody class="bg-white text-gray-800">
+                        <tr v-for="(row, index) in fileData" :key="index" :class="{ 'bg-gray-50': index % 2 === 0 }">
+                            <td v-for="value in Object.values(row)" :key="value" class="px-2 py-2 border-b border-gray-800 text-sm max-w-xs">
+                                {{ formatValue(value) }}
+                            </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
+
     </div>
 </template>
-  
-  
   
 <script>
 import { ref, computed } from 'vue';
@@ -82,10 +88,7 @@ export default {
         const sampleValues = ref({});
         const options = {
             make: 'Marque',
-            // make_model: 'Marque Modèle',
-            // make_model_version: 'Marque Modèle Version',
             model: 'Modèle',
-            // model_version: 'Modèle Version',
             keywords: 'Version',
             energy: 'Énergie',
             transmission: 'Transmission',
@@ -95,6 +98,25 @@ export default {
             color: 'Couleur'
         };
         const responseData = ref([]);
+
+        const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+        const formatValue = (value) => {
+            if (typeof value === 'number') {
+                return value.toFixed(2);
+            }
+            return value;
+        };
+        const getColumnClass = (column) => {
+            if (column === 'make') return 'w-1/6';
+            if (column === 'model') return 'w-1/6';
+            if (column === 'keywords') return 'w-1/5';
+            if (column === 'energy') return 'w-1/6';
+            if (column === 'transmission') return 'w-1/6';
+            if (column === 'year') return 'w-1/6';
+            if (column === 'kms') return 'w-1/6';
+            if (column === 'color') return 'w-1/6';
+            if (column === 'evaluation') return 'w-1/6';
+        };
 
         const downloadLink = ref('');
         const isFileAvailable = ref(false);
@@ -247,7 +269,7 @@ export default {
                     newData[jsonData.columns[key]] = item[key];
                 });
                 return newData;
-            }); 
+            });
             console.log(processedData)
             const jsonString = JSON.stringify(jsonData);
             const dateTime = dayjs().format("YYYY-MM-DD-HH-mm-ss");
@@ -304,6 +326,9 @@ export default {
             changePage,
             isFileAvailable,
             fileData,
+            capitalize,
+            formatValue,
+            getColumnClass,
         };
     },
 };
