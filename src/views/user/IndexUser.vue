@@ -24,7 +24,7 @@ const store = messageStore();
         :signOut="userStore.signOut" />
       <MiniNavBar :roles="userStore.roles"/>
     </nav>
-    <div class="container mx-auto flex-grow pt-28">
+    <div class="container mx-auto pt-28">
       <transition name="fade">
         <div v-if="store.message" class="global-message w-full text-white rounded-lg shadow-lg text-center py-2"
           :class="{ 'bg-green-400': store.messageType === 'success', 'bg-red-400': store.messageType === 'error' }">
@@ -32,7 +32,7 @@ const store = messageStore();
           <button @click="store.clearMessage" class="text-white">X</button>
         </div>
       </transition>
-      <div class="flex flex-col">
+      <div class="">
         <router-view />
       </div>
     </div>
