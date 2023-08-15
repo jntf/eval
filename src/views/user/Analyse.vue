@@ -18,6 +18,9 @@
     </div>
 
     <div class="col-span-12 lg:col-span-9 space-y-4 -top-10">
+      <button v-if="includedRafale === false" @click="loadRafaleData" class="flex flex-right p-2 bg-gray-700 hover:bg-gray-900 text-white rounded-lg shadow-lg">Inclure les cotations rafales</button>
+      <!-- <button v-if="includedRafale === true" @click="removeRafaleData" class="flex flex-right p-2 bg-gray-700 hover:bg-gray-900 text-white">Supprimer les cotations en rafales</button> -->
+      <!-- <div v-for="data in carData" :key="data.id">{{ data }}</div> -->
       <div class="grid grid-cols-2 gap-1">
         <div class="col-span-1 lg:col-span-1 p-5">
           <!-- Top 10 Marques -->
@@ -37,28 +40,6 @@
             datasets: [
               {
                 data: modelData,
-              },
-            ],
-          }" class="lg:w-full bg-white" />
-        </div>
-        <BarChart :data="{ labels: labels, datasets: datasets }" />
-        <div class="col-span-1 lg:col-span-1 p-5">
-          <BarChart title="Top 10 des marques les plus côtées" :data="{
-            labels: ['Marque A', 'Marque B', 'Marque C', 'Marque D', 'Marque E'],
-            datasets: [
-              { data: [10, 22, 28, 43, 49], label: 'Modèle 1' },
-              { data: [12, 19, 30, 40, 45], label: 'Modèle 2' },
-              { data: [15, 25, 35, 45, 50], label: 'Modèle 3' },],
-          }" class="lg:w-full bg-white" />
-        </div>
-        <div class="col-span-1 lg:col-span-1 p-5">
-          <BarChart title="Top 10 des marques les plus côtées" :data="{
-            // 
-            labels: ['Toyota', 'Volkswagen', 'Ford', 'Hyundai', 'Chevrolet'],
-            datasets: [
-              {
-                data: [50, 35, 45, 30, 55],
-                backgroundColor: ['#77CEFF', '#0079AF', '#123E6B', '#97B0C4', '#A5C8ED'],
               },
             ],
           }" class="lg:w-full bg-white" />
@@ -93,13 +74,21 @@ export default {
     const userStore = useUserStore();
     const firstName = ref(userStore.name);
 
+    const includedRafale = ref(false);
+
     const userGraphStore = useUserGraphStore();
     userGraphStore.fetchGraphData();
     const totalQuotations = computed(() => userGraphStore.totalQuotations);
     const averageQuotationPrice = computed(() => userGraphStore.averageQuotationPrice);
     const averageMileage = computed(() => userGraphStore.averageMileage);
     const averageRegistrationYear = computed(() => userGraphStore.averageRegistrationYear);
-    const carData = computed(() => userGraphStore.getCarData);
+    const carData = computed(() => userGraphStore.combinedData);
+
+    const rafaleData = computed(() => userGraphStore.getRafaleData);
+    const loadRafaleData = () => {
+      userGraphStore.fetchRafaleData();
+      includedRafale.value = true;
+    };
 
     // Top 10 des marques
     let makeCounts = ref({});
@@ -212,6 +201,7 @@ export default {
       ],
     });
 
+
     return {
       firstName,
       averageSellingPriceData,
@@ -226,6 +216,9 @@ export default {
       modelData,
       labels,
       datasets,
+      rafaleData,
+      loadRafaleData,
+      includedRafale
     };
   },
 };
