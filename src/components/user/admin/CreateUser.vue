@@ -42,7 +42,7 @@
 import { ref } from 'vue';
 import { API } from 'aws-amplify';
 import { useUserStore } from "../../../stores/userStore";
-import { validate } from "validator";
+import validator from "validator";
 
 export default {
     setup() {
@@ -97,11 +97,11 @@ export default {
 
         const validateForm = () => {
             return (
-                validate(firstName.value, { minLength: 1 }) &&
-                validate(lastName.value, { minLength: 1 }) &&
-                validate(email.value, { email: true }) &&
-                validate(phoneNumber.value, { minLength: 1 }) &&
-                validate(temporaryPassword.value, { minLength: 1 })
+                !validator.isEmpty(firstName.value) &&
+                !validator.isEmpty(lastName.value) &&
+                validator.isEmail(email.value) &&
+                !validator.isEmpty(phoneNumber.value) &&
+                !validator.isEmpty(temporaryPassword.value)
             );
         };
 

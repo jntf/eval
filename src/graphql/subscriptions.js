@@ -13,6 +13,7 @@ export const onCreateVehicle = /* GraphQL */ `
       id
       createdAt
       updatedAt
+      __typename
     }
   }
 `;
@@ -28,6 +29,7 @@ export const onUpdateVehicle = /* GraphQL */ `
       id
       createdAt
       updatedAt
+      __typename
     }
   }
 `;
@@ -43,6 +45,7 @@ export const onDeleteVehicle = /* GraphQL */ `
       id
       createdAt
       updatedAt
+      __typename
     }
   }
 `;
@@ -60,6 +63,7 @@ export const onCreateSearchHistory = /* GraphQL */ `
       createdAt
       updatedAt
       owner
+      __typename
     }
   }
 `;
@@ -77,6 +81,7 @@ export const onUpdateSearchHistory = /* GraphQL */ `
       createdAt
       updatedAt
       owner
+      __typename
     }
   }
 `;
@@ -94,6 +99,7 @@ export const onDeleteSearchHistory = /* GraphQL */ `
       createdAt
       updatedAt
       owner
+      __typename
     }
   }
 `;
@@ -118,15 +124,18 @@ export const onCreateUser = /* GraphQL */ `
         postalCode
         city
         isActiveCompany
+        settingsCompanyId
         ownerId
         createdAt
         updatedAt
         owner
+        __typename
       }
       companyId
       createdAt
       updatedAt
       owner
+      __typename
     }
   }
 `;
@@ -151,15 +160,18 @@ export const onUpdateUser = /* GraphQL */ `
         postalCode
         city
         isActiveCompany
+        settingsCompanyId
         ownerId
         createdAt
         updatedAt
         owner
+        __typename
       }
       companyId
       createdAt
       updatedAt
       owner
+      __typename
     }
   }
 `;
@@ -184,15 +196,18 @@ export const onDeleteUser = /* GraphQL */ `
         postalCode
         city
         isActiveCompany
+        settingsCompanyId
         ownerId
         createdAt
         updatedAt
         owner
+        __typename
       }
       companyId
       createdAt
       updatedAt
       owner
+      __typename
     }
   }
 `;
@@ -209,13 +224,28 @@ export const onCreateCompany = /* GraphQL */ `
       postalCode
       city
       isActiveCompany
+      settings {
+        id
+        fixedFees
+        freVo
+        margin
+        marginType
+        companyId
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      settingsCompanyId
       users {
         nextToken
+        __typename
       }
       ownerId
       createdAt
       updatedAt
       owner
+      __typename
     }
   }
 `;
@@ -232,13 +262,28 @@ export const onUpdateCompany = /* GraphQL */ `
       postalCode
       city
       isActiveCompany
+      settings {
+        id
+        fixedFees
+        freVo
+        margin
+        marginType
+        companyId
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      settingsCompanyId
       users {
         nextToken
+        __typename
       }
       ownerId
       createdAt
       updatedAt
       owner
+      __typename
     }
   }
 `;
@@ -255,13 +300,130 @@ export const onDeleteCompany = /* GraphQL */ `
       postalCode
       city
       isActiveCompany
+      settings {
+        id
+        fixedFees
+        freVo
+        margin
+        marginType
+        companyId
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      settingsCompanyId
       users {
         nextToken
+        __typename
       }
       ownerId
       createdAt
       updatedAt
       owner
+      __typename
+    }
+  }
+`;
+export const onCreateSettingsCompany = /* GraphQL */ `
+  subscription OnCreateSettingsCompany(
+    $filter: ModelSubscriptionSettingsCompanyFilterInput
+    $owner: String
+  ) {
+    onCreateSettingsCompany(filter: $filter, owner: $owner) {
+      id
+      fixedFees
+      freVo
+      margin
+      marginType
+      company {
+        id
+        companyName
+        vatNumber
+        address
+        postalCode
+        city
+        isActiveCompany
+        settingsCompanyId
+        ownerId
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      companyId
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const onUpdateSettingsCompany = /* GraphQL */ `
+  subscription OnUpdateSettingsCompany(
+    $filter: ModelSubscriptionSettingsCompanyFilterInput
+    $owner: String
+  ) {
+    onUpdateSettingsCompany(filter: $filter, owner: $owner) {
+      id
+      fixedFees
+      freVo
+      margin
+      marginType
+      company {
+        id
+        companyName
+        vatNumber
+        address
+        postalCode
+        city
+        isActiveCompany
+        settingsCompanyId
+        ownerId
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      companyId
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const onDeleteSettingsCompany = /* GraphQL */ `
+  subscription OnDeleteSettingsCompany(
+    $filter: ModelSubscriptionSettingsCompanyFilterInput
+    $owner: String
+  ) {
+    onDeleteSettingsCompany(filter: $filter, owner: $owner) {
+      id
+      fixedFees
+      freVo
+      margin
+      marginType
+      company {
+        id
+        companyName
+        vatNumber
+        address
+        postalCode
+        city
+        isActiveCompany
+        settingsCompanyId
+        ownerId
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      companyId
+      createdAt
+      updatedAt
+      owner
+      __typename
     }
   }
 `;

@@ -50,7 +50,7 @@
                     <div class="text-right">
                         <router-link to="login">
                             <div
-                                class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-gray-200 hover:text-white hover:bg-red-500 mt-4 lg:mt-0">
+                                class="connexion-bouton inline-block text-sm px-4 py-2 leading-none border rounded text-white border-gray-200 hover:text-white hover:bg-red-500 mt-4 lg:mt-0">
                                 Connexion
                             </div>
                         </router-link>

@@ -13,5 +13,5 @@ export default defineConfig({
         replacement: './runtimeConfig.browser',
       },
     ]
-  }
+  },
 })

@@ -60,8 +60,9 @@
           <div class="bg-white rounded-lg shadow-red-900 shadow-lg p-8 h-full border-2 border-gray-100">
             <div class="text-center">
               <div class="text-xl font-semibold text-gray-800 ">Valeur Marché</div>
-              <div class="font-bold text-red-800 ">{{ price - Math.round(mae) }} € - <span class="text-3xl">{{ price }} €</span> - {{ Math.round(price) +
-                  Math.round(mae) }} € </div>
+              <div class="font-bold text-red-800 ">{{ price - Math.round(mae) }} € - <span class="text-3xl">{{ price }}
+                  €</span> - {{ Math.round(price) +
+                    Math.round(mae) }} € </div>
             </div>
           </div>
         </div>
@@ -79,27 +80,28 @@
 </template>
 
 <script>
-import { computed, ref, onMounted, watch } from "vue";
+import { computed, ref, onMounted, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import { Auth } from "aws-amplify";
-import ReliabilityIndicator from '../../components/eval/ReliabilityIndicator.vue';
+import ReliabilityIndicator from '../../components/reuse/ReliabilityIndicator.vue';
+import { useUserStore } from "../../stores/userStore";
 
 export default {
   components: { ReliabilityIndicator },
   setup() {
     const route = useRoute();
-
-    const make = ref("");
-    const model = ref("");
-    const year = ref("");
-    const kms = ref("");
-    const transmission = ref("");
-    const energy = ref("");
-    const keywords = ref("");
-    const price = ref("");
-    const r2 = ref("");
-    const mae = ref("");
-    const rmse = ref("");
+    const userStore = useUserStore();
+    const make = ref(route.query.make || "");
+    const model = ref(route.query.model || "");
+    const year = ref(route.query.year || "");
+    const kms = ref(route.query.kms || "");
+    const transmission = ref(route.query.transmission || "");
+    const energy = ref(route.query.energy || "");
+    const keywords = ref(route.query.keywords || "");
+    const price = ref(route.query.price || 0);
+    const r2 = ref(route.query.r2 || 0);
+    const mae = ref(route.query.mae || 0);
+    const rmse = ref(route.query.rmse || 0);
 
     const userAttributes = ref({
       margin: 1200,
@@ -108,21 +110,8 @@ export default {
       fixedFees: 400,
     });
 
-    async function loadUserAttributes() {
-      try {
-        const user = await Auth.currentAuthenticatedUser();
-        const attributes = user.attributes;
-        userAttributes.value.margin = attributes["custom:margin"] || 1200;
-        userAttributes.value.marginType = attributes["custom:marginType"] || "euro";
-        userAttributes.value.frevo = attributes["custom:frevo"] || 2;
-        userAttributes.value.fixedFees = attributes["custom:fixedFees"] || 400;
-      } catch (error) {
-        console.error("Erreur lors du chargement des attributs utilisateur", error);
-      }
-    }
-
     onMounted(async () => {
-      await loadUserAttributes();
+      await loadCompanySettings();
       updateData();
     });
 
@@ -141,17 +130,40 @@ export default {
       Math.round(price.value - marginValue.value - frevoValue.value - fixedFeesValue.value)
     );
 
-    watch(
+    watchEffect(
       [route, price],
       () => {
         updateData();
       }
     );
 
-    watch(
+    watchEffect(
       price,
     );
 
+    async function loadCompanySettings() {
+      try {
+        const userStore = useUserStore();
+
+        if (userStore.companyId) {
+          userAttributes.value.margin = parseFloat(userStore.margin);
+          userAttributes.value.marginType = userStore.marginType;
+          userAttributes.value.frevo = parseFloat(userStore.frevo);
+          userAttributes.value.fixedFees = parseFloat(userStore.fixedFees);
+        } else {
+          const user = await Auth.currentAuthenticatedUser();
+          const attributes = user.attributes;
+          userAttributes.value.margin = parseFloat(attributes["custom:margin"]) || 1200;
+          userAttributes.value.marginType = attributes["custom:marginType"] || "euro";
+          userAttributes.value.frevo = parseFloat(attributes["custom:frevo"]) || 2;
+          userAttributes.value.fixedFees = parseFloat(attributes["custom:fixedFees"]) || 400;
+        }
+      } catch (error) {
+        console.error("Erreur lors du chargement des paramètres", error);
+      }
+    }
+
+    // Fonction qui permet de réactualiser les données de la page sans reload de l'url. 
     function updateData() {
       make.value = route.query.make;
       model.value = route.query.model;
@@ -164,10 +176,6 @@ export default {
       r2.value = route.query.r2;
       mae.value = route.query.mae;
       rmse.value = route.query.rmse;
-    }
-
-    function parseFloat(value) {
-      return parseFloat(value);
     }
 
     return {
@@ -186,7 +194,6 @@ export default {
       frevoValue,
       fixedFeesValue,
       totalPrice,
-      parseFloat,
     };
   },
 };

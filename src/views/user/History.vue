@@ -1,5 +1,5 @@
 <template>
-    <div class="container mx-auto px-4 py-6">
+    <div class="container min-h-screen mx-auto px-4 py-6">
         <h1 class="text-2xl font-semibold mb-4">Historique des recherches</h1>
 
         <div class="mb-4">
@@ -7,6 +7,11 @@
                 class="border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 placeholder="Rechercher par date, référence, marque ou modèle" v-model="searchQuery"
                 @input="filterResults" />
+        </div>
+
+        <div>
+            <pagination :items="filteredSearchHistory" @page-change="handlePageChange"
+                @items-per-page-change="itemsPerPageChange"></pagination>
         </div>
 
         <div class="table-responsive">
@@ -25,7 +30,7 @@
                     </tr>
                 </thead>
                 <tbody class="shadow-xl">
-                    <tr v-for="(search, index) in filteredSearchHistory" :key="index">
+                    <tr v-for="(search, index) in displayedSearchHistory" :key="index">
                         <td class="border px-4 py-2 text-xs">{{ formatDate(search.createdAt) }}</td>
                         <td class="border px-4 py-2 text-xs">{{ search.ref }}</td>
                         <td class="border px-4 py-2 text-xs">
@@ -37,8 +42,7 @@
                                             : search.dataSearch.map(item => item.make)
                                     )
                                 ).join(', ').toUpperCase().slice(0, 30)
-                            }}<span
-                                v-if="search.isMultipleImport"> ...</span>
+                            }}<span v-if="search.isMultipleImport"> ...</span>
                         </td>
                         <td class="border px-4 py-2 text-xs">
                             {{
@@ -49,8 +53,7 @@
                                             : search.dataSearch.map(item => item.model)
                                     )
                                 ).join(', ').toUpperCase().slice(0, 30)
-                            }}<span
-                                v-if="search.isMultipleImport"> ...</span>
+                            }}<span v-if="search.isMultipleImport"> ...</span>
                         </td>
                         <td class="border px-4 py-2 text-xs">
                             {{
@@ -61,8 +64,7 @@
                                             : search.dataSearch.map(item => item.keywords)
                                     )
                                 ).join(', ').toUpperCase().slice(0, 30)
-                            }}<span
-                                v-if="search.isMultipleImport">...</span>
+                            }}<span v-if="search.isMultipleImport">...</span>
                         </td>
                         <td class="border px-4 py-2 text-xs">
                             {{
@@ -73,8 +75,7 @@
                                             : search.dataSearch.map(item => item.year)
                                     )
                                 ).join(', ').toUpperCase().slice(0, 30)
-                            }}<span
-                                v-if="search.isMultipleImport"> ...</span>
+                            }}<span v-if="search.isMultipleImport"> ...</span>
                         </td>
                         <td class="border px-4 py-2 text-xs">
                             {{
@@ -85,8 +86,7 @@
                                             : search.dataSearch.map(item => item.mileage)
                                     )
                                 ).join(', ').toUpperCase().slice(0, 30)
-                            }}<span
-                                v-if="search.isMultipleImport"> ...</span>
+                            }}<span v-if="search.isMultipleImport"> ...</span>
                         </td>
                         <td class="border px-4 py-2 text-xs">
                             {{ formatPrice(search.dataSearch) }} <span>{{ search.isMultipleImport ? "€ en moyenne" : "€"
@@ -97,45 +97,40 @@
                                 class="bg-green-500 text-white rounded-md p-1 mx-1">
                                 <i class="fas fa-file-export"></i>
                             </button>
-                            <button @click="deleteSearchHistory(search.id)" class="bg-red-500 text-white rounded-md p-1"><i class="fas fa-trash"></i></button>
+                            <button @click="deleteSearchHistory(search.id)" class="bg-red-500 text-white rounded-md p-1"><i
+                                    class="fas fa-trash"></i></button>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
-
-        <div>
-            <!-- Ajoutez ici la pagination en utilisant une bibliothèque de votre choix ou en créant votre propre solution. -->
-        </div>
-
     </div>
 </template>
-<style scoped>
-.table-responsive {
-    display: block;
-    width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-}
 
-@media screen and (min-width: 640px) {
-    .table-responsive {
-        display: table;
-    }
-}
-</style>
 <script>
 import { ref, computed } from 'vue';
 import { Auth, API, Storage } from 'aws-amplify';
 import { listSearchHistories } from '../../graphql/queries';
 import { deleteSearchHistory as deleteSearchHistoryMutation } from '../../graphql/mutations';
+import Pagination from '../../components/reuse/Pagination.vue';
 
 export default {
+    components: {
+        Pagination,
+    },
+    methods: {
+        handlePageChange(newPage) {
+            this.currentPage = newPage;
+        },
+    },
     setup() {
         const searchHistory = ref([]);
         const searchQuery = ref('');
         const s3Files = ref([]);
         const downloadLink = ref('');
+        const currentPage = ref(1);
+        const totalPages = computed(() => Math.ceil(searchHistory.value.length / 10));
+        const itemsPerPage = ref(10);
 
         const formatDate = (dateString) => {
             const date = new Date(dateString);
@@ -270,6 +265,20 @@ export default {
             window.open(search.downloadLink, "_blank");
         };
 
+        const displayedSearchHistory = computed(() => {
+            const start = (currentPage.value - 1) * itemsPerPage.value;
+            const end = start + itemsPerPage.value;
+            return filteredSearchHistory.value.slice(start, end);
+        });
+
+        const itemsPerPageChange = (newItemsPerPage) => {
+            itemsPerPage.value = newItemsPerPage;
+        };
+
+        const pageChange = (newPage) => {
+            currentPage.value = newPage;
+        };
+
         const filterResults = () => {
             // La recherche sera effectuée par la propriété calculée filteredSearchHistory.
         };
@@ -283,14 +292,39 @@ export default {
             searchHistory,
             searchQuery,
             filteredSearchHistory,
+            currentPage,
+            totalPages,
+            displayedSearchHistory,
             deleteSearchHistory,
             filterResults,
             downloadLink,
             downloadFile,
             s3Files,
+            itemsPerPageChange,
+            pageChange,
         };
     },
 };
 </script>
+
+<style scoped>
+.table-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.pagination {
+    display: flex;
+    justify-content: right;
+}
+
+@media screen and (min-width: 640px) {
+    .table-responsive {
+        display: table;
+    }
+}
+</style>
 
   

@@ -52,9 +52,9 @@ import { useRouter } from 'vue-router';
 
 import SelectComponent from './SelectComponent.vue';
 import KeywordToggle from './KeywordToggle.vue';
-import { fetchMakes, fetchModels, fetchDetails } from '../../stores/vehicles.js';
+import { fetchMakes, fetchModels, fetchDetails } from '../../api/vehicles.js';
 import { createSearchHistory as createSearchHistoryMutation } from '../../graphql/mutations.js';
-import { submitEvalForm } from '../../stores/evalForm.js';
+import { submitEvalForm } from '../../api/evalForm.js';
 import Slider from '@vueform/slider';
 
 import { useLoadingStore } from '../../stores/loadingStore';

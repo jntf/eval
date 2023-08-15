@@ -1,175 +1,227 @@
 <template>
-  <div id="Dashboard" class="text-black px-5 pb-5">
+  <div id="Dashboard" class="text-black px-5 pb-5 grid grid-cols-12 gap-4">
 
-    <div class="lg:flex justify-between items-center mb-6">
+    <div class="col-span-12 lg:col-span-12 flex justify-between items-center mb-6">
       <p class="text-2xl font-semibold mb-2 lg:mb-0">Bienvenue {{ firstName }} !</p>
     </div>
 
-    <div class="mx-3">
-      <div>
-        <v-select v-model="selectedBrands" :items="brandList" label="Select Brands" multiple chips></v-select>
-        <v-select v-model="selectedModels" :items="modelList" label="Select Models" multiple chips></v-select>
-        <div ref="chartContainer" style="width: 100%; height: 400px;"></div>
+    <div class="col-span-12 lg:col-span-3 lg:pt-20">
+      <!-- KPI Components -->
+      <kpi-component title="Nombre de cotations" :value="totalQuotations.toString()" color="bg-blue-400"
+        icon="fas fa-chart-line"></kpi-component>
+      <kpi-component title="Prix moyen des cotations" :value="averageQuotationPrice.toString()" color="bg-blue-500"
+        icon="fas fa-euro-sign"></kpi-component>
+      <kpi-component title="Kilométrage moyen" :value="averageMileage.toString()" color="bg-blue-600"
+        icon="fas fa-tachometer-alt"></kpi-component>
+      <kpi-component title="Année moyenne d'immatriculation" :value="averageRegistrationYear.toString()"
+        color="bg-blue-700" icon="fas fa-calendar-alt"></kpi-component>
+    </div>
+
+    <div class="col-span-12 lg:col-span-9 space-y-4 -top-10">
+      <button v-if="includedRafale === false" @click="loadRafaleData" class="flex flex-right p-2 bg-gray-700 hover:bg-gray-900 text-white rounded-lg shadow-lg">Inclure les cotations rafales</button>
+      <!-- <button v-if="includedRafale === true" @click="removeRafaleData" class="flex flex-right p-2 bg-gray-700 hover:bg-gray-900 text-white">Supprimer les cotations en rafales</button> -->
+      <!-- <div v-for="data in carData" :key="data.id">{{ data }}</div> -->
+      <div class="grid grid-cols-2 gap-1">
+        <div class="col-span-1 lg:col-span-1 p-5">
+          <!-- Top 10 Marques -->
+          <BarChart title="Top 10 des marques les plus côtées" :data="{
+            labels: makeLabels,
+            datasets: [
+              {
+                data: makeData,
+              },
+            ],
+          }" class="lg:w-full bg-white" />
+        </div>
+        <div class="col-span-1 lg:col-span-1 p-5">
+          <!-- Top 10 Modèles -->
+          <BarChart title="Top 10 des modèles les plus côtées" :data="{
+            labels: modelLabels,
+            datasets: [
+              {
+                data: modelData,
+              },
+            ],
+          }" class="lg:w-full bg-white" />
+        </div>
       </div>
+
+      <!-- Linear Price -->
+      <LinearChart title="Prix de vente moyen (90 derniers jours)" :data="averageSellingPriceData"
+        class="lg:w-full bg-white" />
+      <!-- Add your graph or table components here -->
+
+      <!-- <table-component class="lg:w-full"></table-component> -->
     </div>
   </div>
 </template>
 
 <script>
 import { useUserStore } from "../../stores/userStore";
-import { ref, computed, watch, reactive, onMounted } from 'vue';
-import * as echarts from 'echarts';
+import { useUserGraphStore } from "../../stores/userGraphStore";
+import { ref, computed, watch } from 'vue';
+import KpiComponent from '../../components/reuse/KpiComponent.vue';
+import BarChart from '../../components/reuse/BarChart.vue';
+import LinearChart from "../../components/reuse/LinearChart.vue";
 
 export default {
+  components: {
+    KpiComponent,
+    BarChart,
+    LinearChart
+  },
   setup() {
     const userStore = useUserStore();
     const firstName = ref(userStore.name);
 
-    // Création de données factices
-    const dataJson = ref({
-      '2023-06-01': {
-        "audi": { "a1": 12, "a3": 34, "a4": 15, "a6": 25 },
-        "bmw": { "serie 1": 4, "serie 3": 23, "serie 5": 14, "serie 7": 13 },
-        "citroen": { "c3": 56, "c4": 42, "c5": 33, "c6": 22 },
-        "peugeot": { "206": 17, "207": 38, "306": 25, "307": 28 },
-        "renault": { "clio": 20, "megane": 30, "scenic": 15, "captur": 18 }
-      },
-      '2023-06-02': {
-        "audi": { "a1": 15, "a3": 30, "a4": 20, "a6": 28 },
-        "bmw": { "serie 1": 5, "serie 3": 25, "serie 5": 16, "serie 7": 15 },
-        "citroen": { "c3": 52, "c4": 40, "c5": 35, "c6": 24 },
-        "peugeot": { "206": 20, "207": 35, "306": 30, "307": 28 },
-        "renault": { "clio": 22, "megane": 33, "scenic": 18, "captur": 20 }
-      },
-      '2023-06-03': {
-        "audi": { "a1": 20, "a3": 32, "a4": 25, "a6": 30 },
-        "bmw": { "serie 1": 7, "serie 3": 27, "serie 5": 18, "serie 7": 20 },
-        "citroen": { "c3": 55, "c4": 42, "c5": 38, "c6": 26 },
-        "peugeot": { "206": 22, "207": 38, "306": 32, "307": 30 },
-        "renault": { "clio": 25, "megane": 35, "scenic": 20, "captur": 22 }
-      },
-      // plus de données...
-    });
+    const includedRafale = ref(false);
 
-    const selectedBrands = ref([]);
-    const selectedModels = ref([]);
-    const chartContainer = ref(null);
-    let chartInstance = null;
+    const userGraphStore = useUserGraphStore();
+    userGraphStore.fetchGraphData();
+    const totalQuotations = computed(() => userGraphStore.totalQuotations);
+    const averageQuotationPrice = computed(() => userGraphStore.averageQuotationPrice);
+    const averageMileage = computed(() => userGraphStore.averageMileage);
+    const averageRegistrationYear = computed(() => userGraphStore.averageRegistrationYear);
+    const carData = computed(() => userGraphStore.combinedData);
 
-    const brandList = computed(() => {
-      // création de la liste des marques
-      const brands = new Set();
-      for (let date in dataJson.value) {
-        for (let brand in dataJson.value[date]) {
-          brands.add(brand);
+    const rafaleData = computed(() => userGraphStore.getRafaleData);
+    const loadRafaleData = () => {
+      userGraphStore.fetchRafaleData();
+      includedRafale.value = true;
+    };
+
+    // Top 10 des marques
+    let makeCounts = ref({});
+    let makeLabels = ref([]);
+    let makeData = ref([]);
+
+    watch(carData, (newCarData) => {
+      let newMakeCounts = {};
+      newCarData.forEach(car => {
+        if (!newMakeCounts.hasOwnProperty(car.make)) {
+          newMakeCounts[car.make] = 0;
         }
-      }
-      return Array.from(brands);
-    });
-
-    const modelList = computed(() => {
-      // création de la liste des modèles
-      const models = new Set();
-      for (let date in dataJson.value) {
-        for (let brand in dataJson.value[date]) {
-          for (let model in dataJson.value[date][brand]) {
-            models.add(model);
-          }
-        }
-      }
-      return Array.from(models);
-    });
-
-    const filteredData = computed(() => {
-      // Filtrez les données en fonction des marques et des modèles sélectionnés
-      let result = { ...dataJson.value }; // crée une copie des données
-      for (let date in result) {
-        for (let brand in result[date]) {
-          if (!selectedBrands.value.includes(brand)) {
-            delete result[date][brand];
-          } else {
-            for (let model in result[date][brand]) {
-              if (!selectedModels.value.includes(model)) {
-                delete result[date][brand][model];
-              }
-            }
-          }
-        }
-      }
-      return result;
-    });
-
-    const percentages = computed(() => {
-      // Calculez les pourcentages en fonction des données filtrées
-      let result = {};
-      for (let date in filteredData.value) {
-        let dayTotal = 0;
-        for (let brand in filteredData.value[date]) {
-          for (let model in filteredData.value[date][brand]) {
-            dayTotal += filteredData.value[date][brand][model];
-          }
-        }
-        for (let brand in filteredData.value[date]) {
-          for (let model in filteredData.value[date][brand]) {
-            if (!result[date]) result[date] = {};
-            result[date][brand] = (filteredData.value[date][brand][model] / dayTotal) * 100;
-          }
-        }
-      }
-      return result;
-    });
-
-    const options = computed(() => {
-      // Prepare data for ECharts
-      let legendData = [...selectedBrands.value];
-      let xAxisData = Object.keys(filteredData.value);
-      let seriesData = legendData.map(brand => {
-        return {
-          name: brand,
-          type: 'bar',
-          stack: 'total',
-          data: xAxisData.map(date => percentages.value[date][brand] || 0)
-        };
+        newMakeCounts[car.make] += 1;
       });
 
-      return {
-        title: { text: 'Répartition des marques/modèles' },
-        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-        legend: { data: legendData },
-        xAxis: { type: 'category', data: xAxisData },
-        yAxis: { type: 'value' },
-        series: seriesData
-      }
+      let sortedMakes = Object.entries(newMakeCounts).sort((a, b) => b[1] - a[1]).slice(0, 10);
+      makeLabels.value = sortedMakes.map(item => item[0]);
+      makeData.value = sortedMakes.map(item => item[1]);
     });
 
-    onMounted(() => {
-      chartInstance = echarts.init(chartContainer.value);
-      chartInstance.setOption(options.value);
+    // Top 10 des modèles
+    let modelCounts = ref({});
+    let modelLabels = ref([]);
+    let modelData = ref([]);
+
+    watch(carData, (newCarData) => {
+      let newModelCounts = {};
+      newCarData.forEach(car => {
+        if (!newModelCounts.hasOwnProperty(car.model)) {
+          newModelCounts[car.model] = 0;
+        }
+        newModelCounts[car.model] += 1;
+      });
+
+      let sortedModels = Object.entries(newModelCounts).sort((a, b) => b[1] - a[1]).slice(0, 10);
+      modelLabels.value = sortedModels.map(item => item[0]);
+      modelData.value = sortedModels.map(item => item[1]);
     });
 
-    watch(options, () => {
-      if (chartInstance) {
-        chartInstance.setOption(options.value);
-      }
+    // Comptage des marques et des modèles
+    let counts = ref({});
+
+    watch(carData, (newCarData) => {
+      let newCounts = {};
+
+      newCarData.forEach(car => {
+        if (!newCounts.hasOwnProperty(car.make)) {
+          newCounts[car.make] = {};
+        }
+
+        if (!newCounts[car.make].hasOwnProperty(car.model)) {
+          newCounts[car.make][car.model] = 0;
+        }
+
+        newCounts[car.make][car.model] += 1;
+      });
+
+      counts.value = newCounts;
     });
+
+    // Préparation des données pour le graphique à barres empilées
+    let labels = ref([]);
+    let datasets = ref([]);
+
+    watch(counts, (newCounts) => {
+      // Trier les marques par nombre total de voitures
+      let sortedMakes = Object.entries(newCounts)
+        .map(([make, models]) => [make, Object.values(models).reduce((a, b) => a + b, 0)])
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10);
+
+      labels.value = sortedMakes.map(item => item[0]);
+
+      // Préparation des données de modèle pour chaque marque
+      let newDatasets = [];
+      sortedMakes.forEach(([make, total]) => {
+        Object.entries(newCounts[make]).forEach(([model, count]) => {
+          let dataset = newDatasets.find(ds => ds.label === model);
+          if (!dataset) {
+            dataset = { label: model, data: [] };
+            newDatasets.push(dataset);
+          }
+
+          while (dataset.data.length < labels.value.indexOf(make)) {
+            // S'assurer que chaque série de données a une valeur pour chaque marque, même si ce n'est que 0
+            dataset.data.push(0);
+          }
+
+          dataset.data.push(count);
+        });
+      });
+
+      // S'assurer que chaque série de données a une valeur pour chaque marque
+      newDatasets.forEach(dataset => {
+        while (dataset.data.length < labels.value.length) {
+          dataset.data.push(0);
+        }
+      });
+
+      datasets.value = newDatasets;
+    });
+
+    // Créer des données factices pour les prix de vente moyens
+    const averageSellingPriceData = ref({
+      labels: Array.from({ length: 90 }, (_, i) => new Date(Date.now() - i * 24 * 60 * 60 * 1000)),
+      datasets: [
+        {
+          data: Array.from({ length: 90 }, () => Math.floor(Math.random() * 10000) + 10000),
+        },
+      ],
+    });
+
 
     return {
       firstName,
-      selectedBrands,
-      selectedModels,
-      brandList,
-      modelList,
-      chartContainer,
+      averageSellingPriceData,
+      totalQuotations,
+      averageQuotationPrice,
+      averageMileage,
+      averageRegistrationYear,
+      carData,
+      makeLabels,
+      makeData,
+      modelLabels,
+      modelData,
+      labels,
+      datasets,
+      rafaleData,
+      loadRafaleData,
+      includedRafale
     };
   },
 };
 </script>
 
-<style scoped>
-.chart-container {
-  width: 100%;
-  height: 400px;
-}
-</style>
-
-
+<style scoped></style>
