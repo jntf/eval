@@ -43,18 +43,23 @@
 
         <!-- Section for displaying the file data -->
         <div v-if="isFileAvailable" class="flex flex-col items-center w-full">
-            <button @click="downloadFile" class="px-4 py-2 bg-red-700 text-white rounded-md mb-4">
-                <i class="fas fa-file-export"></i>
-            </button>
+            <div class="flex flex-row">
+                <button @click="newEval" class="px-4 py-2 bg-gray-600 text-white rounded-l-md mb-4">
+                    <i class="fas fa-backward"></i>
+                </button>
+                <button @click="downloadFile" class="px-4 py-2 bg-green-600 text-white rounded-r-md mb-4">
+                    <i class="fas fa-file-export"></i>
+                </button>
+            </div>
             <div class="overflow-x-auto">
-                <table class="min-w-full text-gray-800 border rounded-lg shadow-md text-xs md:text-sm">
+                <table class="table-auto rounded shadow border border-gray-200 text-sm lg:text-base">
                     <thead>
-                        <tr class="bg-gray-800 text-white">
-                            <th v-for="(value, key) in fileData[0]" :key="key" class="px-4 py-3" :class="getColumnClass(key)">{{ capitalize(key) }}</th>
+                        <tr class="bg-gray-500 text-gray-700 font-bold">
+                            <th v-for="(value, key) in fileData[0]" :key="key" class="px-2 py-4" :class="getColumnClass(key)">{{ capitalize(key) }}</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white text-gray-800">
-                        <tr v-for="(row, index) in fileData" :key="index" :class="{ 'bg-gray-50': index % 2 === 0 }">
+                    <tbody class="bg-white text-gray-600 alternated">
+                        <tr v-for="(row, index) in fileData" :key="index" :class="{ 'bg-gray-50': index % 2 === 0 }" class="h-12 whitespace-nowrap text-gray">
                             <td v-for="value in Object.values(row)" :key="value" class="px-2 py-2 border-b border-gray-800 text-sm max-w-xs">
                                 {{ formatValue(value) }}
                             </td>
@@ -107,15 +112,9 @@ export default {
             return value;
         };
         const getColumnClass = (column) => {
-            if (column === 'make') return 'w-1/6';
-            if (column === 'model') return 'w-1/6';
-            if (column === 'keywords') return 'w-1/5';
-            if (column === 'energy') return 'w-1/6';
-            if (column === 'transmission') return 'w-1/6';
-            if (column === 'year') return 'w-1/6';
-            if (column === 'kms') return 'w-1/6';
-            if (column === 'color') return 'w-1/6';
-            if (column === 'evaluation') return 'w-1/6';
+            if (['make', 'model', 'keywords', 'energy', 'transmission', 'year', 'kms', 'color', 'evaluation'].includes(column)) {
+                return `w-1/${9}`;
+            }
         };
 
         const downloadLink = ref('');
@@ -308,6 +307,11 @@ export default {
             window.open(downloadLink.value, "_blank");
         };
 
+        const newEval = () => {
+            isFileAvailable.value = false;
+            columns.value = [];
+        }
+
         return {
             data,
             columns,
@@ -329,6 +333,7 @@ export default {
             capitalize,
             formatValue,
             getColumnClass,
+            newEval
         };
     },
 };
