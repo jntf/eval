@@ -29,15 +29,98 @@ En automatisant une partie fastidieuse du travail et en exploitant la puissance 
 
 ## Installation
 
-Exemples d'installation 
+
+L'application Eval comprend 2 parties principales :
+
+- Le frontend Vue.js 
+- Le backend serverless déployé sur AWS
+
+### Frontend
+
+Le code source du frontend est disponible sur GitHub. Pour installer et lancer l'application frontend en local :
+
+- Cloner le dépôt GitHub
+- Exécuter `npm install` pour installer les dépendances 
+- Exécuter `amplify pull`pour installer les dépendances amplify (Partie Backend à installer avant)
+- Exécuter `npm run dev` pour démarrer le serveur de développement
+- Rendez-vous sur `http://localhost:5173` 
+
+### Backend
+
+Le backend étant hébergé sur AWS, il nécessite quelques manipulations pour le déployer :
+
+- Installer l'AWS CLI et configurer les accès
+- Installer le SDK Serverless Framework
+- Copier le code source backend dans un répertoire local
+- Exécuter `serverless deploy` pour déployer le backend
+
+Cette commande va automatiquement provisionner les services AWS nécessaires :
+
+- Lambda functions
+- DynamoDB tables
+- AppSync API
+- etc.
+
+Une fois le déploiement terminé, l'URL de l'API GraphQL AppSync sera affichée et pourra être configurée dans le frontend.
 
 ## Utilisation
 
-Exemples d'utilisation
+Cette section explique comment utiliser les principales fonctionnalités de l'application Eval une fois installée.
+
+### Navigation
+
+- La page d'accueil présente les fonctionnalités clés et le menu de navigation principal
+- La barre de navigation en haut permet d'accéder aux différentes sections
+- Le formulaire de connexion se trouve en haut à droite
+
+### Connexion
+
+- La connexion se fait soit par email/mot de passe soit via Google/Facebook
+- Un nouvel utilisateur doit au préalable créer un compte
+- Une fois connecté, l'utilisateur accède à son tableau de bord personnel
+
+### Recherche et évaluation de véhicule
+
+- Depuis le tableau de bord, l'utilisateur accède au formulaire de recherche 
+- Il peut définir différents critères comme la marque, le modèle, le kilométrage, etc.
+- En soumettant la recherche, l'application calcule et affiche les estimations de prix
+- L'utilisateur peut sauvegarder les résultats ou relancer une recherche
+
+### Profil et historique
+
+- Via le menu, l'utilisateur accède à la page de son profil
+- Celle-ci résume ses informations personnelles et son activité
+- L'onglet Historique liste toutes ses recherches passées
+
+### Administration
+
+- Les administrateurs ont accès à des fonctionnalités avancées
+- Ils peuvent gérer les utilisateurs, les données système, les modèles de ML, etc.
+- L'interface d'administration se trouve sous /admin
 
 ## Architecture 
 
-Aperçu de l'architecture
+L'architecture technique de l'application Eval est organisée en deux parties :
+
+### Backend
+
+Le backend repose sur une architecture serverless déployée sur AWS. 
+
+![Architecture backend](images/backend_architecture.png)
+
+Les principaux composants sont :
+
+- **AWS Lambda** : exécution du code métier sous forme de fonctions serverless
+- **Amazon DynamoDB** : base de données NoSQL pour stocker les données applicatives
+- **Amazon S3** : stockage des données et fichiers dans des buckets  
+- **AWS AppSync** : API GraphQL pour accéder aux données
+- **AWS Cognito** : gestion des utilisateurs et de l'authentification
+
+### Frontend
+
+Le frontend est développé avec Vue.js. L'interface se compose de composants et communique avec le backend via l'API GraphQL.
+
+![Architecture frontend](images/frontend_architecture.png)
 
 ## Technologies
 
