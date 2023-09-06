@@ -104,6 +104,18 @@ L'architecture technique de l'application Eval est organisée en deux parties :
 
 ### Backend
 
+The following diagram represents the backend architecture: 
+
+```mermaid
+graph TD;
+    A[Client] -->|HTTP Request| B[API Gateway]
+    B --> C[AWS Lambda]
+    C --> D[AWS AppSync]
+    C --> E[Database Layer]
+    E --> F[SQL Queries]
+    E --> G[Stored Procedures]
+```
+
 Le backend repose sur une architecture serverless déployée sur AWS. 
 
 ![Architecture backend](images/backend_architecture.png)
