@@ -1,30 +1,44 @@
-# evalio
+# Eval
 
-This template should help get you started developing with Vue 3 in Vite.
+## Table des matières
 
-## Recommended IDE Setup
+1. [Présentation](#présentation)
+2. [Installation](#installation)
+3. [Utilisation](#utilisation)
+4. [Architecture](#architecture)
+5. [Technologies](#technologies)
+6. [Tests](#tests) 
+7. [Contribution](#contribution)
+8. [License](#license)
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+## Présentation
 
-## Customize configuration
+Exemple de présentation
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+## Installation
 
-## Project Setup
+Exemples d'installation 
 
-```sh
-npm install
-```
+## Utilisation
 
-### Compile and Hot-Reload for Development
+Exemples d'utilisation
 
-```sh
-npm run dev
-```
+## Architecture 
 
-### Compile and Minify for Production
+Aperçu de l'architecture
 
-```sh
-npm run build
-```
-# evalio
+## Technologies
+
+Liste des technologies
+
+## Tests
+
+Description des tests
+
+## Contribution 
+
+Guidelines pour contribuer
+
+## License
+
+Informations sur la licence
