@@ -48,9 +48,6 @@
       <!-- Linear Price -->
       <LinearChart title="Prix de vente moyen (90 derniers jours)" :data="averageSellingPriceData"
         class="lg:w-full bg-white" />
-      <!-- Add your graph or table components here -->
-
-      <!-- <table-component class="lg:w-full"></table-component> -->
     </div>
   </div>
 </template>
