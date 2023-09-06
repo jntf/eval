@@ -130,12 +130,9 @@ export default {
       Math.round(price.value - marginValue.value - frevoValue.value - fixedFeesValue.value)
     );
 
-    watchEffect(
-      [route, price],
-      () => {
-        updateData();
-      }
-    );
+    watchEffect(() => {
+      updateData();
+    });
 
     watchEffect(
       price,
