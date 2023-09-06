@@ -10,6 +10,7 @@ export const useUserGraphStore = defineStore({
   state: () => ({
     graphData: [],
     rafaleData: [],
+    includedRafale: false,
   }),
 
   getters: {
@@ -108,7 +109,6 @@ export const useUserGraphStore = defineStore({
           });
 
           this.graphData = data.listSearchHistories.items
-          console.log("this.graphData", this.graphData)
         } catch (error) {
           console.error("Error fetching graph data:", error);
         }
@@ -148,8 +148,6 @@ export const useUserGraphStore = defineStore({
                 dataItem.createdAt = createdAt;
               });
 
-              console.log("filteredResults", filteredResults)
-
               // Ajouter les données filtrées à rafaleData
               this.rafaleData.push(...filteredResults);
             },
@@ -159,9 +157,14 @@ export const useUserGraphStore = defineStore({
         console.error("Error fetching Rafale data:", error);
       }
     },
-
     clearGraphData() {
       this.graphData = [];
+    },
+    toggleIncludedRafale() {
+      this.includedRafale = !this.includedRafale;
+      if (this.includedRafale) {
+        this.fetchRafaleData();
+      }
     },
   },
 });

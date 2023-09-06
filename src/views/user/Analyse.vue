@@ -18,9 +18,8 @@
     </div>
 
     <div class="col-span-12 lg:col-span-9 space-y-4 -top-10">
-      <button v-if="includedRafale === false" @click="loadRafaleData" class="flex flex-right p-2 bg-gray-700 hover:bg-gray-900 text-white rounded-lg shadow-lg">Inclure les cotations rafales</button>
-      <!-- <button v-if="includedRafale === true" @click="removeRafaleData" class="flex flex-right p-2 bg-gray-700 hover:bg-gray-900 text-white">Supprimer les cotations en rafales</button> -->
-      <!-- <div v-for="data in carData" :key="data.id">{{ data }}</div> -->
+      <button v-if="!includedRafale" @click="toggleIncludedRafale" class="flex flex-right p-2 bg-gray-700 hover:bg-gray-900 text-white rounded-lg shadow-lg">Inclure les cotations rafales</button>
+      <button v-if="includedRafale" @click="removeRafaleData" class="flex flex-right p-2 bg-gray-700 hover:bg-gray-900 text-white rounded-lg shadow-lg">Supprimer les cotations en rafales</button>
       <div class="grid grid-cols-2 gap-1">
         <div class="col-span-1 lg:col-span-1 p-5">
           <!-- Top 10 Marques -->
@@ -74,7 +73,7 @@ export default {
     const userStore = useUserStore();
     const firstName = ref(userStore.name);
 
-    const includedRafale = ref(false);
+    // const includedRafale = ref(false);
 
     const userGraphStore = useUserGraphStore();
     userGraphStore.fetchGraphData();
@@ -85,10 +84,14 @@ export default {
     const carData = computed(() => userGraphStore.combinedData);
 
     const rafaleData = computed(() => userGraphStore.getRafaleData);
-    const loadRafaleData = () => {
-      userGraphStore.fetchRafaleData();
-      includedRafale.value = true;
-    };
+
+    const includedRafale = computed(() => userGraphStore.includedRafale);
+    const toggleIncludedRafale = () => {
+      userGraphStore.toggleIncludedRafale();
+    }
+    const removeRafaleData = () => {
+      window.location.reload();
+    }
 
     // Top 10 des marques
     let makeCounts = ref({});
@@ -217,8 +220,9 @@ export default {
       labels,
       datasets,
       rafaleData,
-      loadRafaleData,
-      includedRafale
+      includedRafale,
+      toggleIncludedRafale,
+      removeRafaleData
     };
   },
 };
