@@ -5,8 +5,7 @@
         <div class="mb-4">
             <input type="text"
                 class="border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                placeholder="Rechercher par date, référence, marque ou modèle" v-model="searchQuery"
-                @input="filterResults" />
+                placeholder="Rechercher par date, référence, marque, modèle ou version" v-model="globalSearch" />
         </div>
 
         <div>
@@ -124,6 +123,8 @@ export default {
         },
     },
     setup() {
+        const globalSearch = ref('');
+
         const searchHistory = ref([]);
         const searchQuery = ref('');
         const s3Files = ref([]);
@@ -165,19 +166,36 @@ export default {
         };
 
         const filteredSearchHistory = computed(() => {
-            if (!searchQuery.value) {
+            // Vérifie si la barre de recherche est vide
+            if (!globalSearch.value) {
                 return searchHistory.value;
             }
+            // Convertit la requête de recherche en minuscules pour une comparaison insensible à la casse
+            const query = globalSearch.value.toLowerCase();
+            // Divise la requête en mots-clés
+            const keywords = query.split(' ');
+            // Filtre les éléments de l'historique de recherche en fonction de la requête
             return searchHistory.value.filter((search) => {
-                const query = searchQuery.value.toLowerCase();
-                return (
-                    search.createdAt.toLowerCase().includes(query) ||
-                    search.ref.toLowerCase().includes(query) ||
-                    search.dataSearch.make.toLowerCase().includes(query) ||
-                    search.dataSearch.model.toLowerCase().includes(query)
-                );
+                // Crée une chaîne concaténée qui combine 'ref' et toutes les valeurs des sous-champs dans 'dataSearch'
+                let concatenatedFields = search.ref ? search.ref.toLowerCase() : '';
+
+                if (search.dataSearch) {
+                    ['make', 'model', 'keywords'].forEach((subkey) => {
+                        const values = Array.from(
+                            new Set(
+                                Array.isArray(search.dataSearch[0])
+                                    ? search.dataSearch.flat().map(item => item && item[subkey])
+                                    : search.dataSearch.map(item => item && item[subkey])
+                            )
+                        ).join(' ').toLowerCase();
+                        concatenatedFields += ' ' + values;
+                    });
+                }
+                // Utilise la méthode 'every' pour vérifier si tous les mots-clés sont présents dans la chaîne concaténée
+                return keywords.every(keyword => concatenatedFields.includes(keyword));
             });
         });
+
 
         const fetchSearchHistory = async () => {
             try {
@@ -191,7 +209,7 @@ export default {
                     .filter((item) => item.owner === currentUser.username)
                     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-                // Map over items, transforming each search and fetching signed URL
+                // Mappage sur les éléments, transformation de chaque recherche et récupération de l'URL signée.
                 searchHistory.value = await Promise.all(items.map(async (search) => {
                     const linkXlsx = search.s3Link ? search.s3Link.replace('.csv', '.xlsx') : null;
                     const signedURL = await Storage.get(linkXlsx, { level: "private" });
@@ -279,13 +297,10 @@ export default {
             currentPage.value = newPage;
         };
 
-        const filterResults = () => {
-            // La recherche sera effectuée par la propriété calculée filteredSearchHistory.
-        };
-
         fetchSearchHistory();
 
         return {
+            globalSearch,
             formatDate,
             formatArray,
             formatPrice,
@@ -296,7 +311,6 @@ export default {
             totalPages,
             displayedSearchHistory,
             deleteSearchHistory,
-            filterResults,
             downloadLink,
             downloadFile,
             s3Files,
