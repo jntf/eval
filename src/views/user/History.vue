@@ -96,6 +96,10 @@
                                 class="bg-green-500 text-white rounded-md p-1 mx-1">
                                 <i class="fas fa-file-export"></i>
                             </button>
+                            <button v-else @click="linkEvalClick(search)"
+                                class="bg-blue-500 text-white rounded-md p-1 mx-1">
+                                <i class="fas fa-chart-line"></i>
+                            </button>
                             <button @click="deleteSearchHistory(search.id)" class="bg-red-500 text-white rounded-md p-1"><i
                                     class="fas fa-trash"></i></button>
                         </td>
@@ -109,6 +113,7 @@
 <script>
 import { ref, computed } from 'vue';
 import { Auth, API, Storage } from 'aws-amplify';
+import { useRouter } from 'vue-router';
 import { listSearchHistories } from '../../graphql/queries';
 import { deleteSearchHistory as deleteSearchHistoryMutation } from '../../graphql/mutations';
 import Pagination from '../../components/reuse/Pagination.vue';
@@ -124,7 +129,7 @@ export default {
     },
     setup() {
         const globalSearch = ref('');
-
+        const router = useRouter();
         const searchHistory = ref([]);
         const searchQuery = ref('');
         const s3Files = ref([]);
@@ -178,7 +183,6 @@ export default {
             return searchHistory.value.filter((search) => {
                 // Crée une chaîne concaténée qui combine 'ref' et toutes les valeurs des sous-champs dans 'dataSearch'
                 let concatenatedFields = search.ref ? search.ref.toLowerCase() : '';
-
                 if (search.dataSearch) {
                     ['make', 'model', 'keywords'].forEach((subkey) => {
                         const values = Array.from(
@@ -299,6 +303,28 @@ export default {
 
         fetchSearchHistory();
 
+        const linkEvalClick = (search) => {
+            if (!search.isMultipleImport) {
+                const data = search.dataSearch[0];
+                router.push({
+                    path: '/user/eval',
+                    query: {
+                        make: data?.make,
+                        model: data?.model,
+                        year: data?.year,
+                        kms: data?.kms || data?.mileage, 
+                        transmission: data?.transmission,
+                        energy: data?.energies, 
+                        keywords: data?.keywords,
+                        price: data?.price || data?.evaluation,
+                        r2: data?.metrics?.r2, 
+                        mae: data?.metrics?.mae,
+                        rmse: data?.metrics?.rmse
+                    },
+                });
+            }
+        };
+
         return {
             globalSearch,
             formatDate,
@@ -316,6 +342,7 @@ export default {
             s3Files,
             itemsPerPageChange,
             pageChange,
+            linkEvalClick,
         };
     },
 };
