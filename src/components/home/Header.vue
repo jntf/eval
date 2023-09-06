@@ -66,7 +66,6 @@ export default {
     name: "App",
     data() {
         return {
-            // Un booléen pour contrôler si le menu est actif ou non sur les petits écrans
             isActive: false
         }
     }
