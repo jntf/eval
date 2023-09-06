@@ -100,52 +100,128 @@ Cette section explique comment utiliser les principales fonctionnalités de l'ap
 
 ## Architecture 
 
-L'architecture technique de l'application Eval est organisée en deux parties :
+L'architecture technique de l'application Eval est organisée en trois parties :
 
-### Backend
+### Collecte de données
 
-The following diagram represents the backend architecture: 
+La collecte de données est un élément clé du fonctionnement d'Eval, permettant d'alimenter les modèles d'apprentissage automatique.
 
 ```mermaid
 graph TD;
-    A[Client] -->|HTTP Request| B[API Gateway]
-    B --> C[AWS Lambda]
-    C --> D[AWS AppSync]
-    C --> E[Database Layer]
-    E --> F[SQL Queries]
-    E --> G[Stored Procedures]
+    A[Sites automobiles] --> B[Scraper];
+    B --> C[Stockage S3];
+    C --> D[Transformation Lambda];
+    D --> E[DynamoDB];
 ```
 
-Le backend repose sur une architecture serverless déployée sur AWS. 
+Les étapes principales sont:
 
-![Architecture backend](images/backend_architecture.png)
+- **Scraping** : un scraper développé en Python extrait quotidiennement les annonces depuis des sites automobiles comme Leboncoin.
 
-Les principaux composants sont :
+- **Stockage** : les données scrapées sont stockées dans Amazon S3 dans un bucket dédié.
 
-- **AWS Lambda** : exécution du code métier sous forme de fonctions serverless
-- **Amazon DynamoDB** : base de données NoSQL pour stocker les données applicatives
-- **Amazon S3** : stockage des données et fichiers dans des buckets  
-- **AWS AppSync** : API GraphQL pour accéder aux données
-- **AWS Cognito** : gestion des utilisateurs et de l'authentification
+- **Transformation** : les données brutes sont transformées et enrichies à l'aide de scripts Python et de fonctions AWS Lambda.
+
+- **Chargement** : les données transformées sont chargées dans la base de données Amazon DynamoDB pour être exploitées par l'application.
+
+Cette architecture permet de collecter des milliers d'annonces par jour et de maintenir les données à jour pour fournir des estimations précises.
+
+Des outils comme AWS Batch, Docker et Github Actions sont utilisés pour orchestrer et automatiser ces traitements de données.
+
+### Backend applicatif
+
+Le backend de l'application Eval est développé avec une architecture serverless sur AWS.
+
+```mermaid
+graph TD;
+    A[Frontend] --> B[API Gateway];
+    B --> C[Lambda functions];
+    C --> D[DynamoDB];
+    C --> E[S3];
+    C --> F[Cognito];
+```
+
+Les composants principaux sont:
+
+- **AWS Lambda** : exécution du code métier sous forme de fonctions serverless déclenchées par les appels API 
+- **Amazon DynamoDB** : base de données NoSQL pour stocker les données applicatives comme les profils utilisateurs 
+- **Amazon S3** : stockage des données et fichiers statiques comme les rapports générés 
+- **AWS AppSync** : API GraphQL pour permettre au frontend d'accéder aux données 
+- **AWS Cognito** : service de gestion des utilisateurs et de l'authentification 
+- **API Gateway** : point d'entrée pour les requêtes HTTP vers les Lambda functions backend 
+
+Cette architecture serverless permet une grande flexibilité et une mise à l'échelle automatique en fonction de la charge. 
+
+### Frontend applicatif
+
+Le frontend de Eval est développé avec Vue.js et communique avec le backend via l'API GraphQL.
+
+```mermaid
+graph LR;
+   A[Composants Vue] --> B[Appels API];
+   B --> C[API GraphQL];
+   C --> D[Backend AWS];
+``` 
+
+L'interface utilisateur est construite à l'aide de composants Vue.js pour le routage, l'affichage des données, les formulaires, etc.
+
+Les principales technologies sont :
+
+- **Vue.js** : framework Javascript pour développer l'interface utilisateur sous forme de components
+- **Vue Router** : gestion du routage et de la navigation dans l'application
+- **Pinia** : gestion des états et partage de données entre composants
+- **Tailwind CSS** : utilitaires CSS pour le styling et la mise en page
+- **API GraphQL** : pour récupérer les données depuis le backend AWS et mettre à jour l'interface. 
+
+Cette architecture frontend permet une évolution rapide de l'interface utilisateur et une grande modularité grâce à la decomposition en composants.
+
+L'application Eval repose sur un ensemble de technologies open source pour le frontend, le backend et la data science.
 
 ### Frontend
 
-Le frontend est développé avec Vue.js. L'interface se compose de composants et communique avec le backend via l'API GraphQL.
+- Vue.js
+- Vue Router
+- Pinia
+- Tailwind CSS
 
-![Architecture frontend](images/frontend_architecture.png)
+### Backend
 
-## Technologies
+- AWS Lambda
+- Amazon DynamoDB
+- Amazon S3
+- AWS AppSync
+- AWS Cognito
+- Serverless Framework
 
-Liste des technologies
+### Data science
 
-## Tests
+- Pandas
+- Scikit-learn
+- XGBoostRegressor
+- Aiottp
+- BeautifulSoup
 
-Description des tests
+### Infrastructure
 
-## Contribution 
+- Docker
+- AWS Fargate
+- AWS Batch
+- GitHub Actions
 
-Guidelines pour contribuer
+### Tests
+
+- Jest
+- Test-utils
+
+## Développement
+
+- JavaScript
+- Python
+- Node.js
+- Git/GitHub
 
 ## License
 
-Informations sur la licence
+Ce projet est sous licence MIT. Vous êtes libre de copier, modifier, et redistribuer le code source sous les termes de cette licence. Vous pouvez trouver plus d'informations sur la licence MIT dans le fichier `LICENSE.md` inclus dans ce dépôt.
+
+Pour toute utilisation qui n'est pas couverte par cette licence, veuillez nous contacter à julien.nataf@gmail.com .
