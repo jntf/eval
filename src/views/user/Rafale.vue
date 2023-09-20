@@ -31,14 +31,17 @@
                             <select v-model="selectedColumns[column]"
                                 class="block w-full p-2 border rounded-md bg-gray-700 text-white">
                                 <option value="" selected>Sélectionner...</option>
-                                <option v-for="(optionValue, optionKey) in options" :key="optionKey" :value="optionKey">{{ optionValue }}</option>
+                                <option v-for="(optionValue, optionKey) in options" :key="optionKey" :value="optionKey">{{
+                                    optionValue }}</option>
                             </select>
                         </td>
-                        <td class="px-4 py-3 border-b">{{ Array.from(sampleValues[column]).join(', ').slice(0, 50) }}<span v-if="Array.from(sampleValues[column]).join(', ').length >= 50"> ...</span></td>
+                        <td class="px-4 py-3 border-b">{{ Array.from(sampleValues[column]).join(', ').slice(0, 50) }}<span
+                                v-if="Array.from(sampleValues[column]).join(', ').length >= 50"> ...</span></td>
                     </tr>
                 </tbody>
             </table>
-            <button @click="loadToS3" class="mt-4 px-4 py-2 bg-red-700 text-white rounded-md self-center">Calculer les prix</button>
+            <button @click="loadToS3" class="mt-4 px-4 py-2 bg-red-700 text-white rounded-md self-center">Calculer les
+                prix</button>
         </div>
 
         <!-- Section for displaying the file data -->
@@ -55,12 +58,18 @@
                 <table class="table-auto rounded shadow border border-gray-200 text-sm lg:text-base">
                     <thead>
                         <tr class="bg-gray-500 text-gray-700 font-bold">
-                            <th v-for="(value, key) in fileData[0]" :key="key" class="px-2 py-4" :class="getColumnClass(key)">{{ capitalize(key) }}</th>
+                            <!-- <th v-for="(value, key) in fileData[0]" :key="key" class="px-2 py-4" :class="getColumnClass(key)">{{ capitalize(key) }}</th> -->
+                            <th v-for="(value, key, index) in Object.keys(fileData[0]).slice(0, -3)" :key="key" class="px-2 py-4" :class="getColumnClass(key)">{{ capitalize(value) }}</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white text-gray-600 alternated">
-                        <tr v-for="(row, index) in fileData" :key="index" :class="{ 'bg-gray-50': index % 2 === 0 }" class="h-12 whitespace-nowrap text-gray">
-                            <td v-for="value in Object.values(row)" :key="value" class="px-2 py-2 border-b border-gray-800 text-sm max-w-xs">
+                        <tr v-for="(row, index) in fileData" :key="index" :class="{ 'bg-gray-50': index % 2 === 0 }"
+                            class="h-12 whitespace-nowrap text-gray">
+                            <!-- <td v-for="value in Object.values(row)" :key="value" class="px-2 py-2 border-b border-gray-800 text-sm max-w-xs">
+                                {{ formatValue(value) }}
+                            </td> -->
+                            <td v-for="value in Object.values(row).slice(0, -3)" :key="value"
+                                class="px-2 py-2 border-b border-gray-800 text-sm max-w-xs">
                                 {{ formatValue(value) }}
                             </td>
                         </tr>
@@ -295,7 +304,7 @@ export default {
                 // Stocker le lien de téléchargement dans la variable downloadLink
                 downloadLink.value = signedURL;
 
-                alert("Les données ont été chargées sur S3 avec succès.");
+                // alert("Les données ont été chargées sur S3 avec succès.");
             } catch (error) {
                 console.error(error);
                 alert("Une erreur s'est produite lors du chargement des données sur S3.");
