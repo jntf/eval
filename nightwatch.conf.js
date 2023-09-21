@@ -19,10 +19,7 @@ module.exports = {
     test_settings: {
         default: {
             desiredCapabilities: {
-                browserName: 'chrome',
-                chromeOptions: {
-                    args: ['--headless', '--no-sandbox', '--disable-gpu', '--window-size=1920,1080']
-                }
+                browserName: 'chrome'
             }
         }
     }
