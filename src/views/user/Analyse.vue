@@ -2,7 +2,7 @@
   <div id="Dashboard" class="text-black px-5 pb-5 grid grid-cols-12 gap-4">
 
     <div class="col-span-12 lg:col-span-12 flex justify-between items-center mb-6">
-      <p class="text-2xl font-semibold mb-2 lg:mb-0">Bienvenue {{ firstName }} !</p>
+      <p id="bienvenue" class="text-2xl font-semibold mb-2 lg:mb-0">Bienvenue {{ firstName }} !</p>
     </div>
 
     <div class="col-span-12 lg:col-span-3 lg:pt-20">

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites errors="1"
+            failures="0"
+            tests="0">
+
+  <testsuite name="homeTest"
+    errors="1" failures="0" hostname="" id="" package="homeTest" skipped="1"
+    tests="0" time="0.000" timestamp="">
+  
+
+  
+    <system-err>
+       An error occurred while creating a new Selenium Server session: [SessionNotCreatedError] session not created: This version of ChromeDriver only supports Chrome version 117
+Current browser version is 116.0.5845.187 with binary path /Applications/Google Chrome.app/Contents/MacOS/Google Chrome
+Build info: version: &#39;3.141.59&#39;, revision: &#39;e82be7d358&#39;, time: &#39;2018-11-14T08:25:53&#39;
+System info: host: &#39;macbook-pro-de-admin-10.home&#39;, ip: &#39;fdc5:bea1:8964:4503:a0:a9b8:c96f:6fc0%en0&#39;, os.name: &#39;Mac OS X&#39;, os.arch: &#39;x86_64&#39;, os.version: &#39;14.0&#39;, java.version: &#39;17.0.1&#39;
+Driver info: driver.version: unknown
+remote stacktrace: 0   chromedriver                        0x000000010820be58 chromedriver + 5090904
+1   chromedriver                        0x0000000108202bc3 chromedriver + 5053379
+2   chromedriver                        0x0000000107d9e527 chromedriver + 447783
+3   chromedriver                        0x0000000107ddbf96 chromedriver + 700310
+4   chromedriver                        0x0000000107ddaf99 chromedriver + 696217
+5   chromedriver                        0x0000000107dd5776 chromedriver + 673654
+6   chromedriver                        0x0000000107dd1f93 chromedriver + 659347
+7   chromedriver                        0x0000000107e1e776 chromedriver + 972662
+8   chromedriver                        0x0000000107e14433 chromedriver + 930867
+9   chromedriver                        0x0000000107ddf042 chromedriver + 712770
+10  chromedriver                        0x0000000107de026e chromedriver + 717422
+11  chromedriver                        0x00000001081cd3b9 chromedriver + 4834233
+12  chromedriver                        0x00000001081d255d chromedriver + 4855133
+13  chromedriver                        0x00000001081d94f2 chromedriver + 4883698
+14  chromedriver                        0x00000001081d328d chromedriver + 4858509
+15  chromedriver                        0x00000001081a50ec chromedriver + 4669676
+16  chromedriver                        0x00000001081f1c58 chromedriver + 4983896
+17  chromedriver                        0x00000001081f1e10 chromedriver + 4984336
+18  chromedriver                        0x00000001082027fe chromedriver + 5052414
+19  libsystem_pthread.dylib             0x00007ff80f9d8202 _pthread_start + 99
+20  libsystem_pthread.dylib             0x00007ff80f9d3bab thread_start + 15
+
+    </system-err>
+  
+
+    
+    <error message="An error occurred while creating a new Selenium Server session: [SessionNotCreatedError] session not created: This version of ChromeDriver only supports Chrome version 117
+Current browser version is 116.0.5845.187 with binary path /Applications/Google Chrome.app/Contents/MacOS/Google Chrome
+Build info: version: &#39;3.141.59&#39;, revision: &#39;e82be7d358&#39;, time: &#39;2018-11-14T08:25:53&#39;
+System info: host: &#39;macbook-pro-de-admin-10.home&#39;, ip: &#39;fdc5:bea1:8964:4503:a0:a9b8:c96f:6fc0%en0&#39;, os.name: &#39;Mac OS X&#39;, os.arch: &#39;x86_64&#39;, os.version: &#39;14.0&#39;, java.version: &#39;17.0.1&#39;
+Driver info: driver.version: unknown
+remote stacktrace: 0   chromedriver                        0x000000010820be58 chromedriver + 5090904
+1   chromedriver                        0x0000000108202bc3 chromedriver + 5053379
+2   chromedriver                        0x0000000107d9e527 chromedriver + 447783
+3   chromedriver                        0x0000000107ddbf96 chromedriver + 700310
+4   chromedriver                        0x0000000107ddaf99 chromedriver + 696217
+5   chromedriver                        0x0000000107dd5776 chromedriver + 673654
+6   chromedriver                        0x0000000107dd1f93 chromedriver + 659347
+7   chromedriver                        0x0000000107e1e776 chromedriver + 972662
+8   chromedriver                        0x0000000107e14433 chromedriver + 930867
+9   chromedriver                        0x0000000107ddf042 chromedriver + 712770
+10  chromedriver                        0x0000000107de026e chromedriver + 717422
+11  chromedriver                        0x00000001081cd3b9 chromedriver + 4834233
+12  chromedriver                        0x00000001081d255d chromedriver + 4855133
+13  chromedriver                        0x00000001081d94f2 chromedriver + 4883698
+14  chromedriver                        0x00000001081d328d chromedriver + 4858509
+15  chromedriver                        0x00000001081a50ec chromedriver + 4669676
+16  chromedriver                        0x00000001081f1c58 chromedriver + 4983896
+17  chromedriver                        0x00000001081f1e10 chromedriver + 4984336
+18  chromedriver                        0x00000001082027fe chromedriver + 5052414
+19  libsystem_pthread.dylib             0x00007ff80f9d8202 _pthread_start + 99
+20  libsystem_pthread.dylib             0x00007ff80f9d3bab thread_start + 15
+"><![CDATA[
+      SessionNotCreatedError: An error occurred while creating a new Selenium Server session: [SessionNotCreatedError] session not created: This version of ChromeDriver only supports Chrome version 117
+Current browser version is 116.0.5845.187 with binary path /Applications/Google Chrome.app/Contents/MacOS/Google Chrome
+Build info: version: &#39;3.141.59&#39;, revision: &#39;e82be7d358&#39;, time: &#39;2018-11-14T08:25:53&#39;
+System info: host: &#39;macbook-pro-de-admin-10.home&#39;, ip: &#39;fdc5:bea1:8964:4503:a0:a9b8:c96f:6fc0%en0&#39;, os.name: &#39;Mac OS X&#39;, os.arch: &#39;x86_64&#39;, os.version: &#39;14.0&#39;, java.version: &#39;17.0.1&#39;
+Driver info: driver.version: unknown
+remote stacktrace: 0   chromedriver                        0x000000010820be58 chromedriver + 5090904
+1   chromedriver                        0x0000000108202bc3 chromedriver + 5053379
+2   chromedriver                        0x0000000107d9e527 chromedriver + 447783
+3   chromedriver                        0x0000000107ddbf96 chromedriver + 700310
+4   chromedriver                        0x0000000107ddaf99 chromedriver + 696217
+5   chromedriver                        0x0000000107dd5776 chromedriver + 673654
+6   chromedriver                        0x0000000107dd1f93 chromedriver + 659347
+7   chromedriver                        0x0000000107e1e776 chromedriver + 972662
+8   chromedriver                        0x0000000107e14433 chromedriver + 930867
+9   chromedriver                        0x0000000107ddf042 chromedriver + 712770
+10  chromedriver                        0x0000000107de026e chromedriver + 717422
+11  chromedriver                        0x00000001081cd3b9 chromedriver + 4834233
+12  chromedriver                        0x00000001081d255d chromedriver + 4855133
+13  chromedriver                        0x00000001081d94f2 chromedriver + 4883698
+14  chromedriver                        0x00000001081d328d chromedriver + 4858509
+15  chromedriver                        0x00000001081a50ec chromedriver + 4669676
+16  chromedriver                        0x00000001081f1c58 chromedriver + 4983896
+17  chromedriver                        0x00000001081f1e10 chromedriver + 4984336
+18  chromedriver                        0x00000001082027fe chromedriver + 5052414
+19  libsystem_pthread.dylib             0x00007ff80f9d8202 _pthread_start + 99
+20  libsystem_pthread.dylib             0x00007ff80f9d3bab thread_start + 15
+
+    at Object.checkLegacyResponse (/Users/julien/Desktop/eval.nosync/evalio/node_modules/selenium-webdriver/lib/error.js:558:15)
+    at parseHttpResponse (/Users/julien/Desktop/eval.nosync/evalio/node_modules/selenium-webdriver/lib/http.js:593:13)
+    at Executor.execute (/Users/julien/Desktop/eval.nosync/evalio/node_modules/selenium-webdriver/lib/http.js:529:28)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+      ]]></error>  
+
+  
+    
+    <testcase
+      name="Home Page Test" classname="homeTest">
+      <skipped />
+    </testcase>
+    
+  
+  </testsuite>
+</testsuites>
